@@ -1,0 +1,122 @@
+import React, { useState } from "react";
+import { StyleSheet, View, Text, ImageSourcePropType, TouchableOpacity } from "react-native";
+import { Image } from "expo-image";
+import { Colors, TextStyles } from "@/theme";
+import { useRouter } from "expo-router";
+
+export interface ChildComponentProps {
+  id: number;
+  title: string;
+  description: string;
+  cover: ImageSourcePropType;
+  price?: number;
+  time?: string;
+  ageLimit?: number;
+}
+
+const CardComponent: React.FC<ChildComponentProps> = ({
+  id,
+  title,
+  cover,
+  price,
+  time,
+  ageLimit
+}) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const router = useRouter();
+
+  const handlePress = () => {
+    router.push(`/mc/${id}`);
+  };
+
+  return (
+    <TouchableOpacity onPress={handlePress}>
+      <View style={styles.mainView}>
+        <Image
+          style={[styles.imgCard, !isLoaded && styles.imgPlaceholder]}
+          source={cover}
+          onLoad={() => setIsLoaded(true)}
+        />
+        <Text style={styles.textHeader} numberOfLines={2}>
+          {title}
+        </Text>
+        <View style={styles.infoContainer}>
+          {time && <Text style={styles.timeText}>{time}</Text>}
+          {price && (
+            <Text style={styles.priceText}>
+              {price} ₽
+            </Text>
+          )}
+        </View>
+        {ageLimit && (
+          <Text style={styles.ageLimitText}>
+            {ageLimit}+
+          </Text>
+        )}
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+const styles = StyleSheet.create({
+  mainView: {
+    width: "100%",
+    height: 240,
+    paddingHorizontal: 2,
+  },
+  imgCard: {
+    width: "100%",
+    aspectRatio: 1,
+    borderRadius: 25,
+  },
+  imgPlaceholder: {
+    backgroundColor: Colors.grayBg,
+  },
+  textHeader: {
+    paddingTop: 8,
+    paddingBottom: 2,
+    ...TextStyles.h3,
+    color: Colors.black
+  },
+  infoContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 2,
+    marginTop: 8,
+  },
+  timeText: {
+    ...TextStyles.text,
+    paddingVertical: 4,
+    paddingHorizontal: 16,
+    borderRadius: 15,
+    backgroundColor: Colors.purple,
+    color: Colors.white,
+  },
+  priceText: {
+    ...TextStyles.text,
+    paddingVertical: 4,
+    paddingHorizontal: 16,
+    borderRadius: 15,
+    backgroundColor: Colors.grayBg,
+    color: Colors.grayText,
+  },
+  ageLimitText: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: Colors.white,
+    padding: 2,
+    borderTopRightRadius: 25,
+    borderBottomLeftRadius: 25,
+    ...TextStyles.h2,
+    width: 40,
+    height: 40,
+    color: Colors.purple,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+  },
+});
+
+export default CardComponent;
+
+
