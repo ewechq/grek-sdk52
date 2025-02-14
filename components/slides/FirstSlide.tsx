@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Platform } from 'react-native';
 import { TextStyles, Colors } from '@/theme';
 import Btn from '@/components/btns/Btn';
 import { useRouter } from 'expo-router';
@@ -14,6 +14,18 @@ interface FirstSlideProps {
 
 const FirstSlide: React.FC<FirstSlideProps> = ({ data }) => {
   const router = useRouter();
+  
+  const formatPrice = (price: string) => {
+    return (
+      <Text style={styles.priceValue}>
+        {price}
+        <Text style={styles.currencySymbol}>
+          {Platform.OS === 'ios' ? ' руб.' : '₽'}
+        </Text>
+      </Text>
+    );
+  };
+
   const renderPriceBlock = () => {
     return (
       <View>
@@ -23,14 +35,14 @@ const FirstSlide: React.FC<FirstSlideProps> = ({ data }) => {
             <View style={styles.verticalLine} />
             <View style={styles.priceContent}>
               <Text style={styles.priceAge}>от 1 до 4 лет</Text>
-              <Text style={styles.priceValue}>1 390₽</Text>
+              {formatPrice('1 390')}
             </View>
           </View>
           <View style={styles.priceBlock}>
             <View style={styles.verticalLine} />
             <View style={styles.priceContent}>
               <Text style={styles.priceAge}>от 5 до 16 лет</Text>
-              <Text style={styles.priceValue}>1 690₽</Text>
+              {formatPrice('1 690')}
             </View>
           </View>
         </View>
@@ -40,7 +52,7 @@ const FirstSlide: React.FC<FirstSlideProps> = ({ data }) => {
           <View style={styles.verticalLine} />
           <View style={styles.priceContent}>
             <Text style={styles.priceAge}>от 1 до 16 лет</Text>
-            <Text style={styles.priceValue}>2 290₽</Text>
+            {formatPrice('2 290')}
           </View>
         </View>
       </View>
@@ -62,8 +74,8 @@ const FirstSlide: React.FC<FirstSlideProps> = ({ data }) => {
         <Btn
           title="Купить билет"
           onPress={() => router.push('/(buyticket)')}
-          bgColor={Colors.green}
-          textColor={Colors.black}
+          bgColor={Colors.purple}
+          textColor={Colors.white}
           width="full"
         />
       </View>
@@ -117,7 +129,7 @@ const styles = StyleSheet.create({
   verticalLine: {
     width: 2,
     height: '100%',
-    backgroundColor: Colors.green,
+    backgroundColor: Colors.purple,
     borderRadius: 1,
   },
   priceContent: {
@@ -129,5 +141,9 @@ const styles = StyleSheet.create({
   },
   priceValue: {
     ...TextStyles.h3Number,
+  },
+  currencySymbol: {
+    ...TextStyles.h3,
+    lineHeight: 20,
   },
 }); 

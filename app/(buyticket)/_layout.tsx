@@ -44,13 +44,13 @@ export default function BuyTicketLayout() {
       <Stack.Screen 
         name="confirm"
         options={{
-          headerShown: true,
+          headerShown: false,
         }}
       />
       <Stack.Screen 
         name="payment"
         options={{
-          headerShown: true,
+          headerShown: false,
         }}
       />
     </Stack>

@@ -3,7 +3,6 @@ import { Slot } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { AuthProvider } from '../contexts/auth';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -25,8 +24,6 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
       <Slot />
-    </AuthProvider>
   );
 }

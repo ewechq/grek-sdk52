@@ -1,76 +1,39 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, TextInput } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TextInput,} from 'react-native';
 import { TextStyles, Colors } from '@/theme';
 import Btn from '@/components/btns/Btn';
-import { RadioButton } from '@/components/btns/RadioButton';
-import { Checkbox } from '@/components/Checkbox';
 import PhoneInput from '@/components/inputs/InputPhone';
 import EmailInput from '@/components/inputs/InputEmail';
-import DropDownPicker from "react-native-dropdown-picker";
 import Header from '@/components/Header';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import SelectableDropdown from '@/components/inputs/InputSelectableDropdown';
-import ToggleButton from '@/components/btns/BtnToggle';
 import TextButton from '@/components/btns/BtnDownlineText';
 import { useRouter } from 'expo-router';
+import Counter from '@/components/CounterComponent';
+import CustomAlert from '@/components/modals/CustomAlert';
+import { useTicketPrices } from '@/hooks/useTicketPrices';
+import { PriceCalculation } from '@/components/blocks/tickets/PriceCalculation';
+import { CheckboxWithLink } from '@/components/CheckboxWithLink';
 
 const BuyTicket = () => {
-  const [selectedPark, setSelectedPark] = useState('');
-  const [open, setOpen] = useState(false);
-  const [address, setAddress] = useState<string | null>(null);
-  const [ticketType, setTicketType] = useState('park'); // 'park' или 'gift'
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     email: '',
   });
-  const [selectedChildren, setSelectedChildren] = useState<string[]>([]);
-  const [selectedTariff, setSelectedTariff] = useState('weekday'); 
+  const [guestCounts, setGuestCounts] = useState({
+    onetofour: 0,
+    fivetosixteen: 0,
+  });
+
   const [selectedDiscounts, setSelectedDiscounts] = useState<string[]>([]);
   const [agreements, setAgreements] = useState({
     privacy: false,
     rules: false,
     offer: false,
-    additional: false,
+    price: false,
   });
-  const addresses = [
-    { label: "Grek Land", value: "Grek Land" },
-    { label: "Троя Парк", value: "Троя Парк" },
-  ];
-
-  const childrenOptions = [
-    { label: "Александров Михаил Дмитриевич", value: "Александров Михаил Дмитриевич" },
-    { label: "Ева Попова", value: "Ева Попова" },
-    { label: "Константинопольский Артём Александрович", value: "Константинопольский Артём Александрович" },
-    { label: "Мария К.", value: "Мария К." },
-    { label: "Воробьёв-Деревянко Платон Сергеевич", value: "Воробьёв-Деревянко Платон Сергеевич" },
-    { label: "Анна Иванова", value: "Анна Иванова" },
-  ];
-
-  const discountOptions = [
-    { id: 'none', title: 'Нет' },
-    { id: 'family', title: '50% большой семье' },
-    { id: 'birthday', title: '50% именинникам' },
-    { id: 'evening', title: '50% с 20:00 до 21:00' },
-    { id: 'special', title: '50% особенным детям' },
-  ];
-
-  const handleDiscountToggle = (discountId: string) => {
-    if (discountId === 'none') {
-      setSelectedDiscounts(['none']);
-      return;
-    }
-    
-    setSelectedDiscounts(prev => {
-      if (prev.includes('none')) {
-        return [discountId];
-      }
-      if (prev.includes(discountId)) {
-        return prev.filter(id => id !== discountId);
-      }
-      return [...prev, discountId];
-    });
-  };
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
 
   // Форматируем текущую дату
   const today = new Date();
@@ -82,6 +45,114 @@ const BuyTicket = () => {
 
   const router = useRouter();
   
+  // Функция проверки валидности формы
+  const isFormValid = () => {
+    // Проверка заполнения всех полей
+    const isPersonalDataFilled = formData.name.trim() && 
+                                formData.phone.trim() && 
+                                formData.email.trim();
+    
+    // Проверка количества билетов (хотя бы один билет)
+    const hasTickets = guestCounts.onetofour > 0 || guestCounts.fivetosixteen > 0;
+    
+    // Проверка согласия со всеми условиями
+    const isAgreementsAccepted = agreements.privacy && 
+                                agreements.rules && 
+                                agreements.offer;
+
+    return isPersonalDataFilled && hasTickets && isAgreementsAccepted;
+  };
+
+  // Обработчик нажатия кнопки "Подтвердить"
+  const handleSubmit = async () => {
+    if (!isFormValid()) {
+      const message = 'Пожалуйста, заполните все обязательные поля:\n\n' +
+        (!(guestCounts.onetofour > 0 || guestCounts.fivetosixteen > 0) ? '- Укажите количество билетов\n' : '') +
+        (!formData.name || !formData.phone || !formData.email ? '- Заполните все персональные данные\n' : '') +
+        (!agreements.privacy || !agreements.rules || !agreements.offer ? '- Примите все условия' : '');
+      
+      setAlertMessage(message);
+      setAlertVisible(true);
+      return;
+    }
+
+    try {
+      const requestData = {
+        "name": formData.name,
+        "phone": "+" + formData.phone.replace(/\D/g, ''),
+        "email": formData.email,
+        "childage": [] as string[]
+      };
+
+      // Проверяем значения перед добавлением
+      console.log('Начальные значения:', {
+        onetofour: guestCounts.onetofour,
+        fivetosixteen: guestCounts.fivetosixteen
+      });
+
+      // Добавляем с проверкой
+      if (guestCounts.onetofour > 0) {
+        for (let i = 0; i < guestCounts.onetofour; i++) {
+          requestData.childage.push("1-4");
+        }
+      }
+      console.log('После добавления 1-4:', requestData.childage);
+
+      if (guestCounts.fivetosixteen > 0) {
+        for (let i = 0; i < guestCounts.fivetosixteen; i++) {
+          requestData.childage.push("5-16");
+        }
+      }
+      console.log('После добавления 5-16:', requestData.childage);
+
+      // Проверяем финальные данные
+      console.log('Финальный объект для отправки:', JSON.stringify(requestData, null, 2));
+
+      // Прямо перед отправкой
+      const requestBody = JSON.stringify(requestData);
+      console.log('Тело запроса:', requestBody);
+
+      const response = await fetch('https://api.grekland.ru/api/ticket/preorder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: requestBody
+      });
+
+      // Логируем ответ сразу после получения
+      console.log('Статус ответа:', response.status);
+      const responseText = await response.text();
+      console.log('Сырой ответ:', responseText);
+
+      const result = JSON.parse(responseText);
+      console.log('Распарсенный ответ:', result);
+
+      if (response.ok && result.link) {
+        console.log('Успешный ответ:', result.message);
+        console.log('Ссылка для оплаты:', result.link);
+        
+        // Перенаправляем на страницу оплаты
+        router.push({
+          pathname: '/(buyticket)/payment',
+          params: { url: result.link }
+        });
+      } else {
+        // Показываем ошибку
+        const errorMessage = result.message || 'Произошла ошибка при создании заказа';
+        console.error('Ошибка от сервера:', errorMessage);
+        setAlertMessage(errorMessage);
+        setAlertVisible(true);
+      }
+    } catch (error) {
+      console.error('Ошибка при отправке запроса:', error);
+      setAlertMessage('Не удалось отправить запрос. Проверьте подключение к интернету');
+      setAlertVisible(true);
+    }
+  };
+
+  const { prices, isLoading } = useTicketPrices();
 
   return (
     <ScrollView style={styles.container}>
@@ -90,16 +161,10 @@ const BuyTicket = () => {
         marginTop={48}
         onPress={() => router.push('/(tabs)')}
       />
-      {/* Предупреждение */}
-      <View style={styles.warningBox}>
-      <Ionicons name="warning-outline" size={24} color="black" />
-        <Text style={styles.warningText}>
-          Скидки не суммируются и предоставляются при предъявлении оригинальных документов
-        </Text>
-      </View>
+
 
       {/* Дата посещения */}
-      <View style={{marginBottom:40, marginHorizontal:16}}>
+      <View style={{marginVertical:40, marginHorizontal:16}}>
         <Text style={styles.sectionTitle}>Дата посещения</Text>
         <View style={styles.dateContainer}>
           <Text style={styles.dateText}>{formattedDate}</Text>
@@ -107,25 +172,11 @@ const BuyTicket = () => {
         </View>
       </View>
 
-      {/* Тип билета */}
-      <View style={{marginBottom:40, marginHorizontal:16}}>
-      <Text style={styles.sectionTitle}>Тип билета:</Text>
-      <View style={styles.radioGroup}>
-        <RadioButton
-          selected={ticketType === 'park'}
-          onSelect={() => setTicketType('park')}
-          label="Билет в парк"
-        />
-        <RadioButton
-          selected={ticketType === 'gift'}
-          onSelect={() => setTicketType('gift')}
-          label="Подарочный сертификат"
-        />
-      </View></View>
+
 
       {/* Персональные данные */}
       <View style={{marginBottom:40, marginHorizontal:16}}>
-      <Text style={styles.sectionTitle}>Ваши данные:</Text>
+      <Text style={[styles.sectionTitle, {marginBottom:8}]}>Ваши данные:</Text>
       <TextInput
         style={styles.input}
         placeholder="Ваше ФИО"
@@ -145,109 +196,93 @@ const BuyTicket = () => {
         backgroundColor={Colors.white}
         borderColor={Colors.grayText}
       />
+          <View style={styles.counterSection}>
+            <Text style={styles.sectionTitle}>Количество билетов:</Text>           
+            <View style={styles.countersContainer}>
+              <View style={styles.counterRow}>
+                <Counter
+                  label="От 1 до 4 лет:"
+                  value={guestCounts.onetofour}
+                  onIncrease={() => setGuestCounts({...guestCounts, onetofour: guestCounts.onetofour + 1})}
+                  onDecrease={() => setGuestCounts({...guestCounts, onetofour: Math.max(0, guestCounts.onetofour - 1)})}
+                />
+              </View>
+              <View style={styles.counterRow}>
+                <Counter
+                  label="От 5 до 16 лет:"
+                  value={guestCounts.fivetosixteen}
+                  onIncrease={() => setGuestCounts({...guestCounts, fivetosixteen: guestCounts.fivetosixteen + 1})}
+                  onDecrease={() => setGuestCounts({...guestCounts, fivetosixteen: Math.max(0, guestCounts.fivetosixteen - 1)})}
+                />
+              </View>
+            </View>
+          </View>
 
-
-      {/* Выбор детей */}
-      <SelectableDropdown
-        placeholder="Выберите ребенка"
-        items={childrenOptions}
-        selectedItems={selectedChildren}
-        onSelect={setSelectedChildren}
-      />
       </View>
 
-      {/* Тарифы */}
-      <View style={{marginBottom:40, marginHorizontal:16}}>
-      <Text style={styles.sectionTitle}>Тариф</Text>
-      <View style={styles.radioGroup}>
-        <RadioButton
-          selected={selectedTariff === 'weekday'}
-          onSelect={() => setSelectedTariff('weekday')}
-          label="Будни"
-        />
-        <RadioButton
-          selected={selectedTariff === 'weekend'}
-          onSelect={() => setSelectedTariff('weekend')}
-          label="Выходные и праздники"
-        />
-      </View>
-      </View>
-      {/* Скидки и льготы */}
-      <View style={styles.discountsSection}>
-        <Text style={styles.sectionTitle}>Скидки и льготы</Text>
-        <Text style={styles.discountDescription}>
-          Чтобы предоставить скидки попросим оригинальные документы, подтверждающие личность, статус или возраст ребёнка.
-        </Text>
-        <View style={styles.discountButtons}>
-          {discountOptions.map((discount) => (
-            <ToggleButton
-              key={discount.id}
-              title={discount.title}
-              isSelected={selectedDiscounts.includes(discount.id)}
-              onToggle={() => handleDiscountToggle(discount.id)}
-            />
-          ))}
-          <Text style={{...TextStyles.textDescription, color:Colors.grayText, marginTop:16}}>
-          *Скидки не распространяются на ресторан и праздники в банкетных комнатах. К категории «взрослые» относятся люди, достигшие 16 лет.        </Text>
-        </View>
-      </View>
+ 
 
       {/* Итоговая стоимость */}
-      <View style={styles.totalSection}>
-        <Text style={[styles.sectionTitle,{marginBottom:24}]}>Считаем стоимость билетов:</Text>
-        <View style={{marginBottom:16}}>
-        <Text style={{...TextStyles.text, color:Colors.black}}>1 - Имя Ребенка Папчество - 1 183₽</Text>
-        <Text style={{...TextStyles.textDescription, color:Colors.grayText}}>30% большая семья</Text>
-        </View>
-        <View style={{marginBottom:16}}>
-        <Text style={{...TextStyles.text, color:Colors.black}}>2 - Имя Ребенка Отчество - 1 183₽</Text>
-        <Text style={{...TextStyles.textDescription, color:Colors.grayText}}>30% большая семья</Text>
-        </View>
-        <View style={{marginBottom:16}}>
-        <Text style={{...TextStyles.text, color:Colors.black}}>3 - Имя Ребенка Отечество - 695₽</Text>
-        <Text style={{...TextStyles.textDescription, color:Colors.grayText}}>50% именнинику</Text>
-        </View>
-        <View style={styles.horizontalLine} />
-        <View style={{flexDirection:'row',  justifyContent:'space-between'}}>
-          <Text style={{...TextStyles.h2, color:Colors.black}}>Итого:</Text>
-          <Text style={{...TextStyles.h2, color:Colors.black}}>3 061₽</Text>
-        </View>
+      <View style={styles.priceCalculationContainer}>
+        <Text style={[styles.sectionTitle, {marginBottom:24}]}>Считаем стоимость билетов</Text>
+        <PriceCalculation 
+          youngChildrenCount={guestCounts.onetofour}
+          olderChildrenCount={guestCounts.fivetosixteen}
+          prices={prices}
+        />
       </View>
 
       {/* Соглашения */}
       <View style={styles.agreementsSection}>
-        <Checkbox
+        <CheckboxWithLink
           checked={agreements.privacy}
           onCheck={() => setAgreements({...agreements, privacy: !agreements.privacy})}
-          label="Согласен(а) с политикой в отношении обработки персональных данных"
+          label="политикой в отношении обработки персональных данных"
+          url="https://grekland.ru/privacy.html"
         />
-        <Checkbox
+        <CheckboxWithLink
           checked={agreements.rules}
           onCheck={() => setAgreements({...agreements, rules: !agreements.rules})}
-          label="Согласен(а) с правилами парка"
+          label="правилами парка"
+          url="https://grekland.ru/regulations.html"
         />
-        <Checkbox
+        <CheckboxWithLink
+          checked={agreements.price}
+          onCheck={() => setAgreements({...agreements, price: !agreements.price})}
+          label="прайс листом"
+          url="https://grekland.ru/ticket.html"
+        />
+        <CheckboxWithLink
           checked={agreements.offer}
           onCheck={() => setAgreements({...agreements, offer: !agreements.offer})}
-          label="Согласен(а) с публичной офертой"
+          label="публичной офертой"
+          url="https://grekland.ru/public-offer.html"
         />
       </View>
 
       {/* Кнопка подтверждения */}
       <View style={{marginHorizontal:16}}>
-      <Btn
-        title="Подтвердить"
-        onPress={() => {}}
-        width="full"
-        bgColor={Colors.purple}
-      />
-<View style={{paddingBottom:40, marginTop:10}}>
-      <TextButton
+        <Btn
+          title="Подтвердить"
+          onPress={handleSubmit}
+          width="full"
+          bgColor={Colors.purple}
+        />
+        <View style={{paddingBottom:40, marginTop:10}}>
+          <TextButton
             title="Почему не прошла скидка?"
             onPress={() => {}}
             color={Colors.black}
+          />
+        </View>
+      </View>
 
-          /></View></View>
+      <CustomAlert
+        visible={alertVisible}
+        title="Ошибка!"
+        message={alertMessage}
+        onClose={() => setAlertVisible(false)}
+      />
     </ScrollView>
   );
 };
@@ -295,7 +330,7 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.grayElements,
     paddingHorizontal: 16,
     marginBottom: 8,
-    paddingVertical: 10,
+    paddingVertical: 16,
     
   },
   radioGroup: {
@@ -403,6 +438,29 @@ borderRadius:25,
   dateText: {
     ...TextStyles.text,
     color: Colors.black,
+  },
+  counterSection: {
+    marginTop: 40,
+  },
+  countersContainer: {
+    gap: 4,
+  },
+  counterRow: {
+    width: '100%',
+    paddingHorizontal:16
+  },
+  text: {
+    ...TextStyles.text,
+    color: Colors.black,
+    marginBottom: 16,
+  },
+  priceCalculationContainer: {
+    marginBottom: 40,
+    borderRadius: 25,
+    backgroundColor: Colors.grayBg,
+    paddingHorizontal: 16,
+    paddingVertical: 28,
+    marginHorizontal: 16
   },
 });
 

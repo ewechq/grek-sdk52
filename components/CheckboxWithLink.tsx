@@ -1,0 +1,81 @@
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Colors, TextStyles } from '@/theme';
+
+interface CheckboxWithLinkProps {
+  checked: boolean;
+  onCheck: () => void;
+  label: string;
+  url: string;
+}
+
+export const CheckboxWithLink: React.FC<CheckboxWithLinkProps> = ({
+  checked,
+  onCheck,
+  label,
+  url
+}) => {
+  const handleLinkPress = () => {
+    Linking.openURL(url);
+  };
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity 
+        style={styles.checkboxContainer} 
+        onPress={onCheck}
+      >
+        <View style={[styles.checkbox, checked && styles.checkboxChecked]}>
+          {checked && (
+            <Ionicons name="checkmark" size={16} color={Colors.white} />
+          )}
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity 
+        onPress={handleLinkPress}
+        style={styles.labelContainer}
+      >
+        <Text style={styles.label}>
+          Согласен(а) с <Text style={styles.link}>{label}</Text>
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginVertical: 8,
+  },
+  checkboxContainer: {
+    marginRight: 8,
+  },
+  checkbox: {
+    height: 20,
+    width: 20,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: Colors.purple,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkboxChecked: {
+    backgroundColor: Colors.purple,
+    borderColor: Colors.purple,
+  },
+  labelContainer: {
+    flex: 1,
+  },
+  label: {
+    ...TextStyles.text,
+    color: Colors.black,
+    paddingTop: 2,
+  },
+  link: {
+    textDecorationLine: 'underline',
+    color: Colors.black,
+  },
+}); 

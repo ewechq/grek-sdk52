@@ -1,14 +1,15 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React from 'react';
+import { useLocalSearchParams } from 'expo-router';
+import WebBrowser from '@/components/WebBrowser';
 
-const payment = () => {
-  return (
-    <View>
-      <Text>payment</Text>
-    </View>
-  )
-}
+const PaymentScreen = () => {
+  const { url } = useLocalSearchParams<{ url: string }>();
 
-export default payment
+  if (!url) {
+    return null;
+  }
 
-const styles = StyleSheet.create({})
+  return <WebBrowser url={url} />;
+};
+
+export default PaymentScreen;

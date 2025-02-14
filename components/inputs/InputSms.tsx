@@ -19,10 +19,10 @@ const SmsInput: React.FC<SmsInputProps> = ({
   error,
 }) => {
   const handleChange = (text: string) => {
-    // Разрешаем только цифры
+    // Очистка ввода от всех символов кроме цифр
     const numericValue = text.replace(/[^0-9]/g, '');
     
-    // Ограничиваем длину до 6 символов
+    // Проверка длины (6 символов)
     if (numericValue.length <= 6) {
       onChange(numericValue);
     }
@@ -46,6 +46,7 @@ const SmsInput: React.FC<SmsInputProps> = ({
         selectTextOnFocus={true}
         autoComplete="sms-otp"
         textContentType="oneTimeCode"
+        contextMenuHidden={true}
       />
       
       {error && (

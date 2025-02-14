@@ -52,9 +52,10 @@ const styles = StyleSheet.create({
     width: "100%",
     aspectRatio: 1,
     borderRadius: 25,
+    
   },
   imagePlaceholder: {
-    backgroundColor: Colors.grayBg,
+    backgroundColor: Colors.grayElements,
   },
   content: {
     paddingTop: 8,

@@ -64,7 +64,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
       const formattedPhone = formatPhoneNumber(rawText);
       setPhone(formattedPhone);
       const cleanNumber = getCleanNumber(formattedPhone);
-      if (onPhoneChange) {
+      if (onPhoneChange && cleanNumber.length === 11) {
         onPhoneChange(cleanNumber);
       }
     }, 300);

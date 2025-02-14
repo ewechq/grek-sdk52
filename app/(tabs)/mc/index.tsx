@@ -8,14 +8,20 @@ import {
   ScrollView,
   Modal,
   ActivityIndicator,
+  Image,
+  StatusBar,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import { Ionicons } from "@expo/vector-icons";
 import CardComponent, { ChildComponentProps } from "@/components/cards/CardComponent";
 import { TextStyles, Colors } from "@/theme";
+import { CalendarHeader } from "@/components/blocks/mk/CalendarHeader";
+import { DaysSlider } from "@/components/blocks/mk/DaysSlider";
+import { ScrollTopButton } from "@/components/btns/ScrollTopButton";
+import { DatePickerModal } from "@/components/modals/DatePickerModal";
 
 interface Event {
   id: number;
@@ -44,6 +50,9 @@ const CalendarComponent = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
+
+  // Добавим состояние для хранения начальной даты (сегодня)
+  const [initialDate] = useState(new Date());
 
   const getDayOfWeek = (date: Date): number => {
     const day = date.getDay();
@@ -89,9 +98,24 @@ const CalendarComponent = () => {
     fetchNews();
   }, []);
 
+  const generateDays = (centerDate: Date) => {
+    // Создаем новую дату и обнуляем время
+    const center = new Date(centerDate);
+    center.setHours(0, 0, 0, 0);
+    
+    // Генерируем массив из 15 дней (7 до + текущий + 7 после)
+    return Array.from({ length: 15 }, (_, i) => {
+      const date = new Date(center);
+      date.setDate(center.getDate() - 7 + i);
+      return date;
+    });
+  };
+
+  // Обновляем useEffect для генерации дней
   useEffect(() => {
+    // Генерируем дни при первом рендере
     setDays(generateDays(selectedDate));
-  }, [selectedDate]);
+  }, []); 
 
   useEffect(() => {
     if (days.length > 0) {
@@ -127,14 +151,6 @@ const CalendarComponent = () => {
     fetchEvents();
   }, []);
 
-  const generateDays = (centerDate: Date) => {
-    return Array.from({ length: 30 }, (_, i) => {
-      const date = new Date(centerDate);
-      date.setDate(centerDate.getDate() + i - 15);
-      return date;
-    });
-  };
-
   const scrollToSelectedDate = (date: Date, shouldAnimate: boolean = false) => {
     const index = days.findIndex(
       (d) => d.toDateString() === date.toDateString()
@@ -148,11 +164,22 @@ const CalendarComponent = () => {
     }
   };
 
+  // Обновляем обработчик выбора даты в календаре
   const onChange = (event: DateTimePickerEvent, date?: Date) => {
     if (date) {
-      setSelectedDate(date);
+      const newDate = new Date(date);
+      newDate.setHours(0, 0, 0, 0);
+      setSelectedDate(newDate);
+      // Генерируем новый массив дат с выбранной датой в центре
+      setDays(generateDays(newDate));
     }
     setShowDatePicker(false);
+  };
+
+  // Обработчик нажатия на день в слайдере
+  const handleDayPress = (date: Date) => {
+    setSelectedDate(date);
+    // При выборе даты из слайдера НЕ генерируем новый массив дат
   };
 
   const monthName = selectedDate.toLocaleDateString("ru-RU", { month: "long" });
@@ -219,8 +246,8 @@ const CalendarComponent = () => {
     const contentHeight = event.nativeEvent.contentSize.height;
     const screenHeight = event.nativeEvent.layoutMeasurement.height;
 
-    // Показываем кнопку, если прошло больше 2 дней (примерно 600px)
-    setShowScrollTop(offsetY > 600);
+    // Показываем кнопку, если прошло больше 2 дней (примерно 800px)
+    setShowScrollTop(offsetY > 800);
 
     if (offsetY + screenHeight >= contentHeight - 20 && !isLoadingMore) {
       setIsLoadingMore(true);
@@ -243,7 +270,8 @@ const CalendarComponent = () => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: Colors.white }}>
+
       <ScrollView 
         ref={scrollViewRef}
         onScroll={handleScroll}
@@ -251,86 +279,17 @@ const CalendarComponent = () => {
       >
         <View style={styles.container}>
           <View style={styles.calendarContainer}>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                paddingHorizontal: 16,
-              }}
-            >
-              <View style={{ gap: 4 }}>
-                <Text style={{ ...TextStyles.h2, marginTop: 4 }}>Афиша</Text>
-                <Text style={styles.monthName}>
-                  {monthName.charAt(0).toUpperCase() + monthName.slice(1)}
-                </Text>
-              </View>
+            <Image source={require('@/assets/images/pattern-on-white2.png')} style={{position: 'absolute', top: 0, left: 0, width: '110%', height: '100%', opacity: 0.4}} resizeMode='cover'/>
+            <CalendarHeader 
+              monthName={monthName} 
+              onCalendarPress={() => setShowDatePicker(true)}
+            />
 
-              <TouchableOpacity
-                style={{
-                  width: 80,
-                  height: 40,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: Colors.grayBg,
-                  borderRadius: 15,
-                }}
-                onPress={() => setShowDatePicker(true)}
-              >
-                <Ionicons
-                  name="calendar-clear-outline"
-                  size={18}
-                  color={Colors.black}
-                />
-              </TouchableOpacity>
-            </View>
-
-            <FlatList
-              ref={flatListRef}
-              horizontal
-              data={days}
-              keyExtractor={(item) => item.toDateString()}
-              getItemLayout={getItemLayout}
-              onScrollToIndexFailed={handleScrollToIndexFailed}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    setSelectedDate(item);
-                  }}
-                  style={[
-                    styles.dayContainer,
-                    selectedDate.toDateString() === item.toDateString() &&
-                      styles.selectedDayContainer,
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.dayText,
-                      selectedDate.toDateString() === item.toDateString() &&
-                        styles.selectedDayText,
-                    ]}
-                  >
-                    {item.getDate()}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.weekdayText,
-                      selectedDate.toDateString() === item.toDateString() &&
-                        styles.selectedWeekdayText,
-                    ]}
-                  >
-                    {item.toLocaleDateString("ru-RU", { weekday: "short" })}
-                  </Text>
-                </TouchableOpacity>
-              )}
-              contentContainerStyle={styles.flatListContent}
-              showsHorizontalScrollIndicator={false}
-              snapToAlignment="center"
-              decelerationRate="fast"
-              pagingEnabled={false}
-              initialNumToRender={7}
-              maxToRenderPerBatch={7}
-              windowSize={7}
+            <DaysSlider
+              days={days}
+              selectedDate={selectedDate}
+              onDayPress={handleDayPress}
+              flatListRef={flatListRef}
             />
 
             {showDatePicker && (
@@ -400,18 +359,14 @@ const CalendarComponent = () => {
         </View>
       </ScrollView>
 
-      {showScrollTop && (
-        <TouchableOpacity 
-          style={styles.scrollTopButton}
-          onPress={scrollToTop}
-        >
-          <Ionicons 
-            name="arrow-up" 
-            size={24} 
-            color={Colors.white}
-          />
-        </TouchableOpacity>
-      )}
+      {showScrollTop && <ScrollTopButton onPress={scrollToTop} />}
+      
+      <DatePickerModal
+        visible={showDatePicker}
+        selectedDate={selectedDate}
+        onChange={onChange}
+        onClose={() => setShowDatePicker(false)}
+      />
     </View>
   );
 };
@@ -419,6 +374,11 @@ const CalendarComponent = () => {
 const MasterClassScreen = () => {
   return (
     <View style={{ flex: 1 }}>
+      <StatusBar 
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent={true}
+      />
       <CalendarComponent />
     </View>
   );
@@ -433,48 +393,17 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   calendarContainer: {
-    paddingTop: 30,
-    
-  },
-
-  title: {
-    ...TextStyles.h2,
-  },
-  iconContainer: {
-    padding: 20,
-    borderRadius: 50,
-    backgroundColor: Colors.grayBg,
-  },
-  monthName: {
-    ...TextStyles.textDescription,
-    color: Colors.grayText,
-  },
-  flatListContent: {
-    paddingVertical: 10,
+    marginTop: 24,
     marginBottom: 24,
-  },
-  dayContainer: {
-    padding: 24,
+    backgroundColor: Colors.purple,
+    paddingHorizontal: 16,
+    marginHorizontal: 16,
     borderRadius: 25,
   },
-  selectedDayContainer: {
-    backgroundColor: Colors.purple,
-  },
-  dayText: {
-    ...TextStyles.h3Number,
-    color: Colors.black,
-  },
-  selectedDayText: {
-    color: Colors.white,
-  },
-  weekdayText: {
-    textAlign: "center",
-    color: Colors.black,
-    ...TextStyles.text,
-  },
-  selectedWeekdayText: {
-    color: Colors.white,
-    ...TextStyles.text,
+  loaderContainer: {
+    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   modalBackground: {
     flex: 1,
@@ -503,7 +432,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    paddingTop: 20,
+    paddingTop: 16,
   },
   cardWrapper: {
     width: "48%",
@@ -514,14 +443,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   dateHeader: {
-    ...TextStyles.h2,
-    color: Colors.black,
-    marginBottom: 16,
-  },
-  loaderContainer: {
-    paddingVertical: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    ...TextStyles.h3,
+    color: Colors.grayText,
+    textAlign: 'right',
+
   },
   scrollTopButton: {
     position: 'absolute',
@@ -533,13 +458,5 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.purple,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: Colors.black,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
 });

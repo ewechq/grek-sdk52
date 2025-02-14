@@ -1,235 +1,221 @@
-import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
-import SecondSlide from '@/components/slides/SecondSlide'
-import FirstSlide from '@/components/slides/FirstSlide'
-import { Entypo, Ionicons } from '@expo/vector-icons'
-import { Colors } from '@/theme'
+import React from "react";
+import { StyleSheet, Text, View, Image } from "react-native";
+import { Colors, TextStyles } from "@/theme";
+import Btn from "@/components/btns/Btn";
+import DashedLine from "@/components/DashedLine";
+import { useRouter } from "expo-router";
+import DiscountsModal from '@/components/modals/DiscountsModal';
 
-const { width } = Dimensions.get('window')
-const SLIDE_WIDTH = width-32
-const SLIDE_GAP = 4
-const ITEM_WIDTH = SLIDE_WIDTH + SLIDE_GAP
-
-// Данные для слайдов
-const slidesData = [
-  {
-    id: '1',
-    type: 'first',
-    data: {
-      subtitle: 'Билет на весь день',
-      description: 'Один сопровождающий взрослый - бесплатно, каждый последующий - 250₽ дети до 1 года - бесплатно.',
-      button: 'Купить билет',
-      tags: [],
-    },
-  },
-  {
-    id: '2',
-    type: 'second',
-    data: {
-      subtitle: 'Банкетные комнаты',
-      description: 'Какой-нибудь тут может быть текст продумать было бы неплохо но можно и без него.',
-      places: [
-        {
-          id: 1,
-          title: 'Грэк холл',
-          description: 'Какой-то текст может быть больше может нет может маленький',
-          image: require('@/assets/images/hall1.png'),
-        },
-        {
-          id: 2,
-          title: 'БК Супергерои',
-          description: 'Какой-то текст может быть больше может нет может маленький',
-          image: require('@/assets/images/hall2.png'),
-        },
-        {
-          id: 3,
-          title: 'Грэк холл',
-          description: 'Какой-то текст может быть больше может нет может маленький',
-          image: require('@/assets/images/hall3.png'),
-        },
-      ],
-    },
-  },
-
-]
-
-// Добавляем дубликаты для плавного зацикливания
-const extendedSlides = [
-  slidesData[slidesData.length - 1],
-  ...slidesData,
-  slidesData[0]
-]
-
-const Carousel = () => {
-  const scrollViewRef = useRef<ScrollView>(null)
-  const [currentIndex, setCurrentIndex] = useState(1)
-
-  useEffect(() => {
-    setTimeout(() => {
-      scrollViewRef.current?.scrollTo({ x: ITEM_WIDTH, animated: false })
-    }, 0)
-  }, [])
-
-  const handleScroll = (event: any) => {
-    let newIndex = Math.round(event.nativeEvent.contentOffset.x / ITEM_WIDTH)
-    setCurrentIndex(newIndex)
-  }
-
-  useEffect(() => {
-    if (!scrollViewRef.current) return
-
-    if (currentIndex === 0) {
-      setTimeout(() => {
-        scrollViewRef.current?.scrollTo({ x: (slidesData.length) * ITEM_WIDTH, animated: false })
-        setCurrentIndex(slidesData.length)
-      }, 300)
-    } else if (currentIndex === slidesData.length + 1) {
-      setTimeout(() => {
-        scrollViewRef.current?.scrollTo({ x: ITEM_WIDTH, animated: false })
-        setCurrentIndex(1)
-      }, 300)
-    }
-  }, [currentIndex])
-
-  const handlePrevSlide = () => {
-    if (currentIndex > 0) {
-      scrollViewRef.current?.scrollTo({
-        x: (currentIndex - 1) * ITEM_WIDTH,
-        animated: true,
-      })
-    }
-  }
-
-  const handleNextSlide = () => {
-    if (currentIndex < slidesData.length + 1) {
-      scrollViewRef.current?.scrollTo({
-        x: (currentIndex + 1) * ITEM_WIDTH,
-        animated: true,
-      })
-    }
-  }
-
-  const renderSlide = (slide: typeof slidesData[0], index: number) => {
-    const SlideContent = () => {
-      switch (slide.type) {
-        case 'first':
-          return <FirstSlide data={slide.data} />
-        case 'second':
-          return <SecondSlide data={slide.data} />
-        default:
-          return null
-      }
-    }
-
-    return (
-      <View 
-        key={index}
-        style={[
-          styles.roomCard,
-          
-        ]}
-      >
-        <View style={styles.canvasWhite}>
-          <SlideContent />
-        </View>
-      </View>
-    )
-  }
+const MainScreen = () => {
+  const router = useRouter();
+  const [isDiscountsModalVisible, setIsDiscountsModalVisible] = React.useState(false);
 
   return (
-    <View style={styles.mainContainer}>
     <View style={styles.container}>
-      <View style={styles.navigationButtons}>
-        <TouchableOpacity 
-          onPress={handlePrevSlide}
-          style={styles.navButton}
-        >
-          <Entypo 
-            name="chevron-thin-left" 
-            size={12} 
-            color={Colors.grayText} 
-            style={styles.arrowIcon} 
-          />  
-        </TouchableOpacity>
-        <TouchableOpacity 
-          onPress={handleNextSlide}
-          style={styles.navButton}
-        >
-          <Entypo 
-            name="chevron-thin-right" 
-            size={12} 
-            color={Colors.grayText} 
-            style={styles.arrowIcon} 
+
+      {/* Верхний блок */}
+      <View style={styles.topBlock}>
+      <Image 
+        source={require('@/assets/images/logo-white.png')} 
+        style={styles.logo}
+      />
+        <View style={styles.infoBox}>
+          <Image
+            source={require("@/assets/images/pattern.png")}
+            resizeMode="cover"
+            style={styles.patternBackground}
           />
-        </TouchableOpacity>
+          <View style={styles.infoContent}>
+            <Text style={styles.title}>Билет на весь день</Text>
+            <Text style={styles.description}>
+              Один соповождающий взрослый - бесплатно, каждый последующий - 250₽.
+              Дети до 1 года - бесплатно.
+            </Text>
+          </View>
+        </View>
+        <Btn title="Купить" bgColor={Colors.pink} width='full' onPress={() => router.push('/(buyticket)')} />
       </View>
 
-      <ScrollView
-        ref={scrollViewRef}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        snapToInterval={ITEM_WIDTH}
-        decelerationRate="fast"
-        contentContainerStyle={styles.scrollViewContent}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        pagingEnabled
-      >
-        {extendedSlides.map((slide, index) => renderSlide(slide, index))}
-      </ScrollView>
+      <DashedLine />
+
+      {/* Нижний блок */}
+      <View style={styles.bottomBlock}>
+        <View style={styles.locationTimeContainer}>
+          <Text style={styles.infoText}>
+            Место: {'\n'}Алексеева 54А, {'\n'}ТЦ RedSail
+          </Text>
+          <Text style={[styles.infoText, styles.textRight]}>
+            Время:{'\n'}Счастливое{'\n'}детство
+          </Text>
+        </View>
+
+        <View style={styles.priceContainer}>
+          <Image
+            source={require("@/assets/images/pattern.png")}
+            resizeMode="cover"
+            style={styles.patternBackground}
+          />
+          <View style={styles.priceContent}>
+            {/* Будни */}
+            <View>
+              <View style={styles.dayTypeLabel}>
+                <Text style={styles.dayTypeText}>Понедельник-пятница</Text>
+              </View>
+              <View style={styles.priceRow}>
+                <View style={styles.priceColumn}>
+                  <Text style={styles.priceText}>От 1 до 4 лет</Text>
+                  <Text style={styles.priceText}>От 5 до 16 лет</Text>
+                </View>
+                <View style={styles.priceColumn}>
+                  <Text style={styles.priceText}>1 390 ₽</Text>
+                  <Text style={styles.priceText}>1 690 ₽</Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Выходные */}
+            <View style={{marginTop: 24}}>
+              <View style={styles.dayTypeLabel}>
+                <Text style={styles.dayTypeText}>Выходные и праздники</Text>
+              </View>
+              <View style={styles.priceRow}>
+                <Text style={styles.priceText}>От 1 до 16 лет</Text>
+                <Text style={styles.priceText}>2 290 ₽</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        <Btn 
+            title="Скидки" 
+            bgColor={Colors.purpleDark} 
+            textColor={Colors.white} 
+            width='full' 
+            onPress={() => setIsDiscountsModalVisible(true)} 
+          />
+          <Text style={{...TextStyles.textDescription, color: Colors.white, textAlign: 'center', marginTop: 8}}>grekland.ru</Text>
+      </View>
+
+      <DiscountsModal 
+        isVisible={isDiscountsModalVisible}
+        onClose={() => setIsDiscountsModalVisible(false)}
+      />
     </View>
-    </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
-  mainContainer:{
-    flex:1,
-    backgroundColor: Colors.yellow,
-    justifyContent:'flex-end',
-  },
   container: {
-    paddingVertical: 20,
-  },
-  scrollViewContent: {
-    height:460,
-    paddingHorizontal: (width - ITEM_WIDTH) / 2,
-    marginBottom: 70,
-  },
-  roomCard: {
-    width: SLIDE_WIDTH,
+    flex: 1,
     backgroundColor: Colors.white,
-    borderRadius: 25,
-    padding: 10,
-    marginHorizontal: SLIDE_GAP / 2,
-    alignItems: 'center',
-  },
-  canvasWhite: {
-    width: '100%',
-    height: 450,
-    borderRadius: 12,
-    backgroundColor: Colors.white,
-    padding: 16,
-  },
-  navigationButtons: {
-    flexDirection: 'row',
+    paddingBottom: 110,
     paddingHorizontal: 16,
-    gap: 4,
-    marginBottom: 4,
-    justifyContent:'flex-end',
+    paddingTop: 24,
   },
-  navButton: {
-    width: 80,
-    height: 40,
-    backgroundColor: Colors.white,
-    borderRadius: 15,
+  logo: {
+    width: 200,
+    height: 70,
+    alignSelf: 'center',
+    marginBottom: 4
+  },
+  topBlock: {
+    flex: 1,
+    backgroundColor: Colors.purple,
+    borderRadius: 30,
+    padding: 20,
+    paddingTop:4
+  },
+  bottomBlock: {
+    flex: 1.5,
+    backgroundColor: Colors.purple,
+    borderRadius: 30,
+    padding: 20,
+    justifyContent: 'space-between',
+  },
+  patternBackground: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    left: 0,
+    top: 0,
+    opacity: 0.3,
+  },
+  infoBox: {
+    flex: 1,
+    backgroundColor: Colors.purpleDark,
+    borderRadius: 20,
+    marginBottom: 8,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  infoContent: {
+    flex: 1,
+    padding: 20,
     justifyContent: 'center',
-    alignItems: 'center',
-
   },
-  arrowIcon:{
-    alignSelf:'center'
-  }
-})
+  title: {
+    ...TextStyles.h2,
+    textAlign: "center",
+    marginBottom: 4,
+    color: Colors.white,
+  },
+  description: {
+    ...TextStyles.text,
+    textAlign: "center",
+    color: Colors.white,
+  },
+  locationTimeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    color: Colors.white,
+  },
+  infoText: {
+    ...TextStyles.textDescription,
+    color: Colors.white,
+  },
+  textRight: {
+    textAlign: 'right',
+    color: Colors.white,
+  },
+  priceContainer: {
+    flex: 1,
+    backgroundColor: Colors.purpleDark,
+    borderRadius: 20,
+    marginTop: 16,
+    marginBottom: 8,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  priceContent: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
+  },
+  dayTypeLabel: {
+    alignSelf: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    backgroundColor: Colors.purple,
+    borderRadius: 20,
+    marginBottom: 8,
+    color: Colors.white,
+  },
+  dayTypeText: {
+    ...TextStyles.h3,
+    textAlign: 'center',
+    color: Colors.white,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  priceColumn: {
+    gap: 8,
+  },
+  priceText: {
+    ...TextStyles.text,
+    color: Colors.white,
+  },
 
-export default Carousel
+});
+
+export default MainScreen;

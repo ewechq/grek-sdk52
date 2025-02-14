@@ -9,6 +9,7 @@ interface BtnComponentProps {
   textColor?: string
   width?: 'default' | 'full'
   useSystemFont?: boolean
+  disabled?: boolean
 }
 
 const Btn: React.FC<BtnComponentProps> = ({ 
@@ -17,7 +18,8 @@ const Btn: React.FC<BtnComponentProps> = ({
   bgColor = Colors.purple,
   textColor = Colors.white,
   width = 'default',
-  useSystemFont = false
+  useSystemFont = false,
+  disabled = false
 }) => {
 
 
@@ -28,13 +30,16 @@ const Btn: React.FC<BtnComponentProps> = ({
       style={[
         styles.button, 
         { backgroundColor: bgColor },
-        width === 'full' && styles.fullWidth
+        width === 'full' && styles.fullWidth,
+        disabled && styles.disabled
       ]} 
       onPress={onPress}
+      disabled={disabled}
     >
       <Text style={[
         TextStyles.h2,
-        { color: textColor }
+        { color: textColor },
+        disabled && styles.disabledText
       ]}>
         {title}
       </Text>
@@ -46,7 +51,7 @@ export default Btn
 
 const styles = StyleSheet.create({
   button: {
-    height: 50,
+    height: 40,
     paddingHorizontal: 40,
     borderRadius: 40,
     justifyContent: 'center',
@@ -66,5 +71,11 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     textTransform: 'capitalize' as const,
     fontSize: 16,
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+  disabledText: {
+    color: Colors.grayText,
   }
 })
