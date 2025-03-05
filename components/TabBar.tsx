@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     
   },
   activeIconContainer: {
-    backgroundColor: 'rgba(153, 149, 243, 0.8)',
+    backgroundColor: 'rgb(139, 134, 231)',
     borderRadius: 20,
   },
   centerButtonIcon: {

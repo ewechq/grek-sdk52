@@ -22,9 +22,9 @@ const Counter: React.FC<CounterProps> = ({
   onDecrease,
   unit,
   decreaseButtonColor = Colors.grayElements,
-  increaseButtonColor = Colors.purple,
+  increaseButtonColor = Colors.green,
   decreaseIconColor = Colors.black,
-  increaseIconColor = Colors.white,
+  increaseIconColor = Colors.black,
 }) => {
   return (
     <View style={styles.container}>

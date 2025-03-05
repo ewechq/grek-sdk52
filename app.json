@@ -4,19 +4,38 @@
     "slug": "grek-one",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/Grek_na_skeite.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ewec.grekone"
+      "package": "com.ewec.grekone",
+      "runtimeVersion": "1.0.0",
+      "jsEngine": "hermes",
+      "assetBundlePatterns": [
+        "**/*"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "yourappscheme"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -39,7 +58,24 @@
       "typedRoutes": true
     },
     "assetBundlePatterns": [
-      "**/*"
-    ]
+      "assets/images/*",
+      "assets/fonts/*"
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "bd86e186-6344-4400-bb89-77568f97f409"
+      }
+    },
+    "updates": {
+      "enabled": true,
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/bd86e186-6344-4400-bb89-77568f97f409"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
   }
 }

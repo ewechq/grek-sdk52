@@ -1,7 +1,9 @@
 import React from 'react';
-import { Modal, View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { Modal, View, Text, StyleSheet, TouchableOpacity, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import { Colors, TextStyles } from '@/theme';
 import Btn from '@/components/btns/Btn';
+import Svg, { Path } from 'react-native-svg';
+
 interface DiscountsModalProps {
   isVisible: boolean;
   onClose: () => void;
@@ -15,51 +17,67 @@ const DiscountsModal: React.FC<DiscountsModalProps> = ({ isVisible, onClose }) =
       visible={isVisible}
       onRequestClose={onClose}
     >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <Text style={styles.title}>Скидки и льготы</Text>
-          
-          <ScrollView style={styles.scrollView}>
-            <View style={styles.discountsList}>
-              <Text style={styles.discountItem}>
-              — 1 сопровождающий взрослый - бесплатно. Каждый последующий - 250₽
-              </Text>
-              <Text style={styles.discountItem}>
-              — Дети до 1 года - бесплатно
-              </Text>
-              <Text style={styles.discountItem}>
-              — С 20:00 до 21:00 в будние дни - 50%
-              </Text>
-              <Text style={styles.discountItem}>
-              — В день рождения - 50%*
-              </Text>
-              <Text style={styles.discountItem}>
-              — Особенные дети - 50%*
-              </Text>
-              <Text style={styles.discountItem}>
-              — Большая семья - 30%*
-              </Text>
-              <Text style={styles.discountItem}>
-              — 1+1 для двойняшек и тройняшек 11 числа каждого месяца.
-              </Text>
-            </View>
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={styles.modalOverlay}>
+          <TouchableWithoutFeedback onPress={e => e.stopPropagation()}>
+            <View style={styles.modalContent}>
+              <TouchableOpacity 
+                onPress={onClose}
+                style={styles.closeButton}
+                hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
+              >
+                <Svg width="20" height="20" viewBox="0 0 20 20">
+                  <Path
+                    d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                    fill={Colors.grayText}
+                  />
+                </Svg>
+              </TouchableOpacity>
 
-            <View style={styles.noteContainer}>
-              <Text style={styles.noteText}>
-                *Скидки не распространяются на ресторан и праздники в банкетных комнатах.
-              </Text>
-              <Text style={styles.noteText}>
-                К категории «взрослые» относятся люди, достигшие 16 лет.
-              </Text>
-              <Text style={styles.noteText}>
-                Скидки предоставляются только при предъявлении оригиналов документов, подтверждающих личность, статус или возраст ребёнка.
-              </Text>
-            </View>
-          </ScrollView>
+              <Text style={styles.title}>Скидки и льготы</Text>
+              
+              <ScrollView style={styles.scrollView}>
+                <View style={styles.discountsList}>
+                  <Text style={styles.discountItem}>
+                  — 1 сопровождающий взрослый - бесплатно. Каждый последующий - 250₽
+                  </Text>
+                  <Text style={styles.discountItem}>
+                  — Дети до 1 года - бесплатно
+                  </Text>
+                  <Text style={styles.discountItem}>
+                  — С 20:00 до 21:00 в будние дни - 50%
+                  </Text>
+                  <Text style={styles.discountItem}>
+                  — В день рождения - 50%*
+                  </Text>
+                  <Text style={styles.discountItem}>
+                  — Особенные дети - 50%*
+                  </Text>
+                  <Text style={styles.discountItem}>
+                  — Большая семья - 30%*
+                  </Text>
+                  <Text style={styles.discountItem}>
+                  — 1+1 для двойняшек и тройняшек 11 числа каждого месяца.
+                  </Text>
+                </View>
 
-          <Btn title="Закрыть" bgColor={Colors.purple} textColor={Colors.white} width='full' onPress={onClose} />
+                <View style={styles.noteContainer}>
+                  <Text style={styles.noteText}>
+                    *Скидки не распространяются на ресторан и праздники в банкетных комнатах.
+                  </Text>
+                  <Text style={styles.noteText}>
+                    К категории «взрослые» относятся люди, достигшие 16 лет.
+                  </Text>
+                  <Text style={styles.noteText}>
+                    Скидки предоставляются только при предъявлении оригиналов документов, подтверждающих личность, статус или возраст ребёнка.
+                  </Text>
+                </View>
+              </ScrollView>
+
+            </View>
+          </TouchableWithoutFeedback>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };
@@ -78,11 +96,13 @@ const styles = StyleSheet.create({
     padding: 20,
     width: '100%',
     maxHeight: '80%',
+    position: 'relative',
   },
   title: {
     ...TextStyles.h2,
     textAlign: 'center',
     marginBottom: 20,
+    marginTop: 20,
   },
   scrollView: {
     marginBottom: 20,
@@ -106,10 +126,10 @@ const styles = StyleSheet.create({
     color: Colors.grayText,
   },
   closeButton: {
-    backgroundColor: Colors.purple,
-    padding: 15,
-    borderRadius: 15,
-    alignItems: 'center',
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    zIndex: 1,
   },
   closeButtonText: {
     ...TextStyles.text,

@@ -28,7 +28,7 @@ export const CheckboxWithLink: React.FC<CheckboxWithLinkProps> = ({
       >
         <View style={[styles.checkbox, checked && styles.checkboxChecked]}>
           {checked && (
-            <Ionicons name="checkmark" size={16} color={Colors.white} />
+            <Ionicons name="checkmark" size={16} color={Colors.black} />
           )}
         </View>
       </TouchableOpacity>
@@ -58,13 +58,13 @@ const styles = StyleSheet.create({
     width: 20,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: Colors.purple,
+    borderColor: Colors.green,
     alignItems: 'center',
     justifyContent: 'center',
   },
   checkboxChecked: {
-    backgroundColor: Colors.purple,
-    borderColor: Colors.purple,
+    backgroundColor: Colors.green,
+    borderColor: Colors.green,
   },
   labelContainer: {
     flex: 1,

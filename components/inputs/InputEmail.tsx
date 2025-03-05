@@ -27,7 +27,7 @@ const EmailInput: React.FC<EmailInputProps> = ({
   backgroundColor = Colors.white,
   placeholderColor = Colors.grayText,
   textColor = Colors.black,
-  errorColor = Colors.pink
+  errorColor = 'red'
 }) => {
   const [isEmailValid, setIsEmailValid] = useState(true);
 

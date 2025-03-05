@@ -42,7 +42,7 @@ export default function BuyTicketLayout() {
         }}
       />
       <Stack.Screen 
-        name="confirm"
+        name="success"
         options={{
           headerShown: false,
         }}

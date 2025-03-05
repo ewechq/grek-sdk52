@@ -1,0 +1,35 @@
+{
+  "settings": {
+    "standalone": true,
+    "includeHidden": true,
+    "segmented": false,
+    "ignoreExpressions": false,
+    "skipDefaultProperties": false,
+    "hideExtras": false,
+    "preserveVectorAnimation": true,
+    "includeAssets": true,
+    "compression": "None",
+    "quality": "High",
+    "puppetData": {
+      "include": true,
+      "preservePins": true,
+      "preserveMesh": true,
+      "meshQuality": "High"
+    },
+    "assets": {
+      "format": "png",
+      "includeInJson": true,
+      "useOriginalAssets": false,
+      "bundleAssets": true,
+      "embedAssets": true,
+      "saveAsDataURI": true,
+      "includeImages": true,
+      "imageOutputPath": "images/"
+    },
+    "animation": {
+      "frameRate": 30,
+      "preserveKeyframes": true,
+      "optimizeKeyframes": false
+    }
+  }
+} 

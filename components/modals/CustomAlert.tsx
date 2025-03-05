@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { TextStyles, Colors } from '@/theme';
-import Btn from '@/components/btns/Btn';
+import { Ionicons } from '@expo/vector-icons';
 interface CustomAlertProps {
   visible: boolean;
   title: string;
@@ -16,13 +16,24 @@ const CustomAlert: React.FC<CustomAlertProps> = ({ visible, title, message, onCl
       visible={visible}
       animationType="fade"
     >
-      <View style={styles.overlay}>
-        <View style={styles.alertContainer}>
+      <TouchableOpacity 
+        style={styles.overlay} 
+        activeOpacity={1} 
+        onPress={onClose}
+      >
+        <TouchableOpacity 
+          style={styles.alertContainer} 
+          activeOpacity={1}
+          onPress={(e) => e.stopPropagation()}
+        >
+          <TouchableOpacity style={{position:'absolute', top:4, right:0, padding:16}} onPress={onClose}>
+            <Ionicons name="add-outline" size={24} style={{transform:[{rotate:'45deg'}]}} color={Colors.black} />
+          </TouchableOpacity>
+        
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.message}>{message}</Text>
-          <Btn onPress={onClose} title="Oк" width="full" />
-        </View>
-      </View>
+        </TouchableOpacity>
+      </TouchableOpacity>
     </Modal>
   );
 };
@@ -38,9 +49,11 @@ const styles = StyleSheet.create({
   alertContainer: {
     backgroundColor: Colors.white,
     borderRadius: 25,
-    padding: 24,
+    paddingHorizontal: 16, 
+    paddingVertical: 24,
     width: '100%',
     maxWidth: 400,
+    
   },
   title: {
     ...TextStyles.h2,
@@ -51,8 +64,9 @@ const styles = StyleSheet.create({
   message: {
     ...TextStyles.text,
     color: Colors.black,
-    marginBottom: 24,
+
     textAlign: 'left',
+    lineHeight: 13,
   },
   button: {
     backgroundColor: Colors.purple,

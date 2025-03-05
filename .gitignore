@@ -9,6 +9,20 @@ dist/
 web-build/
 expo-env.d.ts
 
+# Expo Prebuild
+#ios/
+#android/
+#*.xcodeproj
+#*.xcworkspace
+#*.pbxproj
+#*.plist
+#*.xcscheme
+#*.gradle
+#gradle/
+#gradlew
+#gradlew.bat
+#local.properties
+
 # Native
 *.orig.*
 *.jks
@@ -36,3 +50,10 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+
+# Android/IntelliJ
+android/app/build/
+android/.gradle/
+android/.idea/
+android/local.properties
+android/*.iml

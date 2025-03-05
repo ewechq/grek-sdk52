@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, ImageSourcePropType, TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
-import { Colors, TextStyles } from "@/theme";
+import { Colors} from "@/theme";
 import { useRouter } from "expo-router";
+import { FontStyles } from '@/theme/fonts';
 
 export interface ChildComponentProps {
   id: number;
@@ -44,7 +45,7 @@ const CardComponent: React.FC<ChildComponentProps> = ({
           {time && <Text style={styles.timeText}>{time}</Text>}
           {price && (
             <Text style={styles.priceText}>
-              {price} ₽
+              {price} РУБ
             </Text>
           )}
         </View>
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
   textHeader: {
     paddingTop: 8,
     paddingBottom: 2,
-    ...TextStyles.h3,
+    ...FontStyles.h3,
     color: Colors.black
   },
   infoContainer: {
@@ -86,13 +87,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   timeText: {
-    ...TextStyles.text,
+    ...FontStyles.h3,
     paddingVertical: 4,
 
     color: Colors.grayText,
   },
   priceText: {
-    ...TextStyles.text,
+    ...FontStyles.h3,
     paddingVertical: 4,
     paddingLeft: 16,
     
@@ -103,15 +104,16 @@ const styles = StyleSheet.create({
     top: 0,
     right: 0,
     backgroundColor: Colors.white,
-    padding: 2,
     borderTopRightRadius: 25,
     borderBottomLeftRadius: 25,
-    ...TextStyles.text,
+    ...FontStyles.h3,
     width: 40,
     height: 40,
     color: Colors.grayText,
     textAlign: 'center',
     textAlignVertical: 'center',
+    lineHeight: 40,
+    paddingTop: 0,
   },
 });
 

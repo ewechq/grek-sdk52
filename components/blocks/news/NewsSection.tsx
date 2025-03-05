@@ -1,9 +1,10 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet, Dimensions } from 'react-native';
+import React, { memo, useCallback } from 'react';
+import { View, Text, FlatList, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { Colors, TextStyles } from '@/theme';
 import NewsCard from '@/components/cards/NewsCard';
 import { Article } from '@/types/articles';
-
+import { Ionicons } from '@expo/vector-icons';
+import { normalize } from '@/utils/responsive';
 const { width } = Dimensions.get('window');
 
 interface NewsSectionProps {
@@ -12,47 +13,60 @@ interface NewsSectionProps {
   onShowAll?: () => void;
 }
 
-export const NewsSection: React.FC<NewsSectionProps> = ({ 
+export const NewsSection: React.FC<NewsSectionProps> = memo(({ 
   title, 
   data,
   onShowAll 
-}) => (
-  <View style={styles.container}>
-    <View style={styles.titleContainer}>
-      <Text style={styles.title}>{title}</Text>
-      <Text 
-        style={styles.showAll}
-        onPress={onShowAll}
-      >
-        Показать все
-      </Text>
+}) => {
+  const renderItem = useCallback(({ item }: { item: Article }) => (
+    <View style={styles.cardWrapper}>
+      <NewsCard
+        id={item.id}
+        title={item.title}
+        introtext={item.introtext}
+        cover={item.cover}
+      />
     </View>
-    
-    <FlatList
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      data={data}
-      renderItem={({ item }) => (
-        <View style={styles.cardWrapper}>
-          <NewsCard
-            id={item.id}
-            title={item.title}
-            introtext={item.introtext}
-            site_cover={item.site_cover}
-          />
-        </View>
-      )}
-      keyExtractor={item => item.id.toString()}
-      contentContainerStyle={styles.slider}
-    />
-  </View>
-);
+  ), []);
+
+  const keyExtractor = useCallback((item: Article) => item.id.toString(), []);
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.titleContainer} onPress={onShowAll}>
+        <Text style={styles.title}>{title}</Text>
+        <Ionicons name="chevron-forward" size={normalize(16)} color={Colors.grayText} />
+      </TouchableOpacity>
+      
+      <FlatList
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        contentContainerStyle={styles.slider}
+        snapToInterval={width * 0.5 + 4}
+        decelerationRate="fast"
+        removeClippedSubviews={true}
+        initialNumToRender={2}
+        maxToRenderPerBatch={3}
+        windowSize={5}
+        updateCellsBatchingPeriod={30}
+        getItemLayout={(data, index) => ({
+          length: width * 0.5,
+          offset: (width * 0.5 + 4) * index,
+          index,
+        })}
+      />
+    </View>
+  );
+});
 
 const styles = StyleSheet.create({
   container: {
     marginTop: 16,
     paddingTop: 16,
-    paddingBottom: 40,
+    paddingBottom: 16,
   },
   titleContainer: {
     flexDirection: 'row',
@@ -71,9 +85,9 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     width: width * 0.5,
-    marginRight: 4,
+    paddingRight: 8,
   },
   slider: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
   },
 }); 

@@ -42,7 +42,7 @@ export const PriceCalculation: React.FC<PriceCalculationProps> = ({
   if (calculations.isEmpty) {
     return (
       <View style={styles.container}>
-        <Text style={styles.emptyText}>Вы пока не указали кол-во билетов :с</Text>
+        <Text style={styles.emptyText}>Вы пока не указали кол-во билетов <Text style={{fontSize: 16}}>👆🏻</Text></Text>
       </View>
     );
   }
@@ -109,6 +109,6 @@ const styles = StyleSheet.create({
   emptyText: {
     ...TextStyles.text,
     color: Colors.black,
-    
+    lineHeight: 18,
   },
 }); 

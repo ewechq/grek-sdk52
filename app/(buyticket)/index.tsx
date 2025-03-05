@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, TextInput,} from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TextInput, Image} from 'react-native';
 import { TextStyles, Colors } from '@/theme';
 import Btn from '@/components/btns/Btn';
 import PhoneInput from '@/components/inputs/InputPhone';
@@ -13,6 +13,8 @@ import CustomAlert from '@/components/modals/CustomAlert';
 import { useTicketPrices } from '@/hooks/useTicketPrices';
 import { PriceCalculation } from '@/components/blocks/tickets/PriceCalculation';
 import { CheckboxWithLink } from '@/components/CheckboxWithLink';
+import { normalize } from '@/utils/responsive';
+import DiscountModal from '@/components/modals/DiscountsModal';
 
 const BuyTicket = () => {
   const [formData, setFormData] = useState({
@@ -34,6 +36,7 @@ const BuyTicket = () => {
   });
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
+  const [DiscountModalVisible, setDiscountModalVisible] = useState(false);
 
   // Форматируем текущую дату
   const today = new Date();
@@ -157,26 +160,24 @@ const BuyTicket = () => {
   return (
     <ScrollView style={styles.container}>
       <Header 
-        title="Купить билет" 
-        marginTop={48}
+        title="Покупка билета" 
+        marginTop={normalize(48)}
         onPress={() => router.push('/(tabs)')}
       />
 
 
       {/* Дата посещения */}
-      <View style={{marginVertical:40, marginHorizontal:16}}>
-        <Text style={styles.sectionTitle}>Дата посещения</Text>
-        <View style={styles.dateContainer}>
-          <Text style={styles.dateText}>{formattedDate}</Text>
-          <Ionicons name="calendar-clear-outline" size={16} color={Colors.grayText} />
-        </View>
+      <View style={{marginVertical: normalize(40), marginHorizontal: normalize(16), backgroundColor: Colors.grayBg, borderRadius: normalize(25), padding: normalize(16), flexDirection: 'row', alignItems: 'center', gap: normalize(16), paddingHorizontal: normalize(16)}}>
+        <Text style={{fontSize: 16}}>⚠️</Text>
+        <Text style={{...TextStyles.h3, color: Colors.black,   paddingRight: normalize(16)}}> Сейчас билеты можно приобрести только на текущую дату</Text>
+        
       </View>
 
 
 
       {/* Персональные данные */}
-      <View style={{marginBottom:40, marginHorizontal:16}}>
-      <Text style={[styles.sectionTitle, {marginBottom:8}]}>Ваши данные:</Text>
+      <View style={{marginBottom: normalize(40), marginHorizontal: normalize(16)}}>
+      <Text style={[styles.sectionTitle, {marginBottom: normalize(8)}]}>Ваши данные:</Text>
       <TextInput
         style={styles.input}
         placeholder="Ваше ФИО"
@@ -224,7 +225,8 @@ const BuyTicket = () => {
 
       {/* Итоговая стоимость */}
       <View style={styles.priceCalculationContainer}>
-        <Text style={[styles.sectionTitle, {marginBottom:24}]}>Считаем стоимость билетов</Text>
+        <Image source={require('@/assets/images/pattern.png')} style={{width: "110%", height: "200%", position: 'absolute', top: 0, left: 0, tintColor: 'rgba(0, 0, 0, 0.1)'}} />
+        <Text style={[styles.sectionTitle, {marginBottom: normalize(24)}]}>Считаем стоимость билетов</Text>
         <PriceCalculation 
           youngChildrenCount={guestCounts.onetofour}
           olderChildrenCount={guestCounts.fivetosixteen}
@@ -261,17 +263,18 @@ const BuyTicket = () => {
       </View>
 
       {/* Кнопка подтверждения */}
-      <View style={{marginHorizontal:16}}>
+      <View style={{marginHorizontal: normalize(16)}}>
         <Btn
           title="Подтвердить"
           onPress={handleSubmit}
           width="full"
-          bgColor={Colors.purple}
+          bgColor={Colors.green}
+          textColor={Colors.black}
         />
-        <View style={{paddingBottom:40, marginTop:10}}>
+        <View style={{paddingBottom: normalize(40), marginTop: normalize(10)}}>
           <TextButton
             title="Почему не прошла скидка?"
-            onPress={() => {}}
+            onPress={() => setDiscountModalVisible(true)}
             color={Colors.black}
           />
         </View>
@@ -283,6 +286,11 @@ const BuyTicket = () => {
         message={alertMessage}
         onClose={() => setAlertVisible(false)}
       />
+
+      <DiscountModal
+        isVisible={DiscountModalVisible}
+        onClose={() => setDiscountModalVisible(false)}
+      />
     </ScrollView>
   );
 };
@@ -291,17 +299,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-    
   },
   warningBox: {
     backgroundColor: Colors.yellow,
-    padding: 16,
-    borderRadius: 40,
+    padding: normalize(16),
+    borderRadius: normalize(40),
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
-    marginBottom:40,
-    margin:16
+    gap: normalize(16),
+    marginBottom: normalize(40),
+    margin: normalize(16)
   },
   warningText: {
     ...TextStyles.h3,
@@ -310,15 +317,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...TextStyles.h2,
     color: Colors.black,
-    marginBottom: 8,
+    marginBottom: normalize(8),
   },
   selectBox: {
     borderWidth: 1,
     borderColor: Colors.grayText,
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 20,
-    
+    borderRadius: normalize(8),
+    padding: normalize(12),
+    marginBottom: normalize(20),
   },
   selectText: {
     ...TextStyles.text,
@@ -328,139 +334,124 @@ const styles = StyleSheet.create({
     ...TextStyles.text,
     borderBottomWidth: 1,
     borderBottomColor: Colors.grayElements,
-    paddingHorizontal: 16,
-    marginBottom: 8,
-    paddingVertical: 16,
-    
+    paddingHorizontal: normalize(16),
+    marginBottom: normalize(8),
+    paddingVertical: normalize(16),
   },
   radioGroup: {
-    marginBottom: 20,
+    marginBottom: normalize(20),
   },
   childrenTags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 20,
+    gap: normalize(8),
+    marginBottom: normalize(20),
   },
   tag: {
     backgroundColor: Colors.purple,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: normalize(12),
+    paddingVertical: normalize(8),
+    borderRadius: normalize(20),
   },
   tagText: {
     color: Colors.white,
     ...TextStyles.text,
   },
   discountsSection: {
-    marginHorizontal:16,
-    borderRadius:25,
-    backgroundColor:Colors.grayBg,
-    paddingHorizontal:16,
-    paddingVertical:28
+    marginHorizontal: normalize(16),
+    borderRadius: normalize(25),
+    backgroundColor: Colors.grayBg,
+    paddingHorizontal: normalize(16),
+    paddingVertical: normalize(28)
   },
   discountDescription: {
     color: Colors.grayText,
-    marginBottom: 24,
+    marginBottom: normalize(24),
     ...TextStyles.text,
   },
   discountButtons: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: normalize(8),
   },
   totalSection: {
-    marginBottom: 40,
-    borderRadius:25,
-    backgroundColor:Colors.grayBg,
-    paddingHorizontal:16,
-    paddingVertical:28,
-    marginHorizontal:16
+    marginBottom: normalize(40),
+    borderRadius: normalize(25),
+    backgroundColor: Colors.grayBg,
+    paddingHorizontal: normalize(16),
+    paddingVertical: normalize(28),
+    marginHorizontal: normalize(16)
   },
   agreementsSection: {
-    marginBottom: 40,
-    marginHorizontal:16
+    marginBottom: normalize(40),
+    marginHorizontal: normalize(16)
   },
   helpLink: {
     color: Colors.purple,
     textAlign: 'center',
-    marginTop: 12,
-    marginBottom: 20,
+    marginTop: normalize(12),
+    marginBottom: normalize(20),
     ...TextStyles.text,
-  },
-  iconArrow: {
-    tintColor: Colors.grayText,
-  },
-  icon: {
-    tintColor: Colors.black,
-  },
-  textStyle: {
-    color: Colors.black,
   },
   dropdown: {
     borderWidth: 0,
     borderBottomWidth: 1,
     borderColor: Colors.grayElements,
-    
-    marginBottom: 16,
-    height: 40,
-    paddingHorizontal: 16,
-    borderRadius:0,
+    marginBottom: normalize(16),
+    height: normalize(40),
+    paddingHorizontal: normalize(16),
+    borderRadius: 0,
   },
   dropdownContainer: {
     borderWidth: 0,
-borderRadius:25,
+    borderRadius: normalize(25),
     backgroundColor: Colors.yellow,
-    
-    paddingHorizontal: 8,
-    paddingVertical: 10,
-  },
-  placeholder: {
-    color: Colors.grayText,
-  },
-  horizontalLine: {
-    width: "100%",
-    height: 2,
-    backgroundColor: Colors.grayElements,
-    borderRadius: 1,
-    marginTop:8,
-    marginBottom:8
+    paddingHorizontal: normalize(8),
+    paddingVertical: normalize(10),
   },
   dateContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    
-    padding: 16,
-    borderBottomWidth:1,
-    borderBottomColor:Colors.grayElements
+    padding: normalize(16),
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.grayElements
   },
   dateText: {
     ...TextStyles.text,
     color: Colors.black,
   },
   counterSection: {
-    marginTop: 40,
+    marginTop: normalize(40),
   },
   countersContainer: {
-    gap: 4,
+    gap: normalize(4),
   },
   counterRow: {
     width: '100%',
-    paddingHorizontal:16
+    paddingHorizontal: normalize(16)
   },
   text: {
     ...TextStyles.text,
     color: Colors.black,
-    marginBottom: 16,
+    marginBottom: normalize(16),
   },
   priceCalculationContainer: {
-    marginBottom: 40,
-    borderRadius: 25,
+    marginBottom: normalize(40),
+    borderRadius: normalize(25),
     backgroundColor: Colors.grayBg,
-    paddingHorizontal: 16,
-    paddingVertical: 28,
-    marginHorizontal: 16
+    paddingHorizontal: normalize(16),
+    paddingVertical: normalize(28),
+    marginHorizontal: normalize(16),
+    overflow: 'hidden'
+  },
+  horizontalLine: {
+    width: "100%",
+    height: normalize(2),
+    backgroundColor: Colors.grayElements,
+    borderRadius: normalize(1),
+    marginTop: normalize(8),
+    marginBottom: normalize(8)
   },
 });
 

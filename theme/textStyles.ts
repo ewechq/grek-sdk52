@@ -1,37 +1,43 @@
 import { StyleSheet } from "react-native";
 import { Colors } from './colors';
-import { Fonts } from './fonts';
+import { Fonts, FontSizes, LineHeights } from './fonts';
 
+// Готовые текстовые стили для использования в компонентах
 export const TextStyles = StyleSheet.create({
   h1: {
-    fontSize: 34,
+    fontSize: FontSizes.h1,
     fontFamily: Fonts.gothic.regular,
-    lineHeight: 34,
+    lineHeight: LineHeights.h1,
   },
   h2: {
-    fontSize: 16,
+    fontSize: FontSizes.h2,
     fontFamily: Fonts.gothic.regular,
-    lineHeight: 18,
+    lineHeight: LineHeights.h2,
   },
   h3: {
-    fontSize: 12,
+    fontSize: FontSizes.h3,
     fontFamily: Fonts.gothic.regular,
-    lineHeight: 16,
+    lineHeight: LineHeights.h3,
+  },
+  h4: {
+    fontSize: FontSizes.h4,
+    fontFamily: Fonts.gothic.regular,
+    lineHeight: LineHeights.h4,
   },
   h3Number: {
-    fontSize: 24,
+    fontSize: FontSizes.h3Number,
     fontFamily: Fonts.gothic.regular,
-    lineHeight: 24,
+    lineHeight: LineHeights.h3Number,
   },
   text: {
-    fontSize: 13,
+    fontSize: FontSizes.text,
     fontFamily: Fonts.inter.regular,
-    lineHeight: 16
+    lineHeight: LineHeights.text,
   },
   textDescription: {
-    fontSize: 10,
+    fontSize: FontSizes.description,
     fontFamily: Fonts.inter.regular,
+    lineHeight: LineHeights.description,
     color: Colors.grayText,
-    lineHeight: 12
   }
 }); 

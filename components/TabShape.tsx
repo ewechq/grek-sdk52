@@ -25,7 +25,7 @@ export default function TabShape() {
 
   return (
     <Svg width={tabWidth} height={TAB_HEIGHT}>
-      <Path fill="rgba(109, 98, 211, 0.8 )" d={d} />
+      <Path fill={Colors.purple} d={d} />
     </Svg>
   );
 } 

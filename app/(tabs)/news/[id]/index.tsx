@@ -79,7 +79,7 @@ return (
         )}
         {newsItem.site_cover && (
           <Image
-            source={{ uri: newsItem.site_cover }}
+            source={{ uri: newsItem.cover }}
             style={styles.image}
             contentFit='cover'
             onLoadStart={() => setImageLoading(true)}

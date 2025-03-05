@@ -1,6 +1,8 @@
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
-import { TextStyles, Colors } from "@/theme"
+import { Colors, TextStyles } from "@/theme"
+import { normalize } from '@/utils/responsive';
+import { makeUseStyles } from '@/hooks/useStyles';
 
 interface BtnComponentProps {
   title: string
@@ -21,9 +23,7 @@ const Btn: React.FC<BtnComponentProps> = ({
   useSystemFont = false,
   disabled = false
 }) => {
-
-
-
+  const [styles, isSmallLayout] = useStyles();
 
   return (
     <TouchableOpacity 
@@ -37,8 +37,9 @@ const Btn: React.FC<BtnComponentProps> = ({
       disabled={disabled}
     >
       <Text style={[
-        TextStyles.h2,
+        styles.text,
         { color: textColor },
+        useSystemFont && styles.systemFont,
         disabled && styles.disabledText
       ]}>
         {title}
@@ -49,11 +50,11 @@ const Btn: React.FC<BtnComponentProps> = ({
 
 export default Btn
 
-const styles = StyleSheet.create({
+const useStyles = makeUseStyles((isSmallLayout) => ({
   button: {
-    height: 40,
-    paddingHorizontal: 40,
-    borderRadius: 40,
+    height: normalize(45),
+    paddingHorizontal: normalize(40),
+    borderRadius: normalize(20),
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
@@ -70,7 +71,6 @@ const styles = StyleSheet.create({
     ...TextStyles.text,
     fontWeight: '400',
     textTransform: 'capitalize' as const,
-    fontSize: 16,
   },
   disabled: {
     opacity: 0.5,
@@ -78,4 +78,4 @@ const styles = StyleSheet.create({
   disabledText: {
     color: Colors.grayText,
   }
-})
+}));

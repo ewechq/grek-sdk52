@@ -8,10 +8,9 @@ import { Ionicons } from '@expo/vector-icons';
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof Ionicons>["name"];
-  color: string;
   size?: number;
   }) {
-  return <Ionicons size={props.size || 24} name={props.name} color={props.color} />;
+  return <Ionicons size={props.size || 24} name={props.name} color={Colors.white} />;
   }
   
 export default function TabLayout() {
@@ -54,7 +53,7 @@ export default function TabLayout() {
             tabBarIcon: (props) => (
               <TabBarIcon 
                 {...props} 
-                name={props.focused ? "person" : "person-outline"} 
+                name={props.focused ? "balloon" : "balloon-outline"} 
               />
             )
           }}
