@@ -1,7 +1,7 @@
 import { StyleSheet, View, ActivityIndicator, FlatList, Text, Dimensions, ListRenderItem } from 'react-native';
 import React, { useCallback } from 'react';
-import { NewsCard } from '@/components/cards/NewsCard';
-import { useNews } from '@/hooks/news/useNews';
+import  NewsCard  from '@/components/news/NewsCard';
+import { useArticles } from '@/hooks/useArticles';
 import { NewsItem } from '@/types/news';
 import { Colors, TextStyles } from '@/theme';
 import HeaderInner from '@/components/Header';
@@ -12,22 +12,22 @@ const GAP_BETWEEN_CARDS = 16;
 const CARD_WIDTH = (width - PADDING_HORIZONTAL * 2 - GAP_BETWEEN_CARDS) / 2;
 
 export default function AllNewsScreen() {
-  const { news, loading, error } = useNews();
+  const { news, isLoading, error } = useArticles();
 
   const renderItem: ListRenderItem<NewsItem> = useCallback(({ item }) => (
     <View style={styles.cardContainer}>
       <NewsCard
         id={item.id}
         title={item.title}
-        description={item.introtext}
-        image={item.cover}
+        introtext={item.introtext}
+        cover={item.cover}
       />
     </View>
   ), []);
 
   const keyExtractor = useCallback((item: NewsItem) => item.id.toString(), []);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" color={Colors.purple} />
@@ -91,11 +91,11 @@ const styles = StyleSheet.create({
   row: {
     justifyContent: 'space-between',
     paddingHorizontal: PADDING_HORIZONTAL,
-    marginBottom: GAP_BETWEEN_CARDS,
+    marginBottom: 0,
   },
   list: {
     paddingVertical: PADDING_HORIZONTAL,
-    paddingBottom: 100,
+    paddingBottom: 10,
   },
   footer: {
     height: 80,

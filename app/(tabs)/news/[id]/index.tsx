@@ -1,181 +1,169 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
-StyleSheet,
-Text,
-View,
-ActivityIndicator,
-ScrollView,
-TouchableOpacity,
-useWindowDimensions
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  ScrollView,
+  useWindowDimensions,
 } from "react-native";
-import RenderHTML from 'react-native-render-html';
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
-import { MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import Header from "@/components/Header";
 import { Colors, TextStyles } from "@/theme";
-
-interface NewsItem {
-id: number;
-title: string;
-site_cover: string;
-content: string;
-//introtext: string;
-created_at: string;
-}
+import { useArticles } from '@/hooks/useArticles';
+import PlaceholderImage from "@/components/images/PlaceholderImage";
+import HtmlContent from "@/components/text/HtmlContent";
 
 const NewsDetail = () => {
-const { width } = useWindowDimensions();
-const router = useRouter();
-const { id } = useLocalSearchParams();
-const [newsItem, setNewsItem] = useState<NewsItem | null>(null);
-const [isLoading, setIsLoading] = useState(true);
-const [imageLoading, setImageLoading] = useState(true);
+  const { width } = useWindowDimensions();
+  const { id } = useLocalSearchParams();
+  const { articles, isLoading, error } = useArticles();
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
 
-useEffect(() => {
-    const fetchNewsDetail = async () => {
-     try {
-        const response = await fetch("http://api.grekland.ru/api/articles");
-        const data: NewsItem[] = await response.json();
-        const item = data.find((item: NewsItem) => item.id === Number(id));
-        console.log(response)
-        setNewsItem(item || null);
-        setIsLoading(false);
-     } catch (error) {
-        console.error("Error fetching news detail:", error);
-     }
-    };
+  const newsItem = useMemo(() => {
+    if (!id) return null;
+    const item = articles.find(item => item.id === Number(id));
+    return item;
+  }, [articles, id]);
 
-    if (id) {
-     fetchNewsDetail();
-    }
-}, [id]);
+  if (isLoading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={Colors.purple} />
+      </View>
+    );
+  }
 
-if (isLoading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
-}
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.error}>{error}</Text>
+      </View>
+    );
+  }
 
-if (!newsItem) {
-    return <Text>Новость не найдена</Text>;
-}
+  if (!newsItem) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.error}>Новость не найдена</Text>
+      </View>
+    );
+  }
 
-const formattedDate = format(
+  const formattedDate = format(
     new Date(newsItem.created_at),
     "dd MMM yyyy",
     { locale: ru }
-);
+  );
 
-return (
+  return (
     <ScrollView style={styles.scrollView}>
-     <Header title='Подробнее' marginTop={32}/>
+      <Header title='Подробнее' marginTop={32}/>
 
-     <View style={styles.imageContainer}>
-        {imageLoading && (
-          <View style={styles.loaderContainer}>
-            <ActivityIndicator size="large" color={Colors.purple} />
-          </View>
+      <View style={styles.imageContainer}>
+        {newsItem.cover && !imageError ? (
+          <>
+            <Image
+              source={{ uri: newsItem.cover }}
+              style={[styles.image, StyleSheet.absoluteFill]}
+              contentFit="cover"
+              transition={200}
+              onLoadStart={() => setImageLoading(true)}
+              onLoad={() => setImageLoading(false)}
+              onError={() => {
+                setImageError(true);
+                setImageLoading(false);
+              }}
+            />
+            {imageLoading && (
+              <View style={[StyleSheet.absoluteFill, styles.imagePlaceholderContainer]}>
+                <PlaceholderImage style={styles.image} />
+              </View>
+            )}
+          </>
+        ) : (
+          <PlaceholderImage style={styles.image} />
         )}
-        {newsItem.site_cover && (
-          <Image
-            source={{ uri: newsItem.cover }}
-            style={styles.image}
-            contentFit='cover'
-            onLoadStart={() => setImageLoading(true)}
-            onLoadEnd={() => setImageLoading(false)}
-            onError={(error) => {
-              console.error('Ошибка загрузки изображения:', error);
-              setImageLoading(false);
-            }}
-          />
-        )}
-     </View>
+      </View>
 
-     <View style={[styles.contentContainer, !newsItem.site_cover && styles.contentContainerNoCover]}>
-        
+      <View style={[styles.contentContainer, !newsItem.cover && styles.contentContainerNoCover]}>
         <Text style={styles.title}>{newsItem.title}</Text>
         <Text style={styles.date}>{formattedDate}</Text>
-        {/*<Text style={styles.description}>{newsItem.introtext}</Text>*/}
-        <RenderHTML  
-        contentWidth={width}
-        source={{html:newsItem.content}}
-        tagsStyles={{
-            
-            p:{...TextStyles.text, margin:0},
-        }}
-         />
-        
-     </View>
+        <HtmlContent html={newsItem.content} style={styles.content} />
+      </View>
     </ScrollView>
-);
+  );
 };
 
 const styles = StyleSheet.create({
-scrollView: {
+  scrollView: {
     height: "100%",
     backgroundColor: "white",
     paddingBottom: 200,
-},
-backButton: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 50,
-    position: 'absolute',
-    top: 20,
-    left: 20,
-},
-imageContainer: {
+  },
+  imageContainer: {
     width: "90%",
-    height: 300,
+    height: undefined,
+    aspectRatio: 1,
     backgroundColor: Colors.grayBg,
     borderRadius: 40,
     alignSelf: 'center',
     marginVertical: 16,
     overflow: 'hidden',
-},
-loaderContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Colors.grayBg,
-},
-image: {
+    position: 'relative',
+  },
+  image: {
     width: "100%",
     height: "100%",
-},
-contentContainer: {
+  },
+  imagePlaceholderContainer: {
+    backgroundColor: Colors.grayBg,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  contentContainer: {
     flex: 1,
     padding: 20,
     backgroundColor: Colors.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-},
-contentContainerNoCover: {
+    paddingBottom: 140,
+  },
+  contentContainerNoCover: {
     marginTop: 0,
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,
-},
-title: {
+  },
+  title: {
     ...TextStyles.h2,
     marginBottom: 10,
-    textAlign:'center',
-
-},
-description: {
-    ...TextStyles.textDescription,
-    paddingBottom:140,
-},
-date: {
-    ...TextStyles.textDescription,
-    color:Colors.grayText,
+    textAlign: 'center',
+  },
+  date: {
+    ...TextStyles.text,
+    color: Colors.grayText,
     marginBottom: 20,
-    textAlign:'center',
-},
+    textAlign: 'center',
+  },
+  content: {
+    color: Colors.black,
+    lineHeight: 24,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.white,
+  },
+  error: {
+    ...TextStyles.text,
+    color: 'red',
+    textAlign: 'center',
+  },
 });
 
 export default NewsDetail;

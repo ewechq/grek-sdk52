@@ -1,37 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Colors, TextStyles } from '@/theme';
-import { PlaceholderImage } from '@/components/images/PlaceholderImage';
+import PlaceholderImage from '@/components/images/PlaceholderImage';
 
 interface NewsCardProps {
   id: number;
   title: string;
-  description: string;
-  image: string;
-  isPromo?: boolean;
+  introtext: string;
+  cover: string;
 }
 
-export const NewsCard = ({ id, title, description, image, isPromo }: NewsCardProps) => {
+const NewsCard = memo(({ id, title, introtext, cover }: NewsCardProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
   const handlePress = () => {
-    router.push(`/(tabs)/news/${id}`);
+    console.log('Navigating to news detail:', id);
+    router.push({
+      pathname: '/(tabs)/news/[id]',
+      params: { id: id.toString() }
+    });
   };
 
   return (
     <TouchableOpacity 
-      style={[styles.container, isPromo && styles.promoContainer]} 
+      style={styles.container} 
       onPress={handlePress}
       activeOpacity={0.7}
     >
       <View style={styles.imageContainer}>
-        {image && !hasError ? (
+        {cover && !hasError ? (
           <Image
-            source={{ uri: image }}
-            style={[styles.image, isPromo && styles.promoImage]}
+            source={{ uri: cover }}
+            style={styles.image}
             contentFit="cover"
             transition={200}
             onLoadStart={() => setIsLoading(true)}
@@ -42,73 +45,63 @@ export const NewsCard = ({ id, title, description, image, isPromo }: NewsCardPro
             }}
           />
         ) : null}
-        {(!image || isLoading || hasError) && (
-          <View style={[StyleSheet.absoluteFill, isPromo && styles.promoImage]}>
+        {(!cover || isLoading || hasError) && (
+          <View style={StyleSheet.absoluteFill}>
             <PlaceholderImage 
-              source={image || ''}
+              source={cover || ''}
               style={StyleSheet.absoluteFill}
-              contentFit="cover"
             />
           </View>
         )}
       </View>
-      <View style={ isPromo && styles.promoContent}>
+      <View style={styles.content}>
         <Text 
-          style={[styles.title, isPromo && styles.promoTitle]} 
+          style={styles.title}
           numberOfLines={2}
         >
           {title}
         </Text>
         <Text 
-          style={[styles.description, isPromo && styles.promoDescription]} 
+          style={styles.description}
           numberOfLines={2}
         >
-          {description}
+          {introtext}
         </Text>
       </View>
     </TouchableOpacity>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
-
-    overflow: 'hidden',
-  },
-  promoContainer: {
-    height: 400,
+    height: 270,
+    marginBottom: 8,
   },
   imageContainer: {
-    position: 'relative',
-    aspectRatio: 1, 
+    width: '100%',
+    aspectRatio: 1,
+    borderRadius: 25,
+    overflow: 'hidden',
+    backgroundColor: Colors.grayElements,
   },
   image: {
     width: '100%',
     height: '100%',
     borderRadius: 25,
   },
-  promoImage: {
-    aspectRatio: undefined,
-    height: 250,
-  },
-
-  promoContent: {
-    padding: 16,
+  content: {
+    paddingTop: 8,
+    paddingBottom: 2,
   },
   title: {
     ...TextStyles.h3,
-    marginTop: 8,
-  },
-  promoTitle: {
-    ...TextStyles.h2,
-    marginBottom: 8,
+    color: Colors.black,
+    marginBottom: 4,
   },
   description: {
-    ...TextStyles.text,
+    ...TextStyles.textDescription,
     color: Colors.grayText,
   },
-  promoDescription: {
-    ...TextStyles.text,
-    fontSize: 16,
-  },
-}); 
+});
+
+export default NewsCard; 

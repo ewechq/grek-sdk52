@@ -1,44 +1,31 @@
-import { useState, useEffect } from 'react';
-import { Article } from '@/types/articles';
+import { useMemo, useEffect } from 'react';
+import { useArticlesStore } from './useArticlesCache';
+import { NewsItem } from '@/types/news';
 
 export const useArticles = (limit?: number) => {
-  const [news, setNews] = useState<Article[]>([]);
-  const [blog, setBlog] = useState<Article[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { articles, isLoading, error, fetchArticles } = useArticlesStore();
 
   useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const response = await fetch('https://api.grekland.ru/api/articles');
-        const data = await response.json();
-        
-        // Фильтруем только по обязательным полям title и introtext
-        const validNewsArticles = data
-          .filter((article: Article) => 
-            article.category === 'news' && 
-            article.title && 
-            article.introtext
-          );
-        
-        const validBlogArticles = data
-          .filter((article: Article) => 
-            article.category === 'blog' && 
-            article.title && 
-            article.introtext
-          );
-      
-        
-        setNews(limit ? validNewsArticles.slice(0, limit) : validNewsArticles);
-        setBlog(limit ? validBlogArticles.slice(0, limit) : validBlogArticles);
-      } catch (error) {
-        console.error('Error fetching articles:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchArticles();
-  }, [limit]);
+  }, [fetchArticles]);
 
-  return { news, blog, isLoading };
+  const news = useMemo(() => {
+    return articles
+      .filter((item: NewsItem) => item.category === 'news')
+      .slice(0, limit);
+  }, [articles, limit]);
+
+  const blog = useMemo(() => {
+    return articles
+      .filter((item: NewsItem) => item.category === 'blog')
+      .slice(0, limit);
+  }, [articles, limit]);
+
+  return {
+    articles,
+    news,
+    blog,
+    isLoading,
+    error
+  };
 }; 
