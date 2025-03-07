@@ -1,9 +1,11 @@
-import React, { useState, memo } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import React, { memo, useCallback, useMemo, useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Platform } from 'react-native';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Colors, TextStyles } from '@/theme';
 import PlaceholderImage from '@/components/images/PlaceholderImage';
+
+const IS_ANDROID = Platform.OS === 'android';
 
 interface NewsCardProps {
   id: number;
@@ -13,16 +15,33 @@ interface NewsCardProps {
 }
 
 const NewsCard = memo(({ id, title, introtext, cover }: NewsCardProps) => {
-  const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handlePress = () => {
-    console.log('Navigating to news detail:', id);
+  const handlePress = useCallback(() => {
     router.push({
       pathname: '/(tabs)/news/[id]',
       params: { id: id.toString() }
     });
-  };
+  }, [id]);
+
+  const imageUri = useMemo(() => {
+    if (!cover) return null;
+    const quality = IS_ANDROID ? 60 : 80;
+    const width = IS_ANDROID ? 300 : 400;
+    return cover.includes('?') 
+      ? `${cover}&quality=${quality}&w=${width}` 
+      : `${cover}?quality=${quality}&w=${width}`;
+  }, [cover]);
+
+  const handleError = useCallback(() => {
+    setHasError(true);
+    setIsLoading(false);
+  }, []);
+
+  const handleLoadEnd = useCallback(() => {
+    setIsLoading(false);
+  }, []);
 
   return (
     <TouchableOpacity 
@@ -31,45 +50,47 @@ const NewsCard = memo(({ id, title, introtext, cover }: NewsCardProps) => {
       activeOpacity={0.7}
     >
       <View style={styles.imageContainer}>
-        {cover && !hasError ? (
-          <Image
-            source={{ uri: cover }}
-            style={styles.image}
-            contentFit="cover"
-            transition={200}
-            onLoadStart={() => setIsLoading(true)}
-            onLoad={() => setIsLoading(false)}
-            onError={() => {
-              setHasError(true);
-              setIsLoading(false);
-            }}
-          />
-        ) : null}
-        {(!cover || isLoading || hasError) && (
-          <View style={StyleSheet.absoluteFill}>
-            <PlaceholderImage 
-              source={cover || ''}
-              style={StyleSheet.absoluteFill}
+        {imageUri && !hasError ? (
+          <>
+            <Image
+              source={{ uri: imageUri }}
+              style={[styles.image, !isLoading && styles.loadedImage]}
+              contentFit="cover"
+              transition={IS_ANDROID ? 0 : 200}
+              cachePolicy="memory-disk"
+              priority={IS_ANDROID ? "high" : "normal"}
+              onError={handleError}
+              onLoadEnd={handleLoadEnd}
             />
-          </View>
+            {isLoading && <PlaceholderImage style={StyleSheet.absoluteFill} />}
+          </>
+        ) : (
+          <PlaceholderImage style={styles.image} />
         )}
       </View>
       <View style={styles.content}>
         <Text 
-          style={styles.title}
+          style={[styles.title, IS_ANDROID && styles.androidText]}
           numberOfLines={2}
+          ellipsizeMode="tail"
         >
           {title}
         </Text>
         <Text 
-          style={styles.description}
+          style={[styles.description, IS_ANDROID && styles.androidText]}
           numberOfLines={2}
+          ellipsizeMode="tail"
         >
           {introtext}
         </Text>
       </View>
     </TouchableOpacity>
   );
+}, (prevProps, nextProps) => {
+  return prevProps.id === nextProps.id && 
+         prevProps.cover === nextProps.cover &&
+         prevProps.title === nextProps.title &&
+         prevProps.introtext === nextProps.introtext;
 });
 
 const styles = StyleSheet.create({
@@ -101,6 +122,13 @@ const styles = StyleSheet.create({
   description: {
     ...TextStyles.textDescription,
     color: Colors.grayText,
+  },
+  androidText: {
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+  },
+  loadedImage: {
+    // Add any styles for the loaded image if needed
   },
 });
 

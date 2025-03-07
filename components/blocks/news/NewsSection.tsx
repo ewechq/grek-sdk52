@@ -1,11 +1,14 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { View, Text, FlatList, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { Colors, TextStyles } from '@/theme';
 import NewsCard from '@/components/cards/NewsCard';
 import { Article } from '@/types/articles';
 import { Ionicons } from '@expo/vector-icons';
 import { normalize } from '@/utils/responsive';
+
 const { width } = Dimensions.get('window');
+const CARD_WIDTH = width * 0.5;
+const CARD_MARGIN = 4;
 
 interface NewsSectionProps {
   title: string;
@@ -31,35 +34,57 @@ export const NewsSection: React.FC<NewsSectionProps> = memo(({
 
   const keyExtractor = useCallback((item: Article) => item.id.toString(), []);
 
+  const getItemLayout = useCallback((_: any, index: number) => ({
+    length: CARD_WIDTH,
+    offset: (CARD_WIDTH + CARD_MARGIN) * index,
+    index,
+  }), []);
+
+  const memoizedData = useMemo(() => data, [data]);
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.titleContainer} onPress={onShowAll}>
+      <TouchableOpacity 
+        style={styles.titleContainer} 
+        onPress={onShowAll}
+        disabled={!onShowAll}
+      >
         <Text style={styles.title}>{title}</Text>
-        <Ionicons name="chevron-forward" size={normalize(16)} color={Colors.grayText} />
+        {onShowAll && (
+          <Ionicons 
+            name="chevron-forward" 
+            size={normalize(16)} 
+            color={Colors.grayText} 
+          />
+        )}
       </TouchableOpacity>
       
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
-        data={data}
+        data={memoizedData}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         contentContainerStyle={styles.slider}
-        snapToInterval={width * 0.5 + 4}
+        snapToInterval={CARD_WIDTH + CARD_MARGIN}
         decelerationRate="fast"
         removeClippedSubviews={true}
         initialNumToRender={2}
-        maxToRenderPerBatch={3}
-        windowSize={5}
-        updateCellsBatchingPeriod={30}
-        getItemLayout={(data, index) => ({
-          length: width * 0.5,
-          offset: (width * 0.5 + 4) * index,
-          index,
-        })}
+        maxToRenderPerBatch={2}
+        windowSize={3}
+        updateCellsBatchingPeriod={75}
+        getItemLayout={getItemLayout}
+        maintainVisibleContentPosition={{
+          minIndexForVisible: 0,
+          autoscrollToTopThreshold: 10,
+        }}
       />
     </View>
   );
+}, (prevProps, nextProps) => {
+  if (prevProps.title !== nextProps.title) return false;
+  if (prevProps.data.length !== nextProps.data.length) return false;
+  return prevProps.data.every((item, index) => item.id === nextProps.data[index].id);
 });
 
 const styles = StyleSheet.create({
@@ -84,8 +109,8 @@ const styles = StyleSheet.create({
     color: Colors.grayText,
   },
   cardWrapper: {
-    width: width * 0.5,
-    paddingRight: 8,
+    width: CARD_WIDTH,
+    paddingRight: CARD_MARGIN,
   },
   slider: {
     paddingHorizontal: 12,

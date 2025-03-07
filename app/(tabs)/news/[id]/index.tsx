@@ -6,6 +6,8 @@ import {
   ActivityIndicator,
   ScrollView,
   useWindowDimensions,
+  Platform,
+  TextStyle,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { format } from "date-fns";
@@ -13,22 +15,42 @@ import { ru } from "date-fns/locale";
 import { Image } from "expo-image";
 import Header from "@/components/Header";
 import { Colors, TextStyles } from "@/theme";
-import { useArticles } from '@/hooks/useArticles';
-import PlaceholderImage from "@/components/images/PlaceholderImage";
+import { useArticlesStore } from '@/hooks/news/useArticlesCache';
 import HtmlContent from "@/components/text/HtmlContent";
+import { NewsItem } from "@/types/news";
+import PlaceholderImage from "@/components/images/PlaceholderImage";
+
+const IS_ANDROID = Platform.OS === 'android';
 
 const NewsDetail = () => {
   const { width } = useWindowDimensions();
   const { id } = useLocalSearchParams();
-  const { articles, isLoading, error } = useArticles();
-  const [imageLoading, setImageLoading] = useState(true);
+  const { articles, isLoading, error } = useArticlesStore();
   const [imageError, setImageError] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(true);
 
   const newsItem = useMemo(() => {
     if (!id) return null;
-    const item = articles.find(item => item.id === Number(id));
+    const item = articles.find((item: NewsItem) => item.id === Number(id));
     return item;
   }, [articles, id]);
+
+  const imageUri = useMemo(() => {
+    if (!newsItem?.cover) return null;
+    const quality = IS_ANDROID ? 60 : 80;
+    return newsItem.cover.includes('?') 
+      ? `${newsItem.cover}&quality=${quality}` 
+      : `${newsItem.cover}?quality=${quality}`;
+  }, [newsItem?.cover]);
+
+  const handleImageError = () => {
+    setImageError(true);
+    setIsImageLoading(false);
+  };
+
+  const handleImageLoadEnd = () => {
+    setIsImageLoading(false);
+  };
 
   if (isLoading) {
     return (
@@ -61,39 +83,52 @@ const NewsDetail = () => {
   );
 
   return (
-    <ScrollView style={styles.scrollView}>
+    <ScrollView 
+      style={styles.scrollView}
+      showsVerticalScrollIndicator={false}
+    >
       <Header title='Подробнее' marginTop={32}/>
 
       <View style={styles.imageContainer}>
-        {newsItem.cover && !imageError ? (
+        {imageUri && !imageError ? (
           <>
             <Image
-              source={{ uri: newsItem.cover }}
-              style={[styles.image, StyleSheet.absoluteFill]}
+              source={{ uri: imageUri }}
+              style={[styles.image, !isImageLoading && styles.loadedImage]}
               contentFit="cover"
-              transition={200}
-              onLoadStart={() => setImageLoading(true)}
-              onLoad={() => setImageLoading(false)}
-              onError={() => {
-                setImageError(true);
-                setImageLoading(false);
-              }}
+              transition={IS_ANDROID ? 0 : 200}
+              cachePolicy="memory-disk"
+              priority={IS_ANDROID ? "high" : "normal"}
+              onError={handleImageError}
+              onLoadEnd={handleImageLoadEnd}
             />
-            {imageLoading && (
-              <View style={[StyleSheet.absoluteFill, styles.imagePlaceholderContainer]}>
-                <PlaceholderImage style={styles.image} />
-              </View>
-            )}
+            {isImageLoading && <PlaceholderImage style={StyleSheet.absoluteFill} />}
           </>
         ) : (
           <PlaceholderImage style={styles.image} />
         )}
       </View>
 
-      <View style={[styles.contentContainer, !newsItem.cover && styles.contentContainerNoCover]}>
-        <Text style={styles.title}>{newsItem.title}</Text>
-        <Text style={styles.date}>{formattedDate}</Text>
-        <HtmlContent html={newsItem.content} style={styles.content} />
+      <View style={[
+        styles.contentContainer, 
+        !imageUri && styles.contentContainerNoCover
+      ]}>
+        <Text style={[
+          styles.title, 
+          IS_ANDROID && styles.androidText
+        ]}>
+          {newsItem.title}
+        </Text>
+        <Text style={[
+          styles.date, 
+          IS_ANDROID && styles.androidText
+        ]}>
+          {formattedDate}
+        </Text>
+        <HtmlContent 
+          html={newsItem.content} 
+          style={styles.content as TextStyle} 
+        />
       </View>
     </ScrollView>
   );
@@ -103,7 +138,7 @@ const styles = StyleSheet.create({
   scrollView: {
     height: "100%",
     backgroundColor: "white",
-    paddingBottom: 200,
+    paddingBottom: IS_ANDROID ? 100 : 200,
   },
   imageContainer: {
     width: "90%",
@@ -114,16 +149,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginVertical: 16,
     overflow: 'hidden',
-    position: 'relative',
   },
   image: {
     width: "100%",
     height: "100%",
   },
-  imagePlaceholderContainer: {
-    backgroundColor: Colors.grayBg,
-    justifyContent: 'center',
-    alignItems: 'center',
+  loadedImage: {
+    opacity: 1,
   },
   contentContainer: {
     flex: 1,
@@ -131,7 +163,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-    paddingBottom: 140,
+    paddingBottom: IS_ANDROID ? 80 : 140,
   },
   contentContainerNoCover: {
     marginTop: 0,
@@ -152,6 +184,10 @@ const styles = StyleSheet.create({
   content: {
     color: Colors.black,
     lineHeight: 24,
+  },
+  androidText: {
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   centered: {
     flex: 1,

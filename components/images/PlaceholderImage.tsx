@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, View, Animated, Easing, Platform } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, View, Animated, Platform } from 'react-native';
 import { Image } from 'expo-image';
 import { Colors } from '@/theme';
 
@@ -8,103 +8,72 @@ interface PlaceholderImageProps {
   style?: any;
 }
 
-const PlaceholderImage: React.FC<PlaceholderImageProps> = ({ source, style }) => {
-  const [isLoading, setIsLoading] = useState(true);
+// Прекешируем изображение плейсхолдера
+const placeholderImage = require('@/assets/images/placeholder.webp');
+
+// Создаем один общий Animated.Value для всех инстансов
+const rotateAnimation = new Animated.Value(0);
+
+// Создаем анимацию один раз
+Animated.loop(
+  Animated.sequence([
+    Animated.timing(rotateAnimation, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }),
+    Animated.timing(rotateAnimation, {
+      toValue: -1,
+      duration: 1000,
+      useNativeDriver: true,
+    }),
+    Animated.timing(rotateAnimation, {
+      toValue: 0,
+      duration: 1000,
+      useNativeDriver: true,
+    }),
+  ])
+).start();
+
+const PlaceholderImage: React.FC<PlaceholderImageProps> = React.memo(({ style }) => {
+  const rotate = rotateAnimation.interpolate({
+    inputRange: [-1, 0, 1],
+    outputRange: ['-5deg', '0deg', '5deg']
+  });
 
   return (
     <View style={[styles.container, style]}>
-      {source && (
+      <Animated.View style={[styles.animatedContainer, { transform: [{ rotate }] }]}>
         <Image
-          source={{ uri: source }}
-          style={[styles.image, !isLoading && styles.loadedImage]}
-          contentFit="cover"
-          cachePolicy="memory-disk"
-          onLoadStart={() => setIsLoading(true)}
-          onLoadEnd={() => setIsLoading(false)}
-        />
-      )}
-      <View style={[
-        styles.placeholderContainer,
-        { opacity: source ? 1 : 1 }
-      ]}>
-        <Image 
-          source={require('@/assets/images/pattern.png')}
-          style={styles.backgroundPlaceholderImage}
-          contentFit="cover"
+          source={placeholderImage}
+          style={styles.placeholderImage}
+          contentFit="contain"
           cachePolicy="memory"
         />
-        <View style={[
-          styles.placeholderWrapper,
-          
-        ]}>
-          <Image
-            source={require('@/assets/images/placeholder2.png')}
-            style={styles.placeholderImage}
-            contentFit="cover"
-            cachePolicy="memory"
-          />
-        </View>
-      </View>
+      </Animated.View>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
-    overflow: 'hidden',
     backgroundColor: Colors.grayBg,
-    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
     width: '100%',
     height: '100%',
   },
-  placeholderContainer: {
-    ...Platform.select({
-      ios: {
-        position: 'absolute',
-        zIndex: 1,
-      },
-      android: {
-        position: 'absolute',
-        elevation: 1,
-      },
-    }),
+  animatedContainer: {
     width: '100%',
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  placeholderWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...Platform.select({
-      android: {
-        elevation: 2,
-      }
-    }),
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-    opacity: 0,
-  },
-  loadedImage: {
-    opacity: 1,
   },
   placeholderImage: {
-    width: 150,
-    height: 150,
-  },
-  backgroundPlaceholderImage: {
-    width: '200%',
-    height: '200%',
-    position: 'absolute',
-    top: -50,
-    left: -50,
-    right: 0,
-    bottom: 0,
-    tintColor: 'rgba(0, 0, 0, 0.15)'
+    width: 100,
+    height: 100,
   },
 });
 
-export default React.memo(PlaceholderImage); 
+export default PlaceholderImage; 

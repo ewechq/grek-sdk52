@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 25,
     backgroundColor: Colors.white,
     paddingBottom: 100,
+    
   },
   dateEventsContainer: {
     marginTop: 44,

@@ -1,7 +1,7 @@
 import { StyleSheet, View, ActivityIndicator, FlatList, Text, Dimensions, ListRenderItem } from 'react-native';
 import React, { useCallback } from 'react';
 import  NewsCard  from '@/components/news/NewsCard';
-import { useArticles } from '@/hooks/useArticles';
+import { useArticles } from '@/hooks/news/useArticles';
 import { NewsItem } from '@/types/news';
 import { Colors, TextStyles } from '@/theme';
 import HeaderInner from '@/components/Header';
