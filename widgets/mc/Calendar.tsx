@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
 import { Colors } from '@/theme';
-import { CalendarHeader } from '@/components/mc/CalendarHeader';
-import { DayItem } from '@/components/mc/DayItem';
+import { CalendarHeader } from '@/components/pages/mc/CalendarHeader';
+import { DayItem } from '@/components/pages/mc/DayItem';
 
 interface CalendarProps {
   selectedDate: Date;

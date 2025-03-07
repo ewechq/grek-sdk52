@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { NewsItem } from '@/types/news';
-import PromoSlider from '@/components/news/PromoSlider';
+import PromoSlider from '@/components/pages/news/PromoSlider';
 
 interface NewsSliderSectionProps {
   news: NewsItem[];

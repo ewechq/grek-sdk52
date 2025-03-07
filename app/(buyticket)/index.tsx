@@ -11,7 +11,7 @@ import { useRouter } from 'expo-router';
 import Counter from '@/components/CounterComponent';
 import CustomAlert from '@/components/modals/CustomAlert';
 import { useTicketPrices } from '@/hooks/useTicketPrices';
-import { PriceCalculation } from '@/components/blocks/tickets/PriceCalculation';
+import { PriceCalculation } from '@/widgets/tickets/PriceCalculation';
 import { CheckboxWithLink } from '@/components/CheckboxWithLink';
 import { normalize } from '@/utils/responsive';
 import DiscountModal from '@/components/modals/DiscountsModal';

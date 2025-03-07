@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useMemo } from 'react';
 import { StyleSheet, View, FlatList, Dimensions, Platform } from 'react-native';
 import { Colors, TextStyles } from '@/theme';
-import NewsCard from '@/components/news/NewsCard';
+import NewsCard from '@/components/pages/news/NewsCard';
 import { NewsItem } from '@/types/news';
 import { router } from 'expo-router';
 import { SectionHeader } from '@/components/SectionHeader';
