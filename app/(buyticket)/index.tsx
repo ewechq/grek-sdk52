@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView, Image } from 'react-native';
 import { Colors } from '@/theme';
-import Btn from '@/components/btns/Btn';
-import Header from '@/components/Header';
-import TextButton from '@/components/btns/BtnDownlineText';
+import Btn from '@/components/ui/btns/Btn';
+import Header from '@/components/ui/layout/Header';
+import TextButton from '@/components/ui/btns/BtnDownlineText';
 import { useRouter } from 'expo-router';
-import CustomAlert from '@/components/modals/CustomAlert';
+import { Alert } from '@/components/ui/modals/Alert';
+import { DiscountsModal } from '@/components/ui/modals/DiscountsModal';
 import { useTicketPrices } from '@/hooks/useTicketPrices';
 import { PriceCalculation } from '@/widgets/tickets/PriceCalculation';
 import { normalize } from '@/utils/responsive';
-import DiscountModal from '@/components/modals/DiscountsModal';
-import { DateWarning } from '@/components/buyticket/DateWarning';
+import { DateWarning } from '@/components/pages/buyticket/DateWarning';
 import { PersonalDataForm } from '@/widgets/buyticket/PersonalDataForm';
 import { AgreementsBlock } from '@/widgets/buyticket/AgreementsBlock';
 import { useBuyTicketForm } from '@/hooks/buyticket/useBuyTicketForm';
@@ -19,6 +19,9 @@ const BuyTicket = () => {
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [DiscountModalVisible, setDiscountModalVisible] = useState(false);
+  const [isNameValid, setIsNameValid] = useState(true);
+  const [isPhoneValid, setIsPhoneValid] = useState(true);
+  const [isEmailValid, setIsEmailValid] = useState(true);
   const router = useRouter();
   
   const {
@@ -32,6 +35,32 @@ const BuyTicket = () => {
   } = useBuyTicketForm();
 
   const { prices, isLoading } = useTicketPrices();
+
+  const onSubmit = async () => {
+    const errors: string[] = [];
+
+    if (!isNameValid && formData.name.trim()) {
+      errors.push('• Введите корректное ФИО (минимум 2 символа)');
+    }
+    if (!isPhoneValid && formData.phone.trim()) {
+      errors.push('• Введите корректный номер телефона');
+    }
+    if (!isEmailValid && formData.email.trim()) {
+      errors.push('• Введите корректный email (например: name@example.com)');
+    }
+
+    if (errors.length > 0) {
+      setAlertMessage(errors.join('\n'));
+      setAlertVisible(true);
+      return;
+    }
+
+    const result = await handleSubmit();
+    if (result?.error) {
+      setAlertMessage(result.error);
+      setAlertVisible(true);
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -48,6 +77,9 @@ const BuyTicket = () => {
         setFormData={setFormData}
         guestCounts={guestCounts}
         setGuestCounts={setGuestCounts}
+        onNameValidityChange={setIsNameValid}
+        onPhoneValidityChange={setIsPhoneValid}
+        onEmailValidityChange={setIsEmailValid}
       />
 
       <View style={styles.priceCalculationContainer}>
@@ -70,7 +102,7 @@ const BuyTicket = () => {
       <View style={styles.buttonContainer}>
         <Btn
           title="Подтвердить"
-          onPress={handleSubmit}
+          onPress={onSubmit}
           width="full"
           bgColor={Colors.green}
           textColor={Colors.black}
@@ -84,14 +116,14 @@ const BuyTicket = () => {
         </View>
       </View>
 
-      <CustomAlert
+      <Alert
         visible={alertVisible}
         title="Ошибка!"
         message={alertMessage}
         onClose={() => setAlertVisible(false)}
       />
 
-      <DiscountModal
+      <DiscountsModal
         isVisible={DiscountModalVisible}
         onClose={() => setDiscountModalVisible(false)}
       />

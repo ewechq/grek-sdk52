@@ -1,17 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextInput, View, Text, StyleSheet } from "react-native";
 
 import { TextStyles, Colors } from "@/theme";
 
 const isValidEmail = (email: string) => {
-  // Простое регулярное выражение для проверки электронной почты
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+  // Проверяем наличие кириллицы
+  if (/[а-яА-ЯёЁ]/.test(email)) {
+    return false;
+  }
+
+  // Более строгая проверка email
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  
+  return emailRegex.test(email) && email.includes('.');
 };
 
 interface EmailInputProps {
   value: string;
   onChange: (text: string) => void;
+  onValidityChange?: (isValid: boolean) => void;
   // Стилизация
   backgroundColor?: string;
   borderColor?: string;
@@ -24,28 +31,45 @@ interface EmailInputProps {
 const EmailInput: React.FC<EmailInputProps> = ({ 
   value, 
   onChange,
+  onValidityChange,
   backgroundColor = Colors.white,
   placeholderColor = Colors.grayText,
   textColor = Colors.black,
   errorColor = 'red'
 }) => {
   const [isEmailValid, setIsEmailValid] = useState(true);
+  const [isTouched, setIsTouched] = useState(false);
+
+  useEffect(() => {
+    const isValid = value === "" || isValidEmail(value);
+    onValidityChange?.(isValid);
+  }, [value, onValidityChange]);
 
   const handleEmailChange = (text: string) => {
     onChange(text);
-    setIsEmailValid(isValidEmail(text) || text === "");
+    if (isTouched) {
+      const isValid = text === "" || isValidEmail(text);
+      setIsEmailValid(isValid);
+      onValidityChange?.(isValid);
+    }
+  };
+
+  const handleBlur = () => {
+    setIsTouched(true);
+    const isValid = value === "" || isValidEmail(value);
+    setIsEmailValid(isValid);
+    onValidityChange?.(isValid);
   };
 
   return (
-    <View >
+    <View>
       <TextInput
         style={[
           styles.input,
           {
             backgroundColor,
-            
-            
-            color: textColor
+            color: textColor,
+            borderColor: !isEmailValid && isTouched ? errorColor : Colors.grayElements
           }
         ]}
         placeholder="Введите эл. почту"
@@ -53,11 +77,14 @@ const EmailInput: React.FC<EmailInputProps> = ({
         keyboardType="email-address"
         value={value}
         onChangeText={handleEmailChange}
+        onBlur={handleBlur}
         autoCapitalize="none"
+        autoComplete="email"
+        autoCorrect={false}
       />
-      {!isEmailValid && (
+      {!isEmailValid && isTouched && (
         <Text style={[styles.errorText, { color: errorColor }]}>
-          Введите корректный адрес электронной почты
+          Введите корректный email (например: name@example.com)
         </Text>
       )}
     </View>
@@ -70,18 +97,17 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderBottomWidth: 1,
     paddingHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 24,
     color: Colors.black,
     ...TextStyles.text,
-    borderColor: Colors.grayElements,
   },
   errorText: {
     position: 'absolute',
-    bottom: -4,
+    bottom: 4,
     left: 16,
-    ...TextStyles.text,
-    fontSize: 12,
-    color: Colors.pink,
+    right: 16,
+    ...TextStyles.textDescription,
+
   },
 });
 

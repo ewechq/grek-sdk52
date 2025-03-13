@@ -7,8 +7,8 @@ import { EventsList } from "@/widgets/mc/EventsList";
 import { ScrollToTop } from "@/widgets/mc/ScrollToTop";
 import { useEvents } from "@/hooks/mc/useEvents";
 import { useVisibleDates } from "@/hooks/mc/useVisibleDates";
-import { LoadingState } from "@/components/state/LoadingState";
-import { EmptyState } from "@/components/state/EmptyState";
+import { LoadingState } from "@/components/ui/feedback/LoadingState";
+import { EmptyState } from "@/components/ui/feedback/EmptyState";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 

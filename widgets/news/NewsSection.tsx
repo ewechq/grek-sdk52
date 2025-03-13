@@ -4,7 +4,7 @@ import { Colors, TextStyles } from '@/theme';
 import NewsCard from '@/components/pages/news/NewsCard';
 import { NewsItem } from '@/types/news';
 import { router } from 'expo-router';
-import { SectionHeader } from '@/components/SectionHeader';
+import { SectionHeader } from '@/components/ui/layout/SectionHeader';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.5;

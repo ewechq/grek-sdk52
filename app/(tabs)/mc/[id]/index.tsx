@@ -11,8 +11,8 @@ import {
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { Image } from "expo-image";
 import { TextStyles, Colors } from "@/theme";
-import Header from "@/components/Header";
-import Btn from "@/components/btns/Btn";
+import Header from "@/components/ui/layout/Header";
+import Btn from "@/components/ui/btns/Btn";
 
 interface Event {
   id: number;

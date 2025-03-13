@@ -54,22 +54,22 @@ export const PriceCalculation: React.FC<PriceCalculationProps> = ({
           <Text style={styles.text}>
             Дети 1-4 лет ({youngChildrenCount} x {prices["1-4"]}₽)
           </Text>
-          <Text style={styles.price}>{calculations.youngChildrenTotal}₽</Text>
+          <Text style={styles.price}>{calculations.youngChildrenTotal} РУБ.</Text>
         </View>
       )}
       
       {olderChildrenCount > 0 && (
         <View style={styles.row}>
           <Text style={styles.text}>
-            Дети 5-16 лет ({olderChildrenCount} x {prices["5-16"]}₽)
+            Дети 5-16 лет ({olderChildrenCount} x {prices["5-16"]}Р)
           </Text>
-          <Text style={styles.price}>{calculations.olderChildrenTotal}₽</Text>
+          <Text style={styles.price}>{calculations.olderChildrenTotal} РУБ.</Text>
         </View>
       )}
 
       <View style={[styles.row, styles.totalRow]}>
         <Text style={styles.totalText}>Итого</Text>
-        <Text style={styles.totalPrice}>{calculations.total}₽</Text>
+        <Text style={styles.totalPrice}>{calculations.total} РУБ.</Text>
       </View>
     </View>
   );

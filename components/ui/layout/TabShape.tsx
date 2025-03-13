@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dimensions } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { Colors } from '@/theme';
 
 const TAB_HEIGHT = 70;
@@ -25,7 +25,17 @@ export default function TabShape() {
 
   return (
     <Svg width={tabWidth} height={TAB_HEIGHT}>
+      <Defs>
+        <LinearGradient id="innerShadow" x1="0" y1="0" x2="0" y2="1">
+          <Stop offset="0" stopColor={Colors.purple} stopOpacity="0" />
+          <Stop offset="1" stopColor="rgba(116, 112, 226, 0.1)" stopOpacity="0.8" />
+        </LinearGradient>
+      </Defs>
       <Path fill={Colors.purple} d={d} />
+      <Path 
+        d={d} 
+        fill="url(#innerShadow)"
+      />
     </Svg>
   );
 } 

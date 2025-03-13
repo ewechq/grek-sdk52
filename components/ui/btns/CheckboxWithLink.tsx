@@ -28,7 +28,7 @@ export const CheckboxWithLink: React.FC<CheckboxWithLinkProps> = ({
       >
         <View style={[styles.checkbox, checked && styles.checkboxChecked]}>
           {checked && (
-            <Ionicons name="checkmark" size={16} color={Colors.black} />
+            <Ionicons name="checkmark" size={12} color={Colors.black} />
           )}
         </View>
       </TouchableOpacity>
@@ -51,12 +51,14 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   checkboxContainer: {
-    marginRight: 8,
+    paddingLeft: 4,
+    transform: [{ scale: 1.5 }],
   },
   checkbox: {
+    
     height: 20,
     width: 20,
-    borderRadius: 6,
+    borderRadius: 8,
     borderWidth: 2,
     borderColor: Colors.green,
     alignItems: 'center',
@@ -73,6 +75,7 @@ const styles = StyleSheet.create({
     ...TextStyles.text,
     color: Colors.black,
     paddingTop: 2,
+    paddingLeft: 16,
   },
   link: {
     textDecorationLine: 'underline',

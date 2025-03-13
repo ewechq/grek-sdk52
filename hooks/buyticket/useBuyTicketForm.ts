@@ -48,28 +48,38 @@ export const useBuyTicketForm = () => {
 
   const [ticketData, setTicketData] = useState<TicketData | null>(null);
 
-  const isFormValid = () => {
-    const isPersonalDataFilled = formData.name.trim() && 
-                                formData.phone.trim() && 
-                                formData.email.trim();
-    
-    const hasTickets = guestCounts.onetofour > 0 || guestCounts.fivetosixteen > 0;
-    
-    const isAgreementsAccepted = agreements.privacy && 
-                                agreements.rules && 
-                                agreements.offer;
+  const validateForm = () => {
+    const errors: string[] = [];
 
-    return isPersonalDataFilled && hasTickets && isAgreementsAccepted;
+    if (!formData.name.trim()) {
+      errors.push('• Укажите ваше имя');
+    }
+    if (!formData.phone.trim()) {
+      errors.push('• Укажите номер телефона');
+    }
+    if (!formData.email.trim()) {
+      errors.push('• Укажите email');
+    }
+    if (guestCounts.onetofour === 0 && guestCounts.fivetosixteen === 0) {
+      errors.push('• Выберите количество детей');
+    }
+
+    const missingAgreements: string[] = [];
+    if (!agreements.privacy) missingAgreements.push('политикой конфиденциальности');
+    if (!agreements.rules) missingAgreements.push('правилами посещения');
+    if (!agreements.offer) missingAgreements.push('договором оферты');
+
+    if (missingAgreements.length > 0) {
+      errors.push(`• Необходимо согласиться с: ${missingAgreements.join(', ')}`);
+    }
+
+    return errors.length > 0 ? errors : null;
   };
 
   const handleSubmit = async () => {
-    if (!isFormValid()) {
-      console.log('Форма не валидна:', {
-        hasTickets: guestCounts.onetofour > 0 || guestCounts.fivetosixteen > 0,
-        personalDataFilled: formData.name && formData.phone && formData.email,
-        agreementsAccepted: agreements.privacy && agreements.rules && agreements.offer
-      });
-      return;
+    const errors = validateForm();
+    if (errors) {
+      return { error: errors.join('\n') };
     }
 
     try {
@@ -118,14 +128,15 @@ export const useBuyTicketForm = () => {
               ticketData: JSON.stringify(requestData)
             }
           });
+          return { success: true };
         } catch (navigationError) {
-          console.error('Ошибка при навигации:', navigationError);
+          return { error: 'Ошибка при переходе на страницу подтверждения' };
         }
       } else {
-        console.error('Ошибка при получении подписи:', signatureResult.message || 'Неизвестная ошибка');
+        return { error: signatureResult.message || 'Ошибка при получении подписи' };
       }
     } catch (error) {
-      console.error('Ошибка при отправке запроса:', error);
+      return { error: 'Ошибка при отправке запроса' };
     }
   };
 
@@ -137,6 +148,6 @@ export const useBuyTicketForm = () => {
     agreements,
     setAgreements,
     handleSubmit,
-    isFormValid
+    validateForm
   };
 }; 

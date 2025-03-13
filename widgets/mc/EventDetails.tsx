@@ -18,7 +18,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { TextStyles, Colors } from '@/theme';
 import { Event } from '@/types/mc';
 import { EventCover } from '@/components/pages/mc/EventCover';
-import Btn from '@/components/btns/Btn';
+import Btn from '@/components/ui/btns/Btn';
 
 interface EventDetailsProps {
   event: Event;

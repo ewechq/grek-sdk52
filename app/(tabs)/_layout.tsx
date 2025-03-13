@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from '@/theme';
-import TabBar from '@/components/TabBar';
+import TabBar from '@/components/ui/layout/TabBar';
 import { Ionicons } from '@expo/vector-icons';
 
 function TabBarIcon(props: {

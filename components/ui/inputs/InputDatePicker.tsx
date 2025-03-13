@@ -4,7 +4,7 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import { MaskedTextInput } from 'react-native-mask-text';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { TextStyles, Colors } from "@/theme";
-import Btn from '../btns/Btn';
+import Btn from '../shared/ui/btns/Btn';
 
 interface DatePickerProps {
   containerStyle?: StyleProp<ViewStyle>;

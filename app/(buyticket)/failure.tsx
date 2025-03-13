@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Colors, TextStyles } from '@/theme';
-import Btn  from '@/components/btns/Btn';
+import Btn  from '@/components/ui/btns/Btn';
 
 const FailureScreen = () => {
   const router = useRouter();

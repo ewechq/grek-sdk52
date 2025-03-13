@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View, ScrollView, Image } from 'react-native'
 import React, { useState, useCallback, useMemo } from 'react'
 import { useRouter } from 'expo-router'
-import Btn from '@/components/btns/Btn'
+import Btn from '@/components/ui/btns/Btn'
 import { Colors, TextStyles } from '@/theme/index'
 import Svg, { Path } from 'react-native-svg'
-import DiscountsModal from '@/components/modals/DiscountsModal'
+import {DiscountsModal} from '@/components/ui/modals/DiscountsModal'
 import { normalize } from '@/utils/responsive'
 
 interface PriceCardProps {

@@ -1,11 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { View, TextInput, StyleSheet, Text, Keyboard } from 'react-native';
 import { Colors, TextStyles } from '@/theme';
-import Header from '@/components/Header';
-import Btn from '@/components/btns/Btn';
+import Header from '@/components/ui/layout/Header';
+import Btn from '@/components/ui/btns/Btn';
 import { router, useLocalSearchParams } from 'expo-router';
 import { normalize } from '@/utils/responsive';
-import CustomAlert from '@/components/modals/CustomAlert';
+import { Alert } from '@/components/ui/modals/Alert';
 
 const CODE_LENGTH = 6;
 
@@ -223,7 +223,7 @@ const ConfirmNumberPage = () => {
         </Text>
       </View>
 
-      <CustomAlert
+      <Alert
         visible={alertVisible}
         title="Ошибка!"
         message={alertMessage}

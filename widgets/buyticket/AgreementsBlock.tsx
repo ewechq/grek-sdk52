@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { normalize } from '@/utils/responsive';
-import { CheckboxWithLink } from '@/components/CheckboxWithLink';
+import { CheckboxWithLink } from '@/components/ui/btns/CheckboxWithLink';
 
 interface AgreementsBlockProps {
   agreements: {

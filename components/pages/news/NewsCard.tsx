@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity, Platform } from 'react-native
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Colors, TextStyles } from '@/theme';
-import PlaceholderImage from '@/components/images/PlaceholderImage';
+import PlaceholderImage from '@/components/ui/images/PlaceholderImage';
 
 const IS_ANDROID = Platform.OS === 'android';
 

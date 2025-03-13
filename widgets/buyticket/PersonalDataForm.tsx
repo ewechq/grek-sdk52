@@ -1,10 +1,62 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { TextStyles, Colors } from '@/theme';
 import { normalize } from '@/utils/responsive';
-import PhoneInput from '@/components/inputs/InputPhone';
-import EmailInput from '@/components/inputs/InputEmail';
-import Counter from '@/components/CounterComponent';
+import PhoneInput from '@/components/ui/inputs/InputPhone';
+import EmailInput from '@/components/ui/inputs/InputEmail';
+import Counter from '@/components/ui/btns/CounterComponent';
+
+interface NameInputProps {
+  value: string;
+  onChange: (text: string) => void;
+  onValidityChange?: (isValid: boolean) => void;
+}
+
+const NameInput: React.FC<NameInputProps> = ({
+  value,
+  onChange,
+  onValidityChange
+}) => {
+  const [isTouched, setIsTouched] = useState(false);
+  const [isValid, setIsValid] = useState(true);
+
+  const handleChange = (text: string) => {
+    onChange(text);
+    const valid = text.trim().length >= 2;
+    setIsValid(valid);
+    onValidityChange?.(valid);
+  };
+
+  const handleBlur = () => {
+    setIsTouched(true);
+    const valid = value.trim().length >= 2;
+    setIsValid(valid);
+    onValidityChange?.(valid);
+  };
+
+  return (
+    <View>
+      <TextInput
+        style={[
+          styles.input,
+          {
+            borderBottomColor: !isValid && isTouched ? "red" : Colors.grayElements
+          }
+        ]}
+        placeholder="Ваше ФИО"
+        placeholderTextColor={Colors.grayText}
+        value={value}
+        onChangeText={handleChange}
+        onBlur={handleBlur}
+      />
+      {!isValid && isTouched && (
+        <Text style={styles.errorText}>
+          Введите корректное ФИО (минимум 2 символа)
+        </Text>
+      )}
+    </View>
+  );
+};
 
 interface PersonalDataFormProps {
   formData: {
@@ -18,13 +70,19 @@ interface PersonalDataFormProps {
     fivetosixteen: number;
   };
   setGuestCounts: (counts: any) => void;
+  onNameValidityChange?: (isValid: boolean) => void;
+  onPhoneValidityChange?: (isValid: boolean) => void;
+  onEmailValidityChange?: (isValid: boolean) => void;
 }
 
 export const PersonalDataForm = ({
   formData,
   setFormData,
   guestCounts,
-  setGuestCounts
+  setGuestCounts,
+  onNameValidityChange,
+  onPhoneValidityChange,
+  onEmailValidityChange
 }: PersonalDataFormProps) => {
   return (
     <View style={styles.container}>
@@ -32,26 +90,22 @@ export const PersonalDataForm = ({
         Ваши данные:
       </Text>
       
-      <TextInput
-        style={styles.input}
-        placeholder="Ваше ФИО"
-        placeholderTextColor={Colors.grayText}
+      <NameInput
         value={formData.name}
-        onChangeText={(text) => setFormData({...formData, name: text})}
+        onChange={(text) => setFormData({...formData, name: text})}
+        onValidityChange={onNameValidityChange}
       />
       
       <PhoneInput
         initialValue={formData.phone}
         onPhoneChange={(text) => setFormData({...formData, phone: text})}
-        backgroundColor={Colors.white}
-        borderColor={Colors.grayText}
+        onValidityChange={onPhoneValidityChange}
       />
       
       <EmailInput
         value={formData.email}
         onChange={(text) => setFormData({...formData, email: text})}
-        backgroundColor={Colors.white}
-        borderColor={Colors.grayText}
+        onValidityChange={onEmailValidityChange}
       />
 
       <View style={styles.counterSection}>
@@ -90,12 +144,22 @@ const styles = StyleSheet.create({
     marginBottom: normalize(8),
   },
   input: {
-    ...TextStyles.text,
+    height: 50,
+    borderWidth: 0,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.grayElements,
     paddingHorizontal: normalize(16),
-    marginBottom: normalize(8),
+    marginBottom: 24,
     paddingVertical: normalize(16),
+    color: Colors.black,
+    ...TextStyles.text,
+  },
+  errorText: {
+    position: 'absolute',
+    bottom: 4,
+    left: normalize(16),
+    right: normalize(16),
+    ...TextStyles.textDescription,
+    color: "red",
   },
   counterSection: {
     marginTop: normalize(40),

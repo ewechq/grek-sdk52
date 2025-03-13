@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Platform, TextStyle } from 'react-native';
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import { Colors, TextStyles } from '@/theme';
-import HtmlContent from "@/components/text/HtmlContent";
+import HtmlContent from "@/components/ui/text/HtmlContent";
 
 const IS_ANDROID = Platform.OS === 'android';
 

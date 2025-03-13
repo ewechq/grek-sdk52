@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { TextStyles, Colors } from '@/theme';
 import { Event } from '@/types/mc';
 import { formatDate, formatTime } from '@/utils/mc/dateFormatters';
-import CardComponent from '@/components/cards/CardComponent';
+import CardComponent from '@/components/pages/mc/EventsCard';
 
 interface EventsListProps {
   events: Event[];

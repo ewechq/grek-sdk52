@@ -4,10 +4,10 @@ import { useLocalSearchParams } from "expo-router";
 import { useArticlesStore } from '@/hooks/news/useArticlesCache';
 import { NewsItem } from "@/types/news";
 import { getOptimizedImageUrl } from "@/utils/images";
-import Header from "@/components/Header";
-import { LoadingState } from "@/components/state/LoadingState";
-import { ErrorState } from "@/components/state/ErrorState";
-import { EmptyState } from "@/components/state/EmptyState";
+import Header from "@/components/ui/layout/Header";
+import { LoadingState } from "@/components/ui/feedback/LoadingState";
+import { ErrorState } from "@/components/ui/feedback/ErrorState";
+import { EmptyState } from "@/components/ui/feedback/EmptyState";
 import { NewsImage } from "@/widgets/news/detail/NewsImage";
 import { NewsContent } from "@/widgets/news/detail/NewsContent";
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Stack, router } from 'expo-router';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import LottieView from 'lottie-react-native';
-import Btn from '@/components/btns/Btn';
+import Btn from '@/components/ui/btns/Btn';
 import { TextStyles, Colors } from '@/theme/index';
 
 export default function NotFoundScreen() {

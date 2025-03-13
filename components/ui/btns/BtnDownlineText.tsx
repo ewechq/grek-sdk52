@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Colors } from '../../theme/colors';
+import { Colors } from '../../../theme/colors';
 
 
 interface BtnDownlineTextProps {
