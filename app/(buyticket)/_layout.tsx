@@ -53,6 +53,12 @@ export default function BuyTicketLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen 
+        name="sms"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

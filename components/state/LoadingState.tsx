@@ -18,8 +18,8 @@ export const LoadingState = ({ loading }: LoadingStateProps) => {
 const styles = StyleSheet.create({
   centered: {
     flex: 1,
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.white,
   },
 });

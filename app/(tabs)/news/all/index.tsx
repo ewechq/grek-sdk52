@@ -7,9 +7,16 @@ import { LoadingState } from '@/components/state/LoadingState';
 import { ErrorState } from '@/components/state/ErrorState';
 import { EmptyState } from '@/components/state/EmptyState';
 import { NewsGrid } from '@/widgets/news/all/NewsGrid';
+import { useLocalSearchParams } from 'expo-router';
+import { NewsItem } from '@/types/news';
 
 export default function AllNewsScreen() {
-  const { news, isLoading, error } = useArticles();
+  const { category = 'news' } = useLocalSearchParams<{ category: 'news' | 'blog' }>();
+  const { news, blog, isLoading, error } = useArticles();
+
+  const filteredArticles = React.useMemo(() => {
+    return category === 'blog' ? blog : news;
+  }, [news, blog, category]);
 
   if (isLoading) {
     return <LoadingState loading={true} />;
@@ -19,14 +26,14 @@ export default function AllNewsScreen() {
     return <ErrorState message={error} />;
   }
 
-  if (!news?.length) {
-    return <EmptyState message="Нет доступных новостей" />;
+  if (!filteredArticles?.length) {
+    return <EmptyState message={`Нет доступных ${category === 'blog' ? 'записей блога' : 'новостей'}`} />;
   }
 
   return (
     <View style={styles.container}>
-      <Header title="Новости" />
-      <NewsGrid news={news} />
+      <Header title={category === 'blog' ? 'Блог' : 'Новости'} />
+      <NewsGrid news={filteredArticles} />
     </View>
   );
 }

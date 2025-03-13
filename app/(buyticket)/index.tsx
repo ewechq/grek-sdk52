@@ -38,6 +38,16 @@ const BuyTicket = () => {
   const [alertMessage, setAlertMessage] = useState('');
   const [DiscountModalVisible, setDiscountModalVisible] = useState(false);
 
+  // Добавляем состояние для хранения данных формы глобально
+  interface TicketData {
+    name: string;
+    phone: string;
+    email: string;
+    childage: string[];
+  }
+  const [ticketData, setTicketData] = useState<TicketData | null>(null);
+  const [signatureId, setSignatureId] = useState<string | null>(null);
+
   // Форматируем текущую дату
   const today = new Date();
   const formattedDate = today.toLocaleDateString('ru-RU', {
@@ -69,13 +79,11 @@ const BuyTicket = () => {
   // Обработчик нажатия кнопки "Подтвердить"
   const handleSubmit = async () => {
     if (!isFormValid()) {
-      const message = 'Пожалуйста, заполните все обязательные поля:\n\n' +
-        (!(guestCounts.onetofour > 0 || guestCounts.fivetosixteen > 0) ? '- Укажите количество билетов\n' : '') +
-        (!formData.name || !formData.phone || !formData.email ? '- Заполните все персональные данные\n' : '') +
-        (!agreements.privacy || !agreements.rules || !agreements.offer ? '- Примите все условия' : '');
-      
-      setAlertMessage(message);
-      setAlertVisible(true);
+      console.log('Форма не валидна:', {
+        hasTickets: guestCounts.onetofour > 0 || guestCounts.fivetosixteen > 0,
+        personalDataFilled: formData.name && formData.phone && formData.email,
+        agreementsAccepted: agreements.privacy && agreements.rules && agreements.offer
+      });
       return;
     }
 
@@ -87,71 +95,61 @@ const BuyTicket = () => {
         "childage": [] as string[]
       };
 
-      // Проверяем значения перед добавлением
-      console.log('Начальные значения:', {
-        onetofour: guestCounts.onetofour,
-        fivetosixteen: guestCounts.fivetosixteen
-      });
-
-      // Добавляем с проверкой
+      // Добавляем билеты в массив
       if (guestCounts.onetofour > 0) {
         for (let i = 0; i < guestCounts.onetofour; i++) {
           requestData.childage.push("1-4");
         }
       }
-      console.log('После добавления 1-4:', requestData.childage);
 
       if (guestCounts.fivetosixteen > 0) {
         for (let i = 0; i < guestCounts.fivetosixteen; i++) {
           requestData.childage.push("5-16");
         }
       }
-      console.log('После добавления 5-16:', requestData.childage);
 
-      // Проверяем финальные данные
-      console.log('Финальный объект для отправки:', JSON.stringify(requestData, null, 2));
+      console.log('Отправляем данные:', requestData);
 
-      // Прямо перед отправкой
-      const requestBody = JSON.stringify(requestData);
-      console.log('Тело запроса:', requestBody);
+      // Сохраняем данные для последующей отправки
+      setTicketData(requestData);
 
-      const response = await fetch('https://api.grekland.ru/api/ticket/preorder', {
+      // Отправляем запрос на подтверждение номера
+      const signatureResponse = await fetch('https://api.grekland.ru/api/ticket/signature', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: requestBody
+        body: JSON.stringify({
+          phone: requestData.phone
+        })
       });
 
-      // Логируем ответ сразу после получения
-      console.log('Статус ответа:', response.status);
-      const responseText = await response.text();
-      console.log('Сырой ответ:', responseText);
+      const signatureResult = await signatureResponse.json();
+      console.log('Ответ от сервера signature:', signatureResult);
 
-      const result = JSON.parse(responseText);
-      console.log('Распарсенный ответ:', result);
-
-      if (response.ok && result.link) {
-        console.log('Успешный ответ:', result.message);
-        console.log('Ссылка для оплаты:', result.link);
+      if (signatureResponse.ok && signatureResult.signature?.id) {
+        // Сохраняем ID подписи из правильного места в ответе
+        const newSignatureId = signatureResult.signature.id;
+        console.log('ID подписи:', newSignatureId);
         
-        // Перенаправляем на страницу оплаты
-        router.push({
-          pathname: '/(buyticket)/payment',
-          params: { url: result.link }
-        });
+        try {
+          // Переходим на страницу подтверждения SMS с параметрами сразу
+          router.push({
+            pathname: '/(buyticket)/sms',
+            params: { 
+              signatureId: newSignatureId,
+              ticketData: JSON.stringify(requestData)
+            }
+          });
+        } catch (navigationError) {
+          console.error('Ошибка при навигации:', navigationError);
+        }
       } else {
-        // Показываем ошибку
-        const errorMessage = result.message || 'Произошла ошибка при создании заказа';
-        console.error('Ошибка от сервера:', errorMessage);
-        setAlertMessage(errorMessage);
-        setAlertVisible(true);
+        console.error('Ошибка при получении подписи:', signatureResult.message || 'Неизвестная ошибка');
       }
     } catch (error) {
       console.error('Ошибка при отправке запроса:', error);
-      setAlertMessage('Не удалось отправить запрос. Проверьте подключение к интернету');
-      setAlertVisible(true);
     }
   };
 
@@ -239,25 +237,25 @@ const BuyTicket = () => {
         <CheckboxWithLink
           checked={agreements.privacy}
           onCheck={() => setAgreements({...agreements, privacy: !agreements.privacy})}
-          label="политикой в отношении обработки персональных данных"
+          label="Политикой в отношении обработки персональных данных"
           url="https://grekland.ru/privacy.html"
         />
         <CheckboxWithLink
           checked={agreements.rules}
           onCheck={() => setAgreements({...agreements, rules: !agreements.rules})}
-          label="правилами парка"
+          label="Правилами парка"
           url="https://grekland.ru/regulations.html"
         />
         <CheckboxWithLink
           checked={agreements.price}
           onCheck={() => setAgreements({...agreements, price: !agreements.price})}
-          label="прайс листом"
+          label="Прайс листом"
           url="https://grekland.ru/ticket.html"
         />
         <CheckboxWithLink
           checked={agreements.offer}
           onCheck={() => setAgreements({...agreements, offer: !agreements.offer})}
-          label="публичной офертой"
+          label="Публичной офертой"
           url="https://grekland.ru/public-offer.html"
         />
       </View>

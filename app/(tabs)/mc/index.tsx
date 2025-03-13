@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback } from "react";
-import { View, ScrollView, StyleSheet, Image } from "react-native";
+import { View, ScrollView, StyleSheet, Image, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
 import { Colors } from "@/theme";
 import { Calendar } from "@/widgets/mc/Calendar";
@@ -7,6 +7,10 @@ import { EventsList } from "@/widgets/mc/EventsList";
 import { ScrollToTop } from "@/widgets/mc/ScrollToTop";
 import { useEvents } from "@/hooks/mc/useEvents";
 import { useVisibleDates } from "@/hooks/mc/useVisibleDates";
+import { LoadingState } from "@/components/state/LoadingState";
+import { EmptyState } from "@/components/state/EmptyState";
+
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const CalendarPage = () => {
   const router = useRouter();
@@ -40,12 +44,45 @@ const CalendarPage = () => {
     setSelectedDate(date);
   }, []);
 
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <View style={styles.contentContainer}>
+          <View style={styles.whiteContainer}>
+            <LoadingState loading={true} />
+          </View>
+        </View>
+      );
+    }
+
+    if (!events?.length) {
+      return (
+        <View style={styles.contentContainer}>
+          <View style={styles.whiteContainer}>
+            <EmptyState message="Информация отсутствует" />
+          </View>
+        </View>
+      );
+    }
+
+    return (
+      <EventsList
+        events={events}
+        visibleDates={visibleDates}
+        isLoadingMore={isLoadingMore}
+        selectedDate={selectedDate}
+        onEmpty={() => <EmptyState message="Информация отсутствует" />}
+      />
+    );
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
         ref={scrollViewRef}
         onScroll={handleScroll}
         scrollEventThrottle={16}
+        contentContainerStyle={styles.scrollContent}
       >
         <View style={styles.calendarContainer}>
           <Image 
@@ -59,12 +96,7 @@ const CalendarPage = () => {
           />
         </View>
         
-        <EventsList
-          events={events}
-          visibleDates={visibleDates}
-          isLoadingMore={isLoadingMore}
-          selectedDate={selectedDate}
-        />
+        {renderContent()}
       </ScrollView>
 
       <ScrollToTop
@@ -82,6 +114,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.purple,
   },
+  scrollContent: {
+    flexGrow: 1,
+    minHeight: SCREEN_HEIGHT,
+  },
   pattern: {
     position: 'absolute',
     top: 0,
@@ -92,5 +128,14 @@ const styles = StyleSheet.create({
   },
   calendarContainer: {
     position: 'relative',
+  },
+  contentContainer: {
+    flex: 1,
+  },
+  whiteContainer: {
+    flex: 1,
+    backgroundColor: Colors.white,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
   },
 });

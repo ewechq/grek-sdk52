@@ -13,15 +13,19 @@ const SuccessScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Image source={require('@/assets/images/error.png')} style={styles.image} />
+    <Image source={require('@/assets/images/grek_vesna.png')} style={styles.image} />
+    <View style={styles.containerText}>
+      
       <Text style={styles.title}>Билеты летят к вам на почту! 🦖🚀</Text>
       <Text style={styles.message}>А Грек уже ждет на входе! Добро пожаловать в мир веселья и счастья!  </Text>
       <View style={styles.buttonContainer}>
         <Btn 
           title="Назад"
           onPress={handleBackPress}
+          bgColor={Colors.pink}
         />
       </View>
+    </View>
     </View>
   );
 };
@@ -30,6 +34,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'flex-end',
+    backgroundColor: Colors.white,
+  },
+  containerText: {
+    
     alignItems: 'center',
     backgroundColor: Colors.white,
     paddingHorizontal: 24,
@@ -50,8 +59,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   image:{
-    width: 300,
-    height:300,
+    width: 350,
+    height:350,
     marginBottom: 16,
   }
 });

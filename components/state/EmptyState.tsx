@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { Colors } from '@/theme';
+import { Colors, TextStyles } from '@/theme';
 
 interface EmptyStateProps {
   message: string;
@@ -8,7 +8,7 @@ interface EmptyStateProps {
 export const EmptyState = ({ message }: EmptyStateProps) => {
   return (
     <View style={styles.centered}>
-      <Text>{message}</Text>
+      <Text style={styles.message}>{message}</Text>
     </View>
   );
 };
@@ -18,6 +18,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.white,
+  },
+  message: {
+    color: Colors.black,
+    ...TextStyles.h2,
   },
 });
