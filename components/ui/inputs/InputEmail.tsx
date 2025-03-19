@@ -69,7 +69,8 @@ const EmailInput: React.FC<EmailInputProps> = ({
           {
             backgroundColor,
             color: textColor,
-            borderColor: !isEmailValid && isTouched ? errorColor : Colors.grayElements
+            borderColor: !isEmailValid && isTouched ? errorColor : Colors.grayElements,
+            marginBottom: !isEmailValid && isTouched ? 24 : 12
           }
         ]}
         placeholder="Введите эл. почту"
@@ -97,7 +98,6 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderBottomWidth: 1,
     paddingHorizontal: 16,
-    marginBottom: 24,
     color: Colors.black,
     ...TextStyles.text,
   },
@@ -107,7 +107,6 @@ const styles = StyleSheet.create({
     left: 16,
     right: 16,
     ...TextStyles.textDescription,
-
   },
 });
 

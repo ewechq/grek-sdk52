@@ -84,7 +84,7 @@ const BuyTicket = () => {
 
       <View style={styles.priceCalculationContainer}>
         <Image 
-          source={require('@/assets/images/pattern.png')} 
+          source={require('@/assets/images/pattern.webp')} 
           style={styles.patternImage} 
         />
         <PriceCalculation 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Stack, router } from 'expo-router';
 import { StyleSheet, Text, View, Image } from 'react-native';
-import LottieView from 'lottie-react-native';
 import Btn from '@/components/ui/btns/Btn';
 import { TextStyles, Colors } from '@/theme/index';
 
@@ -10,7 +9,7 @@ export default function NotFoundScreen() {
     <>
       <Stack.Screen options={{ title: 'Oops!' }} />
       <View style={styles.container}>
-        <Image source={require('@/assets/images/error.png')} style={styles.image} />
+        <Image source={require('@/assets/images/error.webp')} style={styles.image} />
         <Text style={styles.text}>Ой-ой! Грек так долго искал эту страницу, что уснул.</Text>
         <Text style={styles.textDescription}>🦕😴 Но он точно знает, где кнопка «Назад»! </Text>
         <Btn title="Назад" onPress={() => router.push('/(tabs)')} bgColor={Colors.pink} />

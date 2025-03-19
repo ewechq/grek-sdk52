@@ -13,7 +13,7 @@ const FailureScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Image source={require('@/assets/images/error.png')} style={styles.image} />
+      <Image source={require('@/assets/images/error.webp')} style={styles.image} />
       <Text style={styles.title}>Грек запутался в проводах и случайно сбил оплату…</Text>
       <Text style={styles.message}>Давай попробуем еще раз, но без его помощи! 🔌🦕</Text>
       <View style={styles.buttonContainer}>

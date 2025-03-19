@@ -1,18 +1,3 @@
-/**
- * Основной виджет страницы мастер-класса /mc/[id]
- * 
- * Отображает полную информацию о мастер-классе:
- * - Обложка с возрастным ограничением
- * - Заголовок
- * - Длительность
- * - Стоимость
- * - Описание
- * 
- * Использует:
- * - EventCover для отображения обложки
- * - useEventDetails для получения данных
- */
-
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { TextStyles, Colors } from '@/theme';

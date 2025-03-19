@@ -1,28 +1,27 @@
-import React, { useRef, useState, useCallback } from "react";
-import { View, ScrollView, StyleSheet, Image, Dimensions } from "react-native";
-import { useRouter } from "expo-router";
+import React, { useRef, useCallback } from "react";
+import { View, ScrollView, Image, StyleSheet, Dimensions } from "react-native";
 import { Colors } from "@/theme";
 import { Calendar } from "@/widgets/mc/Calendar";
 import { EventsList } from "@/widgets/mc/EventsList";
 import { ScrollToTop } from "@/widgets/mc/ScrollToTop";
 import { useEvents } from "@/hooks/mc/useEvents";
 import { useVisibleDates } from "@/hooks/mc/useVisibleDates";
+import { useCalendarState } from "@/hooks/mc/useCalendarState";
 import { LoadingState } from "@/components/ui/feedback/LoadingState";
 import { EmptyState } from "@/components/ui/feedback/EmptyState";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const CalendarPage = () => {
-  const router = useRouter();
   const scrollViewRef = useRef<ScrollView>(null);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const { selectedDate, handleDateSelect } = useCalendarState();
   const { events, isLoading } = useEvents();
   const {
     visibleDates,
     isLoadingMore,
     loadMoreDates,
   } = useVisibleDates(selectedDate);
-  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [showScrollTop, setShowScrollTop] = React.useState(false);
 
   const handleScroll = useCallback((event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
@@ -38,10 +37,6 @@ const CalendarPage = () => {
 
   const scrollToTop = useCallback(() => {
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
-  }, []);
-
-  const handleDateSelect = useCallback((date: Date) => {
-    setSelectedDate(date);
   }, []);
 
   const renderContent = () => {
@@ -86,7 +81,7 @@ const CalendarPage = () => {
       >
         <View style={styles.calendarContainer}>
           <Image 
-            source={require('@/assets/images/pattern.png')} 
+            source={require('@/assets/images/pattern.webp')} 
             style={styles.pattern}
             resizeMode="cover"
           />
@@ -106,8 +101,6 @@ const CalendarPage = () => {
     </View>
   );
 };
-
-export default CalendarPage;
 
 const styles = StyleSheet.create({
   container: {
@@ -139,3 +132,5 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 16,
   },
 });
+
+export default CalendarPage; 

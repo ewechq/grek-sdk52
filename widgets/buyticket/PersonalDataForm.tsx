@@ -40,7 +40,8 @@ const NameInput: React.FC<NameInputProps> = ({
         style={[
           styles.input,
           {
-            borderBottomColor: !isValid && isTouched ? "red" : Colors.grayElements
+            borderBottomColor: !isValid && isTouched ? "red" : Colors.grayElements,
+            marginBottom: !isValid && isTouched ? 24 : 12
           }
         ]}
         placeholder="Ваше ФИО"
@@ -148,7 +149,6 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderBottomWidth: 1,
     paddingHorizontal: normalize(16),
-    marginBottom: 24,
     paddingVertical: normalize(16),
     color: Colors.black,
     ...TextStyles.text,

@@ -1,6 +1,0 @@
-[33md45c70d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{0}: commit: refactor:news start
-[33mec138f3[m HEAD@{1}: reset: moving to HEAD
-[33mec138f3[m HEAD@{2}: commit: refactor:mc
-[33m9954565[m HEAD@{3}: commit: Updated structure to 3 screens
-[33m0061972[m HEAD@{4}: Branch: renamed refs/heads/master to refs/heads/main
-[33m0061972[m HEAD@{6}: commit (initial): Switching the app to sdk 52

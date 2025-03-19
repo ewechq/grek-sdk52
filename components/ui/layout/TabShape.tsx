@@ -28,7 +28,7 @@ export default function TabShape() {
       <Defs>
         <LinearGradient id="innerShadow" x1="0" y1="0" x2="0" y2="1">
           <Stop offset="0" stopColor={Colors.purple} stopOpacity="0" />
-          <Stop offset="1" stopColor="rgba(116, 112, 226, 0.1)" stopOpacity="0.8" />
+          <Stop offset="1" stopColor="rgba(116, 112, 226, 0.1)" stopOpacity="0.3" />
         </LinearGradient>
       </Defs>
       <Path fill={Colors.purple} d={d} />

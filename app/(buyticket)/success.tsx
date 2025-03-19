@@ -13,7 +13,7 @@ const SuccessScreen = () => {
 
   return (
     <View style={styles.container}>
-    <Image source={require('@/assets/images/grek_vesna.png')} style={styles.image} />
+    <Image source={require('@/assets/images/grek_vesna.webp')} style={styles.image} />
     <View style={styles.containerText}>
       
       <Text style={styles.title}>Билеты летят к вам на почту! 🦖🚀</Text>

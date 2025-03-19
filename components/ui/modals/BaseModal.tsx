@@ -97,6 +97,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   scrollContent: {
-    maxHeight: '80%',
+    //maxHeight: '100%',
   },
 }); 

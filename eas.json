@@ -10,25 +10,32 @@
       "channel": "development"
     },
     "preview": {
-      "distribution": "internal",
-      "channel": "preview",
-      "android": {
-        "buildType": "apk",
-        "gradleCommand": ":app:assembleRelease",
-        "env": {
-          "ANDROID_NDK_HOME": "/usr/local/ndk"
-        },
-        "cache": {
-          "key": "gradle-{{ hashFiles('android/gradle/wrapper/gradle-wrapper.properties') }}"
-        }
-      }
+  "distribution": "internal",
+  "channel": "preview",
+  "android": {
+    "buildType": "apk",
+    "gradleCommand": ":app:assembleRelease",
+    "env": {
+      "ANDROID_NDK_HOME": "C:\\Users\\sysadmin\\AppData\\Local\\Android\\Sdk\\ndk"
     },
-    "production": {
-      "channel": "production",
-      "android": {
-        "buildType": "app-bundle"
-      }
+    "cache": {
+      "key": "gradle-{{ hashFiles('android/gradle/wrapper/gradle-wrapper.properties') }}"
     }
+  }
+  },
+"production": {
+  "channel": "production",
+  "android": {
+    "buildType": "app-bundle",
+    "gradleCommand": ":app:bundleRelease",
+    "env": {
+      "ANDROID_NDK_HOME": "C:\\Users\\sysadmin\\AppData\\Local\\Android\\Sdk\\ndk"
+    },
+    "cache": {
+      "key": "gradle-{{ hashFiles('android/gradle/wrapper/gradle-wrapper.properties') }}"
+    }
+  }
+}
   },
   "submit": {
     "production": {}

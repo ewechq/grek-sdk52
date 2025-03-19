@@ -20,25 +20,25 @@ export const DiscountsModal: React.FC<DiscountsModalProps> = ({
   >
     <View style={styles.discountsList}>
       <Text style={styles.discountItem}>
-        — 1 сопровождающий взрослый - бесплатно. Каждый последующий - 250₽
+        • 1 сопровождающий взрослый - бесплатно. Каждый последующий - 250₽
       </Text>
       <Text style={styles.discountItem}>
-        — Дети до 1 года - бесплатно
+        • Дети до 1 года - бесплатно
       </Text>
       <Text style={styles.discountItem}>
-        — С 20:00 до 21:00 в будние дни - 50%
+        • С 20:00 до 21:00 в будние дни - 50%
       </Text>
       <Text style={styles.discountItem}>
-        — В день рождения - 50%*
+        • В день рождения - 50%*
       </Text>
       <Text style={styles.discountItem}>
-        — Особенные дети - 50%*
+        • Особенные дети - 50%*
       </Text>
       <Text style={styles.discountItem}>
-        — Большая семья - 30%*
+        • Большая семья - 30%*
       </Text>
       <Text style={styles.discountItem}>
-        — 1+1 для двойняшек и тройняшек 11 числа каждого месяца.
+        • 1+1 для двойняшек и тройняшек 11 числа каждого месяца.
       </Text>
     </View>
 
@@ -74,5 +74,6 @@ const styles = StyleSheet.create({
     ...TextStyles.textDescription,
     marginBottom: 8,
     color: Colors.grayText,
+
   },
 }); 

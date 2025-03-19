@@ -91,7 +91,8 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
           {
             backgroundColor,
             color: textColor,
-            borderColor: !isPhoneValid && isTouched ? errorColor : borderColor
+            borderColor: !isPhoneValid && isTouched ? errorColor : borderColor,
+            marginBottom: !isPhoneValid && isTouched ? 24 : 12
           }
         ]}
         placeholder="+7 (___) ___-__-__"
@@ -117,7 +118,6 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderBottomWidth: 1,
     paddingHorizontal: 16,
-    marginBottom: 24,
     color: Colors.grayBg,
     ...TextStyles.text,
   },

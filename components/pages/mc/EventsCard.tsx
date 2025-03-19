@@ -8,7 +8,6 @@ import { FontStyles } from '@/theme/fonts';
 export interface ChildComponentProps {
   id: number;
   title: string;
-  description: string;
   cover: ImageSourcePropType;
   price?: number;
   time?: string;
@@ -38,20 +37,26 @@ const CardComponent: React.FC<ChildComponentProps> = ({
           source={cover}
           onLoad={() => setIsLoaded(true)}
         />
-        <Text style={styles.textHeader} numberOfLines={2}>
-          {title}
-        </Text>
+        {title && (
+          <Text style={styles.textHeader} numberOfLines={2}>
+            {String(title)}
+          </Text>
+        )}
         <View style={styles.infoContainer}>
-          {time && <Text style={styles.timeText}>{time}</Text>}
-          {price && (
+          {time && (
+            <Text style={styles.timeText}>
+              {String(time)}
+            </Text>
+          )}
+          {price !== undefined && price !== null && (
             <Text style={styles.priceText}>
-              {price} РУБ
+              {String(price)} РУБ
             </Text>
           )}
         </View>
-        {ageLimit && (
+        {ageLimit !== undefined && ageLimit !== null && (
           <Text style={styles.ageLimitText}>
-            {ageLimit}+
+            {String(ageLimit)}+
           </Text>
         )}
       </View>
@@ -89,14 +94,12 @@ const styles = StyleSheet.create({
   timeText: {
     ...FontStyles.h3,
     paddingVertical: 4,
-
     color: Colors.grayText,
   },
   priceText: {
     ...FontStyles.h3,
     paddingVertical: 4,
     paddingLeft: 16,
-    
     color: Colors.grayText,
   },
   ageLimitText: {

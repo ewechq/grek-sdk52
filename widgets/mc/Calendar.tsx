@@ -1,8 +1,10 @@
-import React, { useCallback } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
-import { Colors } from '@/theme';
+import React, { useCallback, useRef, useEffect } from 'react';
+import { View, FlatList, StyleSheet, Dimensions } from 'react-native';
 import { CalendarHeader } from '@/components/pages/mc/CalendarHeader';
 import { DayItem } from '@/components/pages/mc/DayItem';
+import { generateDays, formatMonthName } from '@/utils/mc/dateUtils';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface CalendarProps {
   selectedDate: Date;
@@ -13,7 +15,31 @@ export const Calendar: React.FC<CalendarProps> = ({
   selectedDate,
   onDateSelect,
 }) => {
-  const monthName = selectedDate.toLocaleDateString("ru-RU", { month: "long" });
+  const flatListRef = useRef<FlatList>(null);
+  const monthName = formatMonthName(selectedDate);
+  const days = generateDays(selectedDate);
+
+  const scrollToSelectedDate = useCallback(() => {
+    if (flatListRef.current) {
+      const dayWidth = 60; // Примерная ширина элемента дня
+      const screenCenter = SCREEN_WIDTH / 2;
+      const selectedIndex = days.findIndex(
+        date => date.toDateString() === selectedDate.toDateString()
+      );
+      
+      if (selectedIndex !== -1) {
+        const scrollPosition = (selectedIndex * dayWidth) - (screenCenter - dayWidth / 2);
+        flatListRef.current.scrollToOffset({
+          offset: Math.max(0, scrollPosition),
+          animated: true
+        });
+      }
+    }
+  }, [selectedDate, days]);
+
+  useEffect(() => {
+    scrollToSelectedDate();
+  }, [selectedDate, scrollToSelectedDate]);
 
   const renderItem = useCallback(({ item }: { item: Date }) => (
     <DayItem
@@ -31,8 +57,9 @@ export const Calendar: React.FC<CalendarProps> = ({
 
       <View style={styles.daysContainer}>
         <FlatList
+          ref={flatListRef}
           horizontal
-          data={generateDays(selectedDate)}
+          data={days}
           keyExtractor={(item) => item.toDateString()}
           renderItem={renderItem}
           contentContainerStyle={styles.flatListContent}
@@ -43,23 +70,14 @@ export const Calendar: React.FC<CalendarProps> = ({
   );
 };
 
-const generateDays = (centerDate: Date): Date[] => {
-  const days: Date[] = [];
-  for (let i = -5; i <= 5; i++) {
-    const date = new Date(centerDate);
-    date.setDate(centerDate.getDate() + i);
-    days.push(date);
-  }
-  return days;
-};
-
 const styles = StyleSheet.create({
-  container: {},
-  daysContainer: {
+  container: {
     paddingVertical: 20,
-    zIndex: 2,
+  },
+  daysContainer: {
+    marginTop: 16,
   },
   flatListContent: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
   },
 }); 

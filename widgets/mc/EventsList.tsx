@@ -63,16 +63,15 @@ export const EventsList: React.FC<EventsListProps> = ({
                       <View key={event.id} style={styles.cardWrapper}>
                         <CardComponent
                           id={event.id}
-                          title={event.title}
-                          description={event.description || "Описание отсутствует"}
+                          title={event.title || ''}
                           cover={
                             event.cover
                               ? { uri: event.cover }
-                              : require("@/assets/images/placeholder2.png")
+                              : require("@/assets/images/placeholder.webp")
                           }
-                          time={formatTime(event.date_start)}
+                          time={event.date_start ? formatTime(event.date_start) : undefined}
                           price={event.price ? parseFloat(event.price) : undefined}
-                          ageLimit={event.age_limit}
+                          ageLimit={event.age_limit || undefined}
                         />
                       </View>
                     ))}
