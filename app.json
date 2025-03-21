@@ -5,13 +5,32 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "grek-one",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    
+    "splash": {
+      "image": "./assets/images/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "runtimeVersion": {
-        "policy": "appVersion"
+      "bundleIdentifier": "com.grek.one",
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": [
+          "bank100000000008",
+          "bank100000000004",
+          "bank100000000111",
+          "bank100000000015",
+          "bank100000000007",
+          "bank100000000001",
+          "bank100000000005",
+          "alfabank",
+          "bank"
+        ]
       }
     },
     "android": {
@@ -19,29 +38,10 @@
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ewec.grekone",
-      "runtimeVersion": "1.0.0",
-      "jsEngine": "hermes",
-      "enableProguardInReleaseBuilds": true,
-      "enableShrinkResources": true,
-      "enableR8": true,
-      "enableSplitBuildsByAbi": true,
-      "assetBundlePatterns": [
-        "**/*"
-      ],
-      "intentFilters": [
-        {
-          "action": "VIEW",
-          "data": [
-            {
-              "scheme": "yourappscheme"
-            }
-          ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
-        }
+      "package": "com.grek.one",
+      "permissions": [
+        "INTERNET",
+        "QUERY_ALL_PACKAGES"
       ]
     },
     "web": {
@@ -50,40 +50,10 @@
       "favicon": "./assets/images/icon.png"
     },
     "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ]
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "assetBundlePatterns": [
-      "assets/images/*",
-      "assets/fonts/*"
-    ],
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "bd86e186-6344-4400-bb89-77568f97f409"
-      }
-    },
-    "updates": {
-      "enabled": true,
-      "fallbackToCacheTimeout": 0,
-      "url": "https://u.expo.dev/bd86e186-6344-4400-bb89-77568f97f409"
-    },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "owner": "ewec"
+    }
   }
 }

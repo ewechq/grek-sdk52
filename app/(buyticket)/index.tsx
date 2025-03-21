@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView, Image } from 'react-native';
 import { Colors } from '@/theme';
-import Btn from '@/components/ui/btns/Btn';
 import Header from '@/components/ui/layout/Header';
-import TextButton from '@/components/ui/btns/BtnDownlineText';
-import { useRouter } from 'expo-router';
 import { Alert } from '@/components/ui/modals/Alert';
 import { DiscountsModal } from '@/components/ui/modals/DiscountsModal';
 import { useTicketPrices } from '@/hooks/useTicketPrices';
@@ -14,14 +11,15 @@ import { DateWarning } from '@/components/pages/buyticket/DateWarning';
 import { PersonalDataForm } from '@/widgets/buyticket/PersonalDataForm';
 import { AgreementsBlock } from '@/widgets/buyticket/AgreementsBlock';
 import { useBuyTicketForm } from '@/hooks/buyticket/useBuyTicketForm';
+import { useBuyTicketValidation } from '@/hooks/buyticket/useBuyTicketValidation';
+import { useRouter } from 'expo-router';
+import Btn from '@/components/ui/btns/Btn';
+import TextButton from '@/components/ui/btns/BtnDownlineText';
 
 const BuyTicket = () => {
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [DiscountModalVisible, setDiscountModalVisible] = useState(false);
-  const [isNameValid, setIsNameValid] = useState(true);
-  const [isPhoneValid, setIsPhoneValid] = useState(true);
-  const [isEmailValid, setIsEmailValid] = useState(true);
   const router = useRouter();
   
   const {
@@ -34,20 +32,17 @@ const BuyTicket = () => {
     handleSubmit
   } = useBuyTicketForm();
 
+  const {
+    setIsNameValid,
+    setIsPhoneValid,
+    setIsEmailValid,
+    validateForm
+  } = useBuyTicketValidation();
+
   const { prices, isLoading } = useTicketPrices();
 
   const onSubmit = async () => {
-    const errors: string[] = [];
-
-    if (!isNameValid && formData.name.trim()) {
-      errors.push('• Введите корректное ФИО (минимум 2 символа)');
-    }
-    if (!isPhoneValid && formData.phone.trim()) {
-      errors.push('• Введите корректный номер телефона');
-    }
-    if (!isEmailValid && formData.email.trim()) {
-      errors.push('• Введите корректный email (например: name@example.com)');
-    }
+    const errors = validateForm(formData);
 
     if (errors.length > 0) {
       setAlertMessage(errors.join('\n'));
@@ -107,6 +102,7 @@ const BuyTicket = () => {
           bgColor={Colors.green}
           textColor={Colors.black}
         />
+
         <View style={styles.discountButtonContainer}>
           <TextButton
             title="Почему не прошла скидка?"

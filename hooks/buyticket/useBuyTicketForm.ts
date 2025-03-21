@@ -104,7 +104,7 @@ export const useBuyTicketForm = () => {
 
       setTicketData(requestData);
 
-      const signatureResponse = await fetch('https://api.grekland.ru/api/ticket/signature', {
+      const signatureResponse = await fetch('https://dev.api.grekland.ru/api/ticket/signature', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -8,6 +8,7 @@ import { normalize } from '@/utils/responsive';
 import { Alert } from '@/components/ui/modals/Alert';
 
 const CODE_LENGTH = 6;
+const RESEND_TIMEOUT = 60; // 60 секунд для повторной отправки
 
 const ConfirmNumberPage = () => {
   const params = useLocalSearchParams();
@@ -15,10 +16,13 @@ const ConfirmNumberPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
+  const [alertTitle, setAlertTitle] = useState('Ошибка!');
+  const [timer, setTimer] = useState(RESEND_TIMEOUT);
+  const [canResend, setCanResend] = useState(false);
   const inputRefs = useRef<TextInput[]>([]);
 
   // Получаем параметры с дополнительными проверками
-  const signatureId = Number(params.signatureId);
+  const [signatureId, setSignatureId] = useState(Number(params.signatureId));
   let ticketData = null;
   
   try {
@@ -29,14 +33,28 @@ const ConfirmNumberPage = () => {
     console.error('Ошибка при парсинге ticketData:', error);
   }
 
-  // Эффект для логирования параметров при монтировании
+  // Эффект для управления таймером
   useEffect(() => {
-    console.log('Параметры страницы SMS:', {
-      signatureId,
-      ticketData,
-      rawParams: params
-    });
-  }, [params]);
+    const interval = setInterval(() => {
+      setTimer((prevTimer) => {
+        if (prevTimer <= 0) {
+          clearInterval(interval);
+          setCanResend(true);
+          return 0;
+        }
+        return prevTimer - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Эффект для обновления URL при изменении signatureId
+  useEffect(() => {
+    if (signatureId !== Number(params.signatureId)) {
+      router.setParams({ signatureId: String(signatureId) });
+    }
+  }, [signatureId]);
 
   const handleCodeChange = (text: string, index: number) => {
     // Убеждаемся, что вводятся только цифры
@@ -59,24 +77,26 @@ const ConfirmNumberPage = () => {
     }
   };
 
+  const showAlert = (title: string, message: string, isError: boolean = true) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertVisible(true);
+  };
+
   const handleSubmit = async () => {
     if (!signatureId || isNaN(signatureId)) {
-      console.error('Некорректный ID подписи:', params.signatureId);
-      setAlertMessage('Ошибка: некорректный ID подписи');
-      setAlertVisible(true);
+      showAlert('Ошибка!', 'Некорректный ID подписи');
       return;
     }
 
     if (!ticketData) {
-      setAlertMessage('Ошибка: отсутствуют данные заказа');
-      setAlertVisible(true);
+      showAlert('Ошибка!', 'Отсутствуют данные заказа');
       return;
     }
 
     const smsCode = code.join('');
     if (smsCode.length !== CODE_LENGTH) {
-      setAlertMessage('Пожалуйста, введите полный код подтверждения');
-      setAlertVisible(true);
+      showAlert('Ошибка!', 'Пожалуйста, введите полный код подтверждения');
       return;
     }
 
@@ -90,7 +110,7 @@ const ConfirmNumberPage = () => {
       console.log('Отправляем данные для проверки:', checkData);
 
       // Проверяем код подтверждения
-      const signatureCheckResponse = await fetch('https://api.grekland.ru/api/ticket/signatureCheck', {
+      const signatureCheckResponse = await fetch('https://dev.api.grekland.ru/api/ticket/signatureCheck', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -104,7 +124,7 @@ const ConfirmNumberPage = () => {
 
       if (signatureCheckResponse.ok && signatureCheckResult.signature === true) {
         // Если код подтвержден, создаем заказ
-        const orderResponse = await fetch('https://api.grekland.ru/api/ticket/preorder', {
+        const orderResponse = await fetch('https://dev.api.grekland.ru/api/ticket/preorder', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -129,22 +149,22 @@ const ConfirmNumberPage = () => {
       }
     } catch (error) {
       console.error('Ошибка:', error);
-      setAlertMessage(error instanceof Error ? error.message : 'Произошла ошибка при обработке запроса');
-      setAlertVisible(true);
+      showAlert('Ошибка!', error instanceof Error ? error.message : 'Произошла ошибка при обработке запроса');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleResendCode = async () => {
+    if (!canResend) return;
+    
     if (!ticketData?.phone) {
-      setAlertMessage('Ошибка: отсутствует номер телефона');
-      setAlertVisible(true);
+      showAlert('Ошибка!', 'Отсутствует номер телефона');
       return;
     }
 
     try {
-      const response = await fetch('https://api.grekland.ru/api/ticket/signature', {
+      const response = await fetch('https://dev.api.grekland.ru/api/ticket/signature', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -158,16 +178,31 @@ const ConfirmNumberPage = () => {
       const result = await response.json();
 
       if (response.ok && result.id) {
-        // Обновляем ID подписи
-        router.setParams({ signatureId: result.id });
+        // Обновляем ID подписи и очищаем код
+        setSignatureId(result.id);
+        setCode(new Array(CODE_LENGTH).fill(''));
+        showAlert('Успешно!', 'Мы отправили новый код подтверждения на ваш номер телефона', false);
+        setTimer(RESEND_TIMEOUT);
+        setCanResend(false);
       } else {
         throw new Error(result.message || 'Ошибка при отправке кода');
       }
     } catch (error) {
       console.error('Ошибка при повторной отправке кода:', error);
-      setAlertMessage(error instanceof Error ? error.message : 'Не удалось отправить код повторно');
-      setAlertVisible(true);
+      if (error instanceof Error && error.message === 'Сообщение с кодом отправлено.') {
+        showAlert('Успешно!', 'Мы отправили новый код подтверждения на ваш номер телефона', false);
+        setTimer(RESEND_TIMEOUT);
+        setCanResend(false);
+      } else {
+        showAlert('Ошибка!', error instanceof Error ? error.message : 'Не удалось отправить код повторно');
+      }
     }
+  };
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -196,7 +231,6 @@ const ConfirmNumberPage = () => {
               maxLength={1}
               selectTextOnFocus
               onFocus={() => {
-                // При фокусе выделяем текст
                 inputRefs.current[index]?.setNativeProps({
                   selection: { start: 0, end: 1 }
                 });
@@ -217,15 +251,21 @@ const ConfirmNumberPage = () => {
 
         <Text style={styles.resendCode}>
           Не получили код?{' '}
-          <Text style={styles.resendButton} onPress={handleResendCode}>
-            Отправить снова
-          </Text>
+          {timer > 0 ? (
+            <Text style={styles.timerText}>
+              Повторная отправка через {formatTime(timer)}
+            </Text>
+          ) : (
+            <Text style={styles.resendButton} onPress={handleResendCode}>
+              Отправить снова
+            </Text>
+          )}
         </Text>
       </View>
 
       <Alert
         visible={alertVisible}
-        title="Ошибка!"
+        title={alertTitle}
         message={alertMessage}
         onClose={() => setAlertVisible(false)}
       />
@@ -237,7 +277,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-    
   },
   content: {
     flex: 1,
@@ -286,6 +325,9 @@ const styles = StyleSheet.create({
   resendButton: {
     color: Colors.purple,
     textDecorationLine: 'underline',
+  },
+  timerText: {
+    color: Colors.grayText,
   },
 });
 

@@ -2,7 +2,9 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { Colors } from '@/theme';
 import TabShape from './TabShape';
-import { Ionicons } from '@expo/vector-icons';
+import { LeftIcon } from '../icons/LeftIcon';
+import { CenterIcon } from '../icons/CenterIcon';
+import { RightIcon } from '../icons/RightIcon';
 
 const TAB_HEIGHT = 70;
 const { width } = Dimensions.get('window');
@@ -15,13 +17,28 @@ interface TabBarProps {
 }
 
 export default function TabBar({ state, descriptors, navigation }: TabBarProps) {
+  const getIcon = (index: number, isFocused: boolean) => {
+    const color = isFocused ? Colors.white : Colors.grayElements;
+    const size = 28;
+
+    switch (index) {
+      case 0:
+        return <LeftIcon color={color} size={size} />;
+      case 1:
+        return <CenterIcon color={Colors.white} size={size} />;
+      case 2:
+        return <RightIcon color={color} size={size} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TabShape />
       <View style={StyleSheet.absoluteFill}>
         <View style={styles.tabsContainer}>
           {state.routes.map((route: any, index: number) => {
-            const { options } = descriptors[route.key];
             const isFocused = state.index === index;
 
             const onPress = () => {
@@ -48,11 +65,7 @@ export default function TabBar({ state, descriptors, navigation }: TabBarProps) 
                   ]}
                 >
                   <View style={styles.centerButtonInner}>
-                    <Ionicons
-                      name="ticket"
-                      size={24}
-                      color={Colors.white} 
-                    />
+                    {getIcon(index, isFocused)}
                   </View>
                 </TouchableOpacity>
               );
@@ -68,13 +81,7 @@ export default function TabBar({ state, descriptors, navigation }: TabBarProps) 
                   styles.iconContainer,
                   isFocused && styles.activeIconContainer
                 ]}>
-                  <Ionicons
-                    name={options.tabBarIcon({ 
-                      color: isFocused ? Colors.white : Colors.grayElements 
-                    }).props.name}
-                    size={24}
-                    color={isFocused ? Colors.white : Colors.grayElements}
-                  />
+                  {getIcon(index, isFocused)}
                 </View>
               </TouchableOpacity>
             );

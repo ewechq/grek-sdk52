@@ -35,15 +35,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   title: {
-    ...TextStyles.h1,
+    ...TextStyles.h2,
     color: Colors.black,
     marginBottom: 4,
+    marginHorizontal: 16,
+    textAlign: 'center',
   },
   message: {
     ...TextStyles.text,
     color: Colors.black,
     marginBottom: 32,
     textAlign: 'center',
+    marginHorizontal: 16,
   },
   buttonContainer: {
     width: '100%',
