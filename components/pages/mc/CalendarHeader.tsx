@@ -13,7 +13,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
     <View style={styles.container}>
       <View style={styles.content}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Афиша</Text>
+          <Text style={styles.title}>Афиша мероприятий</Text>
           <Text style={styles.monthName}>
             {monthName.charAt(0).toUpperCase() + monthName.slice(1)}
           </Text>
@@ -36,10 +36,12 @@ const styles = StyleSheet.create({
   titleContainer: {
     gap: 4,
     alignItems: 'center',
+    marginBottom: 16
   },
   title: {
     ...TextStyles.h2,
     color: Colors.white,
+
   },
   monthName: {
     ...TextStyles.textDescription,

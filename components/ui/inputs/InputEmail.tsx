@@ -35,7 +35,7 @@ const EmailInput: React.FC<EmailInputProps> = ({
   backgroundColor = Colors.white,
   placeholderColor = Colors.grayText,
   textColor = Colors.black,
-  errorColor = 'red'
+  errorColor = Colors.red
 }) => {
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isTouched, setIsTouched] = useState(false);
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     position: 'absolute',
-    bottom: 4,
+    bottom: -16,
     left: 16,
     right: 16,
     ...TextStyles.textDescription,

@@ -10,6 +10,7 @@ import { ErrorState } from "@/components/ui/feedback/ErrorState";
 import { EmptyState } from "@/components/ui/feedback/EmptyState";
 import { NewsImage } from "@/widgets/news/detail/NewsImage";
 import { NewsContent } from "@/widgets/news/detail/NewsContent";
+import { Colors } from "@/theme";
 
 const NewsDetail = () => {
   const { id } = useLocalSearchParams();
@@ -57,7 +58,7 @@ const NewsDetail = () => {
 const styles = StyleSheet.create({
   scrollView: {
     height: "100%",
-    backgroundColor: "white",
+    backgroundColor: Colors.white,
   },
 });
 

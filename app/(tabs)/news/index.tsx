@@ -10,7 +10,7 @@ const IS_ANDROID = Platform.OS === 'android';
 
 export default function NewsScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
-  const { news, blog, isLoading, error } = useArticles(LATEST_NEWS_COUNT);
+  const { news, blog, promo, isLoading, error } = useArticles(LATEST_NEWS_COUNT);
 
   if (isLoading && !news?.length) {
     return (
@@ -36,9 +36,12 @@ export default function NewsScreen() {
       removeClippedSubviews={IS_ANDROID}
       scrollEventThrottle={IS_ANDROID ? 32 : 16}
     >
-      {news.length > 0 && (
+      {(news.length > 0 || promo.length > 0) && (
         <View style={styles.newsContainer}>
-          <NewsSliderSection news={news} parentScrollRef={scrollViewRef} />
+          <NewsSliderSection 
+            news={promo.length > 0 ? promo : news} 
+            parentScrollRef={scrollViewRef} 
+          />
           
           <View>
             <NewsSection 
@@ -82,7 +85,7 @@ const styles = StyleSheet.create({
     paddingBottom: 140,
   },
   error: {
-    color: 'red',
+    color: Colors.red,
     ...TextStyles.text,
     textAlign: 'center',
     paddingHorizontal: 20,

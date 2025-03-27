@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     
   },
   activeIconContainer: {
-    backgroundColor: 'rgb(139, 134, 231)',
+    backgroundColor: Colors.purpleDark,
     borderRadius: 20,
   },
   centerButtonIcon: {

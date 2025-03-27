@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 8,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.white,
   },
   animation: {
     width: '100%',

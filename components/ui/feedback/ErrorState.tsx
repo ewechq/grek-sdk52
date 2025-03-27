@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   error: {
-    color: 'red',
+    color: Colors.red,
     ...TextStyles.text,
     textAlign: 'center',
     paddingHorizontal: 20,

@@ -2,9 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Colors, TextStyles } from '@/theme';
-import Btn  from '@/components/ui/btns/Btn';
+import Btn from '@/components/ui/btns/Btn';
 
-const FailureScreen = () => {
+export const FailureWidget = () => {
   const router = useRouter();
 
   const handleBackPress = () => {
@@ -51,11 +51,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: '100%',
   },
-  image:{
+  image: {
     width: 300,
-    height:300,
+    height: 300,
     marginBottom: 16,
   }
-});
-
-export default FailureScreen; 
+}); 

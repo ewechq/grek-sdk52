@@ -1,8 +1,7 @@
 import { Stack } from 'expo-router';
 import { Colors } from '@/theme';
 import { useRouter } from 'expo-router';
-import { TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import HeaderInner from '@/components/ui/layout/Header';
 
 export default function BuyTicketLayout() {
   const router = useRouter();
@@ -19,20 +18,9 @@ export default function BuyTicketLayout() {
         },
         headerTintColor: Colors.black,
         headerShown: true,
-        headerLeft: () => (
-          <TouchableOpacity 
-            onPress={handleGoBack}
-            style={{ marginLeft: 16 }}
-          >
-            <Ionicons 
-              name="arrow-back" 
-              size={24} 
-              color={Colors.black} 
-            />
-          </TouchableOpacity>
-        ),
+        headerLeft: () => null,
+        headerTitle: () => null,
         headerShadowVisible: false,
-        headerTitle: "",
       }}
     >
       <Stack.Screen 
@@ -42,19 +30,7 @@ export default function BuyTicketLayout() {
         }}
       />
       <Stack.Screen 
-        name="success"
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen 
         name="payment"
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen 
-        name="sms"
         options={{
           headerShown: false,
         }}

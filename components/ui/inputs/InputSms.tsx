@@ -71,11 +71,11 @@ const styles = StyleSheet.create({
   },
   inputError: {
     borderWidth: 1,
-    borderColor: "red",
+    borderColor: Colors.red,
   },
   errorText: {
-    
     ...TextStyles.textDescription,
+    color: Colors.red,
     marginTop: -5,
     marginBottom: 10,
     marginLeft: 20,

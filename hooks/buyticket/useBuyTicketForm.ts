@@ -125,7 +125,7 @@ export const useBuyTicketForm = () => {
         
         try {
           router.push({
-            pathname: '/(buyticket)/sms',
+            pathname: '/(buyticket)/payment/sms',
             params: { 
               signatureId: newSignatureId,
               ticketData: JSON.stringify(requestData)

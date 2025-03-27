@@ -75,15 +75,15 @@ const MKDetail = () => {
     <ScrollView style={styles.container}>
       <Header title="Подробнее" marginTop={32}/>
       <ScrollView style={styles.scrollView} bounces={false}>
-        <View style={{marginTop: 24,
-    marginBottom: 15,}}>
-        <Image
-          style={styles.image}
-          source={{ uri: event.cover || undefined }}
-          contentFit="cover"
-        />
-        <View style={{position: 'absolute', right: 0, top: 0,width: 50, height: 50, backgroundColor: Colors.white, borderTopRightRadius: 24, borderBottomLeftRadius: 25, justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={{...TextStyles.h2, color: Colors.purple}}>3+</Text></View>
+        <View style={styles.coverContainer}>
+          <Image
+            style={styles.image}
+            source={{ uri: event.cover || undefined }}
+            contentFit="cover"
+          />
+          <View style={styles.ageLimitWrapper}>
+            <Text style={styles.ageLimit}>3+</Text>
+          </View>
         </View>
         <View style={styles.contentContainer}>
           <Text style={styles.title}>{event.title}</Text>
@@ -101,8 +101,6 @@ const MKDetail = () => {
           )}
         </View>
       </ScrollView>
-
-      
     </ScrollView>
   );
 };
@@ -189,6 +187,23 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  coverContainer: {
+    marginTop: 24,
+    marginBottom: 15,
+    position: 'relative',
+  },
+  ageLimitWrapper: {
+    position: 'absolute', 
+    right: 0, 
+    top: 0,
+    width: 50, 
+    height: 50, 
+    backgroundColor: Colors.white, 
+    borderTopRightRadius: 24, 
+    borderBottomLeftRadius: 25, 
+    justifyContent: 'center', 
+    alignItems: 'center'
   },
 });
 

@@ -9,35 +9,40 @@ export const useArticles = (limit?: number) => {
     fetchArticles();
   }, [fetchArticles]);
 
-  const { news, blog } = useMemo(() => {
+  const { news, blog, promo } = useMemo(() => {
     if (!articles?.length) {
-      return { news: [], blog: [] };
+      return { news: [], blog: [], promo: [] };
     }
 
     const newsItems = [];
     const blogItems = [];
+    const promoItems = [];
 
-    // Делаем один проход по массиву вместо двух filter
+    // Делаем один проход по массиву вместо нескольких filter
     for (const item of articles) {
       if (newsItems.length < (limit || articles.length) && item.category === 'news') {
         newsItems.push(item);
       } else if (blogItems.length < (limit || articles.length) && item.category === 'blog') {
         blogItems.push(item);
+      } else if (promoItems.length < (limit || articles.length) && item.category === 'promo') {
+        promoItems.push(item);
       }
 
-      // Если обе категории заполнены, прерываем цикл
+      // Если все категории заполнены, прерываем цикл
       if (newsItems.length >= (limit || articles.length) && 
-          blogItems.length >= (limit || articles.length)) {
+          blogItems.length >= (limit || articles.length) &&
+          promoItems.length >= (limit || articles.length)) {
         break;
       }
     }
 
-    return { news: newsItems, blog: blogItems };
+    return { news: newsItems, blog: blogItems, promo: promoItems };
   }, [articles, limit]);
 
   return {
     news,
     blog,
+    promo,
     isLoading,
     error
   };

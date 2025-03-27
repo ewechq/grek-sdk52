@@ -29,6 +29,7 @@ export const useArticlesStore = create<ArticlesState>()((set, get) => ({
 
     try {
       set({ isLoading: true, error: null });
+      
       const response = await fetch('https://api.grekland.ru/api/articles');
       const data = await response.json();
       
@@ -38,6 +39,7 @@ export const useArticlesStore = create<ArticlesState>()((set, get) => ({
         lastFetch: now
       });
     } catch (error) {
+      console.error('Ошибка при загрузке статей:', error);
       set({ 
         error: 'Ошибка при загрузке данных',
         isLoading: false 

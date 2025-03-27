@@ -22,6 +22,6 @@ const styles = StyleSheet.create({
   },
   message: {
     color: Colors.black,
-    ...TextStyles.h2,
+    ...TextStyles.text,
   },
 });

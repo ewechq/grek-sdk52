@@ -40,7 +40,7 @@ const NameInput: React.FC<NameInputProps> = ({
         style={[
           styles.input,
           {
-            borderBottomColor: !isValid && isTouched ? "red" : Colors.grayElements,
+            borderBottomColor: !isValid && isTouched ? Colors.red : Colors.grayElements,
             marginBottom: !isValid && isTouched ? 24 : 12
           }
         ]}
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     left: normalize(16),
     right: normalize(16),
     ...TextStyles.textDescription,
-    color: "red",
+    color: Colors.red,
   },
   counterSection: {
     marginTop: normalize(40),

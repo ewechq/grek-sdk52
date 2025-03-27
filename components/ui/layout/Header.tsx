@@ -37,7 +37,7 @@ const HeaderInner: React.FC<HeaderInnerProps> = ({
           <View style={{position: 'absolute', left: 0}}>
             <Ionicons name="chevron-back-outline" size={16} color={iconColor} />
           </View>
-          <Text style={styles.title}>{title}</Text>
+          <Text style={[styles.title, { color: textColor }]}>{title}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -56,7 +56,6 @@ const styles = StyleSheet.create({
   },
   title: {
     ...TextStyles.h2,
-    color: Colors.black,
     paddingHorizontal:16,
     textAlign: 'center',
   },

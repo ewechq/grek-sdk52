@@ -2,9 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Colors, TextStyles } from '@/theme';
-import Btn  from '@/components/ui/btns/Btn';
+import Btn from '@/components/ui/btns/Btn';
 
-const SuccessScreen = () => {
+export const SuccessWidget = () => {
   const router = useRouter();
 
   const handleBackPress = () => {
@@ -13,19 +13,18 @@ const SuccessScreen = () => {
 
   return (
     <View style={styles.container}>
-    <Image source={require('@/assets/images/grek_vesna.webp')} style={styles.image} />
-    <View style={styles.containerText}>
-      
-      <Text style={styles.title}>Билеты летят к вам на почту! 🦖🚀</Text>
-      <Text style={styles.message}>А Грек уже ждет на входе! Добро пожаловать в мир веселья и счастья!  </Text>
-      <View style={styles.buttonContainer}>
-        <Btn 
-          title="Назад"
-          onPress={handleBackPress}
-          bgColor={Colors.pink}
-        />
+      <Image source={require('@/assets/images/grek_vesna.webp')} style={styles.image} />
+      <View style={styles.containerText}>
+        <Text style={styles.title}>Билеты летят к вам на почту! 🦖🚀</Text>
+        <Text style={styles.message}>А Грек уже ждет на входе! Добро пожаловать в мир веселья и счастья!</Text>
+        <View style={styles.buttonContainer}>
+          <Btn 
+            title="Назад"
+            onPress={handleBackPress}
+            bgColor={Colors.pink}
+          />
+        </View>
       </View>
-    </View>
     </View>
   );
 };
@@ -38,7 +37,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   containerText: {
-    
     alignItems: 'center',
     backgroundColor: Colors.white,
     paddingHorizontal: 24,
@@ -58,11 +56,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: '100%',
   },
-  image:{
+  image: {
     width: 350,
-    height:350,
+    height: 350,
     marginBottom: 16,
   }
-});
-
-export default SuccessScreen; 
+}); 

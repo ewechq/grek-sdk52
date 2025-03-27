@@ -47,7 +47,7 @@ export const PriceCalculation: React.FC<PriceCalculationProps> = ({
   if (calculations.isEmpty) {
     return (
       <View style={styles.container}>
-        <Text style={styles.emptyText}>Вы пока не указали кол-во билетов <Text style={{fontSize: 16}}>👆🏻</Text></Text>
+        <Text style={styles.emptyText}>Вы пока не указали кол-во билетов <Text style={styles.emoji}>👆🏻</Text></Text>
       </View>
     );
   }
@@ -125,4 +125,7 @@ const styles = StyleSheet.create({
     color: Colors.black,
     lineHeight: 18,
   },
+  emoji: {
+    ...TextStyles.h2,
+  }
 }); 

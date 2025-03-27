@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, ImageSourcePropType, TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
-import { Colors} from "@/theme";
+import { Colors, TextStyles } from "@/theme";
 import { useRouter } from "expo-router";
-import { FontStyles } from '@/theme/fonts';
 
 export interface ChildComponentProps {
   id: number;
@@ -81,7 +80,7 @@ const styles = StyleSheet.create({
   textHeader: {
     paddingTop: 8,
     paddingBottom: 2,
-    ...FontStyles.h3,
+    ...TextStyles.h3,
     color: Colors.black
   },
   infoContainer: {
@@ -92,12 +91,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   timeText: {
-    ...FontStyles.h3,
+    ...TextStyles.h3,
     paddingVertical: 4,
     color: Colors.grayText,
   },
   priceText: {
-    ...FontStyles.h3,
+    ...TextStyles.h3,
     paddingVertical: 4,
     paddingLeft: 16,
     color: Colors.grayText,
@@ -109,7 +108,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderTopRightRadius: 25,
     borderBottomLeftRadius: 25,
-    ...FontStyles.h3,
+    ...TextStyles.h3,
     width: 40,
     height: 40,
     color: Colors.grayText,

@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
   unit: {
     ...TextStyles.h2,
     color: Colors.black,
-    fontSize: 14,
   },
 });
 

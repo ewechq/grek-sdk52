@@ -4,15 +4,7 @@ import { StyleSheet } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from '@/theme';
 import TabBar from '@/components/ui/layout/TabBar';
-import { Ionicons } from '@expo/vector-icons';
 
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof Ionicons>["name"];
-  size?: number;
-  }) {
-  return <Ionicons size={props.size || 24} name={props.name} color={Colors.white} />;
-  }
-  
 export default function TabLayout() {
   return (
     <SafeAreaView edges={["top"]} style={styles.safeArea}>
@@ -25,37 +17,19 @@ export default function TabLayout() {
         <Tabs.Screen
           name="news"
           options={{
-            title: 'Новости',
-            tabBarIcon: (props) => (
-              <TabBarIcon 
-                {...props} 
-                name={props.focused ? "home" : "home-outline"} 
-              />
-            )
+            title: 'Новости'
           }}
         />
         <Tabs.Screen
           name="index"
           options={{
-            title: 'Главная',
-            tabBarIcon: (props) => (
-              <TabBarIcon 
-                {...props} 
-                name={props.focused ? "add-circle" : "add-circle-outline"} 
-              />
-            )
+            title: 'Главная'
           }}
         />
         <Tabs.Screen
           name="mc"
           options={{
-            title: 'MC',
-            tabBarIcon: (props) => (
-              <TabBarIcon 
-                {...props} 
-                name={props.focused ? "balloon" : "balloon-outline"} 
-              />
-            )
+            title: 'MC'
           }}
         />
       </Tabs>

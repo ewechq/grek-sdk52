@@ -1,42 +1,19 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Colors, TextStyles } from '@/theme';
 import Btn from '@/components/ui/btns/Btn';
+import { usePaymentProcessing } from '@/hooks/buyticket/usePaymentProcessing';
 
-const PaymentProcessing = () => {
-  const router = useRouter();
-  const { bankName, paymentId } = useLocalSearchParams<{ bankName: string; paymentId: string }>();
+interface PaymentProcessingWidgetProps {
+  bankName?: string;
+  paymentId?: string;
+}
 
-  useEffect(() => {
-    // Здесь можно добавить логику проверки статуса платежа
-    // Например, периодический опрос API для проверки статуса
-    const checkPaymentStatus = async () => {
-      try {
-        const response = await fetch(`https://dev.api.grekland.ru/api/ticket/payment/status/${paymentId}`);
-        const result = await response.json();
-
-        if (result.status === 'success') {
-          router.replace('/success');
-        } else if (result.status === 'failed') {
-          router.replace('/failure');
-        }
-        // Если статус pending, продолжаем ожидание
-      } catch (error) {
-        console.error('Ошибка при проверке статуса платежа:', error);
-      }
-    };
-
-    // Запускаем проверку каждые 5 секунд
-    const interval = setInterval(checkPaymentStatus, 5000);
-
-    // Очищаем интервал при размонтировании компонента
-    return () => clearInterval(interval);
-  }, [paymentId]);
-
-  const handleCancel = () => {
-    router.replace('/(buyticket)');
-  };
+export const PaymentProcessingWidget: React.FC<PaymentProcessingWidgetProps> = ({ 
+  bankName = 'банка',
+  paymentId 
+}) => {
+  const { handleCancel } = usePaymentProcessing(paymentId);
 
   return (
     <View style={styles.container}>
@@ -100,6 +77,4 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 20
   }
-});
-
-export default PaymentProcessing; 
+}); 

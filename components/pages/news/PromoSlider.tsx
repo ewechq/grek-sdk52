@@ -41,7 +41,11 @@ const PromoSlider: React.FC<PromoSliderProps> = React.memo(({ news, parentScroll
   const autoplayTimerRef = useRef<NodeJS.Timeout>();
   
   const { originalNews, limitedNews, startIndex, totalLength } = useMemo(() => {
-    const original = news.slice(0, MAX_SLIDES).map(item => ({
+    // Ограничиваем максимальное количество слайдов
+    const itemsToUse = news.slice(0, MAX_SLIDES);
+
+    // Добавляем уникальные идентификаторы для слайдера
+    const original = itemsToUse.map(item => ({
       ...item,
       uniqueId: `original_${item.id}`,
     }));
@@ -151,7 +155,6 @@ const PromoSlider: React.FC<PromoSliderProps> = React.memo(({ news, parentScroll
     if (parentScrollRef?.current) {
       parentScrollRef.current.setNativeProps({ scrollEnabled: true });
     }
-    // Перезапускаем автоплей после окончания перетаскивания
     startAutoplay();
   }, [parentScrollRef, startAutoplay]);
 
