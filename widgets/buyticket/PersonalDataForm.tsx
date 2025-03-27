@@ -69,6 +69,7 @@ interface PersonalDataFormProps {
   guestCounts: {
     onetofour: number;
     fivetosixteen: number;
+    attendant: number;
   };
   setGuestCounts: (counts: any) => void;
   onNameValidityChange?: (isValid: boolean) => void;
@@ -109,25 +110,33 @@ export const PersonalDataForm = ({
         onValidityChange={onEmailValidityChange}
       />
 
-      <View style={styles.counterSection}>
-        <Text style={styles.sectionTitle}>Количество билетов:</Text>           
-        <View style={styles.countersContainer}>
-          <View style={styles.counterRow}>
-            <Counter
-              label="От 1 до 4 лет:"
-              value={guestCounts.onetofour}
-              onIncrease={() => setGuestCounts({...guestCounts, onetofour: guestCounts.onetofour + 1})}
-              onDecrease={() => setGuestCounts({...guestCounts, onetofour: Math.max(0, guestCounts.onetofour - 1)})}
-            />
-          </View>
-          <View style={styles.counterRow}>
-            <Counter
-              label="От 5 до 16 лет:"
-              value={guestCounts.fivetosixteen}
-              onIncrease={() => setGuestCounts({...guestCounts, fivetosixteen: guestCounts.fivetosixteen + 1})}
-              onDecrease={() => setGuestCounts({...guestCounts, fivetosixteen: Math.max(0, guestCounts.fivetosixteen - 1)})}
-            />
-          </View>
+      <Text style={[styles.sectionTitle, {marginTop: normalize(40),}]}>Количество билетов:</Text>           
+      <View style={styles.countersContainer}>
+      <Text style={styles.attendantText}>Один сопровождающий взрослый - бесплатно. Билеты на последующих можете приобрести ниже.</Text>
+        <View style={styles.counterRow}>
+          <Counter
+            label="От 1 до 4 лет:"
+            value={guestCounts.onetofour}
+            onIncrease={() => setGuestCounts({...guestCounts, onetofour: guestCounts.onetofour + 1})}
+            onDecrease={() => setGuestCounts({...guestCounts, onetofour: Math.max(0, guestCounts.onetofour - 1)})}
+          />
+        </View>
+        <View style={styles.counterRow}>
+          <Counter
+            label="От 5 до 16 лет:"
+            value={guestCounts.fivetosixteen}
+            onIncrease={() => setGuestCounts({...guestCounts, fivetosixteen: guestCounts.fivetosixteen + 1})}
+            onDecrease={() => setGuestCounts({...guestCounts, fivetosixteen: Math.max(0, guestCounts.fivetosixteen - 1)})}
+          />
+        </View>
+        <View style={styles.counterRow}>
+          <Counter
+            label="Взрослые:"
+            value={guestCounts.attendant}
+            onIncrease={() => setGuestCounts({...guestCounts, attendant: guestCounts.attendant + 1})}
+            onDecrease={() => setGuestCounts({...guestCounts, attendant: Math.max(0, guestCounts.attendant - 1)})}
+          />
+          
         </View>
       </View>
     </View>
@@ -143,6 +152,7 @@ const styles = StyleSheet.create({
     ...TextStyles.h2,
     color: Colors.black,
     marginBottom: normalize(8),
+    
   },
   input: {
     height: 50,
@@ -170,5 +180,10 @@ const styles = StyleSheet.create({
   counterRow: {
     width: '100%',
     paddingHorizontal: normalize(16)
+  },
+  attendantText: {
+    ...TextStyles.textDescription,
+    color: Colors.grayText,
+    marginBottom: normalize(16),
   }
 }); 

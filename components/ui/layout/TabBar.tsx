@@ -19,7 +19,7 @@ interface TabBarProps {
 export default function TabBar({ state, descriptors, navigation }: TabBarProps) {
   const getIcon = (index: number, isFocused: boolean) => {
     const color = isFocused ? Colors.white : Colors.grayElements;
-    const size = 28;
+    const size = 30;
 
     switch (index) {
       case 0:
@@ -27,7 +27,7 @@ export default function TabBar({ state, descriptors, navigation }: TabBarProps) 
       case 1:
         return <CenterIcon color={Colors.white} size={size} />;
       case 2:
-        return <RightIcon color={color} size={size} />;
+        return <RightIcon color={color} size={size-1} />;
       default:
         return null;
     }

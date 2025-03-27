@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 interface TicketPrice {
   "1-4": number;
   "5-16": number;
+  "attendant": number;
 }
 
 export const useTicketPrices = () => {

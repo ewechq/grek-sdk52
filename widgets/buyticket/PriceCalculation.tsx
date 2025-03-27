@@ -5,21 +5,24 @@ import { Colors, TextStyles } from '@/theme';
 interface PriceCalculationProps {
   youngChildrenCount: number;
   olderChildrenCount: number;
+  attendantCount: number;
   prices: {
     "1-4": number;
     "5-16": number;
+    "attendant": number;
   } | null;
 }
 
 export const PriceCalculation: React.FC<PriceCalculationProps> = ({
   youngChildrenCount,
   olderChildrenCount,
+  attendantCount,
   prices
 }) => {
   const calculations = useMemo(() => {
     if (!prices) return null;
 
-    const totalTickets = youngChildrenCount + olderChildrenCount;
+    const totalTickets = youngChildrenCount + olderChildrenCount + attendantCount;
     
     if (totalTickets === 0) {
       return { isEmpty: true };
@@ -27,15 +30,17 @@ export const PriceCalculation: React.FC<PriceCalculationProps> = ({
 
     const youngChildrenTotal = youngChildrenCount * prices["1-4"];
     const olderChildrenTotal = olderChildrenCount * prices["5-16"];
-    const total = youngChildrenTotal + olderChildrenTotal;
+    const attendantTotal = attendantCount * (prices["attendant"] || 0);
+    const total = youngChildrenTotal + olderChildrenTotal + attendantTotal;
 
     return {
       isEmpty: false,
       youngChildrenTotal,
       olderChildrenTotal,
+      attendantTotal,
       total
     };
-  }, [youngChildrenCount, olderChildrenCount, prices]);
+  }, [youngChildrenCount, olderChildrenCount, attendantCount, prices]);
 
   if (!prices || !calculations) return null;
 
@@ -61,9 +66,18 @@ export const PriceCalculation: React.FC<PriceCalculationProps> = ({
       {olderChildrenCount > 0 && (
         <View style={styles.row}>
           <Text style={styles.text}>
-            Дети 5-16 лет ({olderChildrenCount} x {prices["5-16"]}Р)
+            Дети 5-16 лет ({olderChildrenCount} x {prices["5-16"]}₽)
           </Text>
           <Text style={styles.price}>{calculations.olderChildrenTotal} РУБ.</Text>
+        </View>
+      )}
+
+      {attendantCount > 0 && (
+        <View style={styles.row}>
+          <Text style={styles.text}>
+            Взрослые ({attendantCount} x {prices["attendant"] || 0}₽)
+          </Text>
+          <Text style={styles.price}>{calculations.attendantTotal} РУБ.</Text>
         </View>
       )}
 

@@ -16,7 +16,8 @@ export const EmptyState = ({ message }: EmptyStateProps) => {
 const styles = StyleSheet.create({
   centered: {
     flex: 1,
-    justifyContent: 'center',
+    paddingTop: 100,
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
   message: {

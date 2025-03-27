@@ -5,7 +5,7 @@ import Header from '@/components/ui/layout/Header';
 import { Alert } from '@/components/ui/modals/Alert';
 import { DiscountsModal } from '@/components/ui/modals/DiscountsModal';
 import { useTicketPrices } from '@/hooks/useTicketPrices';
-import { PriceCalculation } from '@/widgets/tickets/PriceCalculation';
+import { PriceCalculation } from '@/widgets/buyticket/PriceCalculation';
 import { normalize } from '@/utils/responsive';
 import { DateWarning } from '@/components/pages/buyticket/DateWarning';
 import { PersonalDataForm } from '@/widgets/buyticket/PersonalDataForm';
@@ -85,6 +85,7 @@ const BuyTicket = () => {
         <PriceCalculation 
           youngChildrenCount={guestCounts.onetofour}
           olderChildrenCount={guestCounts.fivetosixteen}
+          attendantCount={guestCounts.attendant}
           prices={prices}
         />
       </View>

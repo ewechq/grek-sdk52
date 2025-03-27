@@ -8,7 +8,7 @@ import { normalize } from '@/utils/responsive';
 import { Alert } from '@/components/ui/modals/Alert';
 
 const CODE_LENGTH = 6;
-const RESEND_TIMEOUT = 60; // 60 секунд для повторной отправки
+const RESEND_TIMEOUT = 60; 
 
 const ConfirmNumberPage = () => {
   const params = useLocalSearchParams();
@@ -47,31 +47,27 @@ const ConfirmNumberPage = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [signatureId]); 
 
-  // Эффект для обновления URL при изменении signatureId
   useEffect(() => {
     if (signatureId !== Number(params.signatureId)) {
       router.setParams({ signatureId: String(signatureId) });
     }
-  }, [signatureId]);
+  }, [signatureId, params.signatureId]);
 
   const handleCodeChange = (text: string, index: number) => {
-    // Убеждаемся, что вводятся только цифры
     if (!/^\d*$/.test(text)) return;
 
     const newCode = [...code];
     newCode[index] = text;
     setCode(newCode);
 
-    // Если введена цифра, переходим к следующему полю
     if (text.length === 1 && index < CODE_LENGTH - 1) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
   const handleKeyPress = (event: any, index: number) => {
-    // При нажатии backspace с пустым полем переходим к предыдущему полю
     if (event.nativeEvent.key === 'Backspace' && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -107,9 +103,7 @@ const ConfirmNumberPage = () => {
         id: signatureId,
         code: Number(smsCode)
       };
-      console.log('Отправляем данные для проверки:', checkData);
 
-      // Проверяем код подтверждения
       const signatureCheckResponse = await fetch('https://dev.api.grekland.ru/api/ticket/signatureCheck', {
         method: 'POST',
         headers: {
@@ -120,10 +114,8 @@ const ConfirmNumberPage = () => {
       });
 
       const signatureCheckResult = await signatureCheckResponse.json();
-      console.log('Ответ проверки кода:', signatureCheckResult);
 
       if (signatureCheckResponse.ok && signatureCheckResult.signature === true) {
-        // Если код подтвержден, создаем заказ
         const orderResponse = await fetch('https://dev.api.grekland.ru/api/ticket/preorder', {
           method: 'POST',
           headers: {
@@ -136,7 +128,6 @@ const ConfirmNumberPage = () => {
         const orderResult = await orderResponse.json();
 
         if (orderResponse.ok && orderResult.link) {
-          // Переходим на страницу оплаты
           router.push({
             pathname: '/(buyticket)/payment',
             params: { url: orderResult.link }
@@ -148,7 +139,7 @@ const ConfirmNumberPage = () => {
         throw new Error(signatureCheckResult.message || 'Неверный код подтверждения');
       }
     } catch (error) {
-      console.error('Ошибка:', error);
+      console.error('Ошибка при обработке запроса:', error);
       showAlert('Ошибка!', error instanceof Error ? error.message : 'Произошла ошибка при обработке запроса');
     } finally {
       setIsLoading(false);
@@ -177,25 +168,18 @@ const ConfirmNumberPage = () => {
 
       const result = await response.json();
 
-      if (response.ok && result.id) {
-        // Обновляем ID подписи и очищаем код
-        setSignatureId(result.id);
+      if (response.ok && result.signature?.id) {
+        setSignatureId(result.signature.id);
         setCode(new Array(CODE_LENGTH).fill(''));
-        showAlert('Успешно!', 'Мы отправили новый код подтверждения на ваш номер телефона', false);
-        setTimer(RESEND_TIMEOUT);
+        showAlert('Успешно!', 'Мы отправили новый код подтверждения', false);
         setCanResend(false);
+        setTimer(RESEND_TIMEOUT);
       } else {
         throw new Error(result.message || 'Ошибка при отправке кода');
       }
     } catch (error) {
       console.error('Ошибка при повторной отправке кода:', error);
-      if (error instanceof Error && error.message === 'Сообщение с кодом отправлено.') {
-        showAlert('Успешно!', 'Мы отправили новый код подтверждения на ваш номер телефона', false);
-        setTimer(RESEND_TIMEOUT);
-        setCanResend(false);
-      } else {
-        showAlert('Ошибка!', error instanceof Error ? error.message : 'Не удалось отправить код повторно');
-      }
+      showAlert('Ошибка!', error instanceof Error ? error.message : 'Не удалось отправить код повторно');
     }
   };
 

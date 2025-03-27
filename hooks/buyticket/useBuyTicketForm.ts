@@ -10,6 +10,7 @@ interface FormData {
 interface GuestCounts {
   onetofour: number;
   fivetosixteen: number;
+  attendant: number;
 }
 
 interface Agreements {
@@ -37,6 +38,7 @@ export const useBuyTicketForm = () => {
   const [guestCounts, setGuestCounts] = useState<GuestCounts>({
     onetofour: 0,
     fivetosixteen: 0,
+    attendant: 0
   });
 
   const [agreements, setAgreements] = useState<Agreements>({
@@ -87,7 +89,8 @@ export const useBuyTicketForm = () => {
         "name": formData.name,
         "phone": "+" + formData.phone.replace(/\D/g, ''),
         "email": formData.email,
-        "childage": [] as string[]
+        "childage": [] as string[],
+        "attendant": guestCounts.attendant.toString()
       };
 
       if (guestCounts.onetofour > 0) {

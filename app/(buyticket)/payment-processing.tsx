@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { Colors } from '@/theme';
+import { Colors, TextStyles } from '@/theme';
 import Btn from '@/components/ui/btns/Btn';
 
 const PaymentProcessing = () => {
@@ -47,16 +47,16 @@ const PaymentProcessing = () => {
       </Text>
       
       <Text style={styles.description}>
-        Мы ждем подтверждения оплаты от {bankName || 'банка'}. Пожалуйста, завершите операцию в приложении банка.
+        Мы ждем подтверждения оплаты от банка. Пожалуйста, завершите операцию в приложении банка.
       </Text>
       
       <Text style={styles.subtitle}>
-        Это окно закроется автоматически после получения подтверждения
+        Билеты придут к вам на почту в течении ~2 минут по окончанию платежа.
       </Text>
 
       <View style={styles.buttonContainer}>
         <Btn
-          title="Отменить и вернуться"
+          title="Вернуться"
           onPress={handleCancel}
           width="full"
           bgColor={Colors.grayElements}
@@ -79,20 +79,19 @@ const styles = StyleSheet.create({
     marginBottom: 24
   },
   title: {
-    fontSize: 24,
-    fontWeight: '600',
+    ...TextStyles.h2,
     color: Colors.black,
     textAlign: 'center',
     marginBottom: 16
   },
   description: {
-    fontSize: 16,
+    ...TextStyles.text,
     color: Colors.grayText,
     textAlign: 'center',
     marginBottom: 24
   },
   subtitle: {
-    fontSize: 14,
+    ...TextStyles.text,
     color: Colors.grayText,
     textAlign: 'center',
     marginBottom: 32

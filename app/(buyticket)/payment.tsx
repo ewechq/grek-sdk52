@@ -102,72 +102,8 @@ const PaymentScreen = () => {
     return match ? match[1] : '';
   };
 
-  // Функция для обработки URL схем банковских приложений
-  const handleBankAppUrl = async (url: string) => {
-    try {
-      console.log('Обработка URL:', url);
-
-      // Если это URL банковского приложения
-      if (url.startsWith('bank') || url.startsWith('sbp://') || 
-          Object.values(BANK_SCHEMES).some(bank => url.startsWith(`${bank.scheme}://`))) {
-        
-        // Извлекаем схему банковского приложения
-        const urlParts = url.split('://');
-        const bankScheme = urlParts[0];
-        const bankName = getBankNameByScheme(bankScheme);
-        const paymentId = extractPaymentId(url);
-        
-        if (Platform.OS === 'android') {
-          // На Android используем IntentLauncher
-          const opened = await openBankAppWithIntent(url, bankScheme);
-          if (opened) {
-            // Переходим на экран обработки платежа
-            router.push({
-              pathname: '/(buyticket)/payment-processing',
-              params: { bankName, paymentId }
-            });
-          } else {
-            Alert.alert(
-              'Ошибка',
-              'Не удалось открыть банковское приложение',
-              [{ text: 'OK' }]
-            );
-          }
-        } else {
-          // На iOS проверяем возможность открытия
-          const canOpen = await Linking.canOpenURL(url);
-          if (canOpen) {
-            await Linking.openURL(url);
-            // Переходим на экран обработки платежа
-            router.push({
-              pathname: '/(buyticket)/payment-processing',
-              params: { bankName, paymentId }
-            });
-          } else {
-            Alert.alert(
-              'Внимание',
-              'Для iOS некоторые банки требуют открытия ссылки из браузера. Пожалуйста, откройте ссылку в браузере.',
-              [{ text: 'OK' }]
-            );
-          }
-        }
-      } else {
-        // Если это обычный URL или URL СБП, загружаем его в WebView
-        setCurrentUrl(url);
-      }
-    } catch (error) {
-      console.error('Общая ошибка при обработке URL:', error);
-      Alert.alert(
-        'Ошибка',
-        'Произошла ошибка при обработке платежа',
-        [{ text: 'OK' }]
-      );
-    }
-  };
-
   const handleNavigationStateChange = (navState: WebViewNavigation) => {
     const url = navState.url;
-    console.log('Изменение состояния навигации:', url);
 
     // Проверяем URL на специальные схемы банковских приложений
     if (
@@ -189,6 +125,78 @@ const PaymentScreen = () => {
     if (url.includes('fail') || url.includes('payment_fail')) {
       router.replace('/failure');
       return;
+    }
+  };
+
+  const handleBankAppUrl = async (url: string) => {
+    try {
+      // Если это URL банковского приложения
+      if (url.startsWith('bank') || url.startsWith('sbp://') || 
+          Object.values(BANK_SCHEMES).some(bank => url.startsWith(`${bank.scheme}://`))) {
+        
+        // Извлекаем схему банковского приложения
+        const urlParts = url.split('://');
+        const bankScheme = urlParts[0];
+        const bankName = getBankNameByScheme(bankScheme);
+        const paymentId = extractPaymentId(url);
+        
+        if (Platform.OS === 'android') {
+          // На Android используем IntentLauncher
+          const opened = await openBankAppWithIntent(url, bankScheme);
+          if (opened) {
+            router.push({
+              pathname: '/(buyticket)/payment-processing',
+              params: { bankName, paymentId }
+            });
+          } else {
+            Alert.alert(
+              'Ошибка',
+              'Не удалось открыть банковское приложение',
+              [{ text: 'OK' }]
+            );
+          }
+        } else {
+          const canOpen = await Linking.canOpenURL(url);
+          if (canOpen) {
+            await Linking.openURL(url);
+            router.push({
+              pathname: '/(buyticket)/payment-processing',
+              params: { bankName, paymentId }
+            });
+          } else {
+            Alert.alert(
+              'Открытие приложения банка',
+              'Для продолжения оплаты, нажмите "Открыть в браузере"',
+              [
+                { 
+                  text: 'Открыть в браузере', 
+                  onPress: async () => {
+                    const browserUrl = url.replace(/^bank\d+:\/\//, 'https://');
+                    await Linking.openURL(browserUrl);
+                    router.push({
+                      pathname: '/(buyticket)/payment-processing',
+                      params: { bankName, paymentId }
+                    });
+                  }
+                },
+                { 
+                  text: 'Отмена',
+                  style: 'cancel'
+                }
+              ]
+            );
+          }
+        }
+      } else {
+        setCurrentUrl(url);
+      }
+    } catch (error) {
+      console.error('Ошибка при обработке платежа:', error);
+      Alert.alert(
+        'Ошибка',
+        'Произошла ошибка при обработке платежа',
+        [{ text: 'OK' }]
+      );
     }
   };
 

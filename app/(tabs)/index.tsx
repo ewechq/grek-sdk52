@@ -227,10 +227,10 @@ const styles = StyleSheet.create({
     marginBottom: normalize(8),
   },
   descriptionText: {
-    ...TextStyles.text,
+    ...TextStyles.textDescription,
     textAlign: 'center',
     marginBottom: normalize(4),
-    color: Colors.black,
+    color: Colors.grayText,
   },
 
   // Price card styles
@@ -331,8 +331,8 @@ const styles = StyleSheet.create({
     marginHorizontal: normalize(24)
   },
   locationTimeText: {
-    ...TextStyles.text,
-    color: Colors.black
+    ...TextStyles.textDescription,
+    color: Colors.grayText
   },
 
   // Fallback styles

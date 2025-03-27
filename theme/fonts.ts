@@ -14,12 +14,12 @@ export const Fonts = {
 // Базовые размеры шрифтов (без нормализации)
 const BASE_FONT_SIZES = {
   h1: 22,
-  h2: 14,
+  h2: 16,
   h3: 12,
   h4: 10,
   h3Number: 24,
-  text: 12,
-  description: 10
+  text: 15,
+  description: 12
 };
 
 // Нормализованные размеры шрифтов
