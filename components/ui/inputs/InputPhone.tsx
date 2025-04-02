@@ -67,6 +67,8 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   const handleChangeText = (text: string) => {
     const formatted = formatPhoneNumber(text);
     setValue(formatted);
+    
+    // Отправляем форматированный номер вместо только цифр
     onPhoneChange(formatted);
     
     if (isTouched) {

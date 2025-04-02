@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native'
 import React from 'react'
 import { Colors, TextStyles } from "@/theme"
 import { normalize } from '@/utils/responsive';
@@ -12,6 +12,7 @@ interface BtnComponentProps {
   width?: 'default' | 'full'
   useSystemFont?: boolean
   disabled?: boolean
+  style?: ViewStyle
 }
 
 const Btn: React.FC<BtnComponentProps> = ({ 
@@ -21,7 +22,8 @@ const Btn: React.FC<BtnComponentProps> = ({
   textColor = Colors.white,
   width = 'default',
   useSystemFont = false,
-  disabled = false
+  disabled = false,
+  style
 }) => {
   const [styles, isSmallLayout] = useStyles();
 
@@ -31,7 +33,8 @@ const Btn: React.FC<BtnComponentProps> = ({
         styles.button, 
         { backgroundColor: bgColor },
         width === 'full' && styles.fullWidth,
-        disabled && styles.disabled
+        disabled && styles.disabled,
+        style
       ]} 
       onPress={onPress}
       disabled={disabled}

@@ -10,7 +10,7 @@ export const usePaymentProcessing = (paymentId: string | undefined) => {
     // Логика проверки статуса платежа
     const checkPaymentStatus = async () => {
       try {
-        const response = await fetch(`https://dev.api.grekland.ru/api/ticket/payment/status/${paymentId}`);
+        const response = await fetch(`https://api.grekland.ru/api/ticket/payment/status/${paymentId}`);
         const result = await response.json();
 
         if (result.status === 'success') {

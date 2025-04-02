@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "grek-one",
-    "slug": "grek-one",
+    "name": "grekApp",
+    "slug": "grekApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "grek-one",
+    "scheme": "grekApp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -18,7 +18,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.grek.one",
+      "bundleIdentifier": "com.grekApp",
       "infoPlist": {
         "LSApplicationQueriesSchemes": [
           "bank100000000008",
@@ -29,8 +29,18 @@
           "bank100000000001",
           "bank100000000005",
           "alfabank",
+          "bank",
+          "bank100000000008",
+          "bank100000000004",
+          "bank100000000111",
+          "bank100000000015",
+          "bank100000000007",
+          "bank100000000001",
+          "bank100000000005",
+          "alfabank",
           "bank"
-        ]
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -38,7 +48,7 @@
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.grek.one",
+      "package": "com.grekApp",
       "permissions": [
         "INTERNET",
         "QUERY_ALL_PACKAGES"
@@ -54,6 +64,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "d7664c7e-f5f1-4a46-9c3a-229f59e8039c"
+      }
+    },
+    "owner": "ewec"
   }
 }

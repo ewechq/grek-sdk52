@@ -42,6 +42,25 @@ const MKDetail = () => {
         const response = await fetch("https://api.grekland.ru/api/events");
         const data = await response.json();
         const item = data.find((item: Event) => item.id === Number(id));
+        
+        // Добавляем лог для отладки
+        if (item) {
+          console.log(`Найдено событие: ${item.id} - ${item.title}, цена: ${item.price}`);
+        } else {
+          console.log(`Событие с ID ${id} не найдено`);
+          // Проверяем, не является ли это расширенным событием
+          const expandedId = Number(id) / 10000;
+          if (expandedId > 0) {
+            const originalItem = data.find((item: Event) => item.id === Math.floor(expandedId));
+            if (originalItem) {
+              console.log(`Найдено исходное событие: ${originalItem.id} - ${originalItem.title}`);
+              setEvent(originalItem);
+              setIsLoading(false);
+              return;
+            }
+          }
+        }
+        
         setEvent(item);
         setIsLoading(false);
       } catch (error) {
@@ -71,6 +90,11 @@ const MKDetail = () => {
     );
   }
 
+  // Определяем текст для кнопки в зависимости от цены
+  const priceText = event.price && parseFloat(event.price) > 0 
+    ? `${Number(event.price).toFixed(0)} руб/${event.price_type || 'чел'}`
+    : "БЕСПЛАТНО";
+
   return (
     <ScrollView style={styles.container}>
       <Header title="Подробнее" marginTop={32}/>
@@ -82,7 +106,7 @@ const MKDetail = () => {
             contentFit="cover"
           />
           <View style={styles.ageLimitWrapper}>
-            <Text style={styles.ageLimit}>3+</Text>
+            <Text style={styles.ageLimit}>{event.age_limit}+</Text>
           </View>
         </View>
         <View style={styles.contentContainer}>
@@ -92,7 +116,7 @@ const MKDetail = () => {
             <Text style={styles.duration}>30 минут</Text>
             
           </View>
-          <Btn title={`${Number(event.price).toFixed(0)} руб/чел`}  width="full" onPress={() => {}}/>
+          <Btn title={priceText} width="full" onPress={() => {}}/>
           
           {event.description && (
             <Text style={styles.description}>

@@ -77,13 +77,15 @@ const styles = StyleSheet.create({
   },
   codeInput: {
     width: 45,
-    height: 56,
+    height: 60,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: Colors.grayElements,
     backgroundColor: Colors.white,
     textAlign: 'center',
-    ...TextStyles.h2,
+    ...TextStyles.h1,
+    textAlignVertical: 'center',
+    lineHeight: 26,
     color: Colors.black,
   },
   codeInputFilled: {

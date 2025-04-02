@@ -21,7 +21,13 @@ export const useVerificationCode = ({
   const [alertTitle, setAlertTitle] = useState('Ошибка!');
   const [timer, setTimer] = useState(resendTimeout);
   const [canResend, setCanResend] = useState(false);
-  const [signatureId, setSignatureId] = useState(initialSignatureId);
+  const [signatureId, setSignatureId] = useState<number>(() => {
+    const id = Number(initialSignatureId);
+    if (isNaN(id)) {
+      throw new Error('Некорректный ID подписи');
+    }
+    return id;
+  });
 
   // Эффект для управления таймером
   useEffect(() => {
@@ -54,7 +60,7 @@ export const useVerificationCode = ({
   };
 
   const handleSubmit = async () => {
-    if (!signatureId || isNaN(signatureId)) {
+    if (!signatureId) {
       showAlert('Ошибка!', 'Некорректный ID подписи');
       return;
     }
@@ -78,7 +84,12 @@ export const useVerificationCode = ({
         code: Number(smsCode)
       };
 
-      const signatureCheckResponse = await fetch('https://dev.api.grekland.ru/api/ticket/signatureCheck', {
+      console.log('Отправка запроса на проверку SMS:', {
+        url: 'https://api.grekland.ru/api/ticket/signatureCheck',
+        data: checkData
+      });
+
+      const signatureCheckResponse = await fetch('https://api.grekland.ru/api/ticket/signatureCheck', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -88,18 +99,30 @@ export const useVerificationCode = ({
       });
 
       const signatureCheckResult = await signatureCheckResponse.json();
+      console.log('Ответ от проверки SMS:', signatureCheckResult);
 
       if (signatureCheckResponse.ok && signatureCheckResult.signature === true) {
-        const orderResponse = await fetch('https://dev.api.grekland.ru/api/ticket/preorder', {
+        const orderData = {
+          ...ticketData,
+          smsSignatureId: signatureId
+        };
+
+        console.log('Отправка запроса на создание заказа:', {
+          url: 'https://api.grekland.ru/api/ticket/preorder',
+          data: orderData
+        });
+
+        const orderResponse = await fetch('https://api.grekland.ru/api/ticket/preorder', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           },
-          body: JSON.stringify(ticketData)
+          body: JSON.stringify(orderData)
         });
 
         const orderResult = await orderResponse.json();
+        console.log('Ответ от создания заказа:', orderResult);
 
         if (orderResponse.ok && orderResult.link) {
           router.push({
@@ -129,21 +152,33 @@ export const useVerificationCode = ({
     }
 
     try {
-      const response = await fetch('https://dev.api.grekland.ru/api/ticket/signature', {
+      const requestData = {
+        phone: ticketData.phone
+      };
+
+      console.log('Отправка запроса на повторную отправку SMS:', {
+        url: 'https://api.grekland.ru/api/ticket/signature',
+        data: requestData
+      });
+
+      const response = await fetch('https://api.grekland.ru/api/ticket/signature', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({
-          phone: ticketData.phone
-        })
+        body: JSON.stringify(requestData)
       });
 
       const result = await response.json();
+      console.log('Ответ от повторной отправки SMS:', result);
 
       if (response.ok && result.signature?.id) {
-        setSignatureId(result.signature.id);
+        const newSignatureId = Number(result.signature.id);
+        if (isNaN(newSignatureId)) {
+          throw new Error('Некорректный ID подписи');
+        }
+        setSignatureId(newSignatureId);
         setCode(new Array(codeLength).fill(''));
         showAlert('Успешно!', 'Мы отправили новый код подтверждения', false);
         setCanResend(false);

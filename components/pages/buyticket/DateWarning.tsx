@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   text: {
-    ...TextStyles.h3,
+    ...TextStyles.text,
     color: Colors.black,
     paddingRight: normalize(16)
   }

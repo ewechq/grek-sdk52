@@ -1,15 +1,37 @@
+/**
+ * Виджет карточки с основной информацией о билетах
+ * 
+ * Функциональность:
+ * 1. Отображение цен на билеты по дням недели
+ * 2. Отображение информации о месте и времени
+ * 3. Визуальное оформление с декоративными элементами
+ * 4. Адаптивный дизайн
+ * 
+ * Особенности:
+ * - Мемоизация компонентов для оптимизации
+ * - SVG-декоративные элементы
+ * - Переиспользуемые компоненты
+ * - Адаптивные отступы через normalize
+ */
+
 import { StyleSheet, Text, View, Image } from 'react-native'
 import React, { useMemo } from 'react'
 import { Colors, TextStyles } from '@/theme/index'
 import Svg, { Path } from 'react-native-svg'
 import { normalize } from '@/utils/responsive'
 
+/**
+ * Пропсы для карточки с ценой
+ */
 interface PriceCardProps {
-  age: string;
-  price: string;
+  age: string;    // Возрастная категория
+  price: string;  // Стоимость билета
 }
 
-// Переиспользуемые компоненты для карточек с ценами
+/**
+ * Компонент карточки с ценой
+ * Отображает возрастную категорию и стоимость
+ */
 const PriceCard = ({ age, price }: PriceCardProps) => (
   <View style={styles.priceCard}>
     <View style={styles.ageCardColumn}>
@@ -23,11 +45,17 @@ const PriceCard = ({ age, price }: PriceCardProps) => (
   </View>
 );
 
+/**
+ * Пропсы для заголовка секции
+ */
 interface SectionHeaderProps {
-  title: string;
+  title: string;  // Текст заголовка
 }
 
-// Компонент для заголовка секции
+/**
+ * Компонент заголовка секции
+ * Включает декоративные элементы по бокам
+ */
 const SectionHeader = ({ title }: SectionHeaderProps) => (
   <View style={styles.sectionHeader}>
     <View style={styles.sectionHeaderDecorLeft} />
@@ -36,11 +64,18 @@ const SectionHeader = ({ title }: SectionHeaderProps) => (
   </View>
 );
 
-// Выносим компоненты за пределы основного компонента
+/**
+ * Компонент разделителя
+ * Мемоизирован для оптимизации
+ */
 const Divider = React.memo(() => (
   <View style={styles.divider} />
 ));
 
+/**
+ * Компонент верхнего декоративного края
+ * SVG-элемент с волнообразным краем
+ */
 const TopEdge = React.memo(() => (
   <View style={styles.topSvgContainer}>
     <Svg 
@@ -55,6 +90,10 @@ const TopEdge = React.memo(() => (
   </View>
 ));
 
+/**
+ * Компонент нижнего декоративного края
+ * SVG-элемент с волнообразным краем
+ */
 const BottomEdge = React.memo(() => (
   <View style={styles.svgContainer}>
     <Svg 
@@ -69,8 +108,11 @@ const BottomEdge = React.memo(() => (
   </View>
 ));
 
+/**
+ * Основной компонент карточки с информацией о билетах
+ */
 export const MainTicketCard = () => {
-  // Мемоизируем компоненты PriceCard
+  // Мемоизируем карточки с ценами для будних дней
   const weekdayPriceCards = useMemo(() => (
     <>
       <PriceCard age="1 - 4 года" price="1 390 РУБ" />
@@ -78,14 +120,19 @@ export const MainTicketCard = () => {
     </>
   ), []);
 
+  // Мемоизируем карточку с ценой для выходных
   const weekendPriceCard = useMemo(() => (
     <PriceCard age="1 - 16 лет" price="2 290 РУБ" />
   ), []);
 
   return (
     <View>
+      {/* Верхний декоративный край */}
       <TopEdge />
+      
+      {/* Основной контент */}
       <View style={styles.mainContent}>
+        {/* Описание билета */}
         <View style={styles.contentDescription}>
           <Text style={styles.sectionTitle}>Билет на весь день</Text>
           <Text style={styles.descriptionText}>
@@ -94,16 +141,19 @@ export const MainTicketCard = () => {
           <Divider />
         </View>
 
+        {/* Секция с ценами на будние дни */}
         <View style={styles.priceSection}>
           <SectionHeader title="Понедельник-пятница" />
           {weekdayPriceCards}
         </View>
 
+        {/* Секция с ценами на выходные */}
         <View style={styles.priceSection}>
           <SectionHeader title="Выходные и праздники" />
           {weekendPriceCard}
         </View>
 
+        {/* Информация о месте и времени */}
         <View>
           <View
             style={{
@@ -120,13 +170,16 @@ export const MainTicketCard = () => {
           </View>
         </View>
       </View>
+      
+      {/* Нижний декоративный край */}
       <BottomEdge />
     </View>
   )
 }
 
+// Стили компонента
 const styles = StyleSheet.create({
-  // Content section styles
+  // Стили основного контента
   mainContent: {
     gap: normalize(24),
     backgroundColor: Colors.white,
@@ -136,7 +189,7 @@ const styles = StyleSheet.create({
     marginHorizontal: normalize(16),
   },
 
-  // Typography styles
+  // Стили типографики
   sectionTitle: {
     ...TextStyles.h2,
     alignSelf: 'center',
@@ -149,7 +202,7 @@ const styles = StyleSheet.create({
     color: Colors.grayText,
   },
 
-  // Price card styles
+  // Стили карточек с ценами
   priceSection: {
     gap: normalize(4)
   },
@@ -170,8 +223,7 @@ const styles = StyleSheet.create({
     gap: normalize(4)
   },
 
-
-  // Section header styles
+  // Стили заголовков секций
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -198,7 +250,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
 
-  // Divider styles
+  // Стили разделителя
   divider: {
     height: 0.5,
     opacity: 0.2,
@@ -208,7 +260,7 @@ const styles = StyleSheet.create({
     marginTop: normalize(16)
   },
 
-  // SVG containers
+  // Стили SVG-контейнеров
   svgContainer: {
     width: '100%',
     height: 40,
@@ -222,6 +274,7 @@ const styles = StyleSheet.create({
     top: 2
   },
 
+  // Стили контейнера с информацией о месте и времени
   locationTimeContainer: {
     gap: normalize(4),
     flexDirection: 'row',

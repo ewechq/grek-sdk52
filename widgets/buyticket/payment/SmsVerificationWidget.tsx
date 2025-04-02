@@ -1,3 +1,19 @@
+/**
+ * Виджет для верификации SMS-кода при оплате
+ * 
+ * Функциональность:
+ * 1. Ввод SMS-кода подтверждения
+ * 2. Отправка кода на сервер
+ * 3. Повторная отправка кода с таймером
+ * 4. Обработка ошибок и уведомлений
+ * 
+ * Особенности:
+ * - Валидация длины кода
+ * - Таймер повторной отправки
+ * - Индикация загрузки
+ * - Адаптивный дизайн
+ */
+
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { Colors, TextStyles } from '@/theme';
@@ -8,9 +24,16 @@ import { SmsCodeInput } from '@/components/pages/buyticket/payment/SmsCodeInput'
 import { ResendTimer } from '@/components/pages/buyticket/payment/ResendTimer';
 import { useVerificationCode } from '@/hooks/buyticket/useVerificationCode';
 
-const CODE_LENGTH = 6;
-const RESEND_TIMEOUT = 60;
+// Константы для конфигурации
+const CODE_LENGTH = 6; // Длина SMS-кода
+const RESEND_TIMEOUT = 60; // Таймаут повторной отправки в секундах
 
+/**
+ * Пропсы для компонента верификации
+ * 
+ * @param signatureId - ID подписи для верификации
+ * @param ticketData - Данные билета
+ */
 interface SmsVerificationWidgetProps {
   signatureId: number;
   ticketData: any;
@@ -20,6 +43,7 @@ export const SmsVerificationWidget: React.FC<SmsVerificationWidgetProps> = ({
   signatureId: initialSignatureId, 
   ticketData 
 }) => {
+  // Использование хука для управления состоянием верификации
   const {
     code,
     isLoading,
@@ -43,17 +67,20 @@ export const SmsVerificationWidget: React.FC<SmsVerificationWidgetProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.content}>
+        {/* Заголовок и описание */}
         <Text style={styles.title}>Введите код из SMS</Text>
         <Text style={styles.description}>
           Мы отправили код подтверждения на ваш номер телефона
         </Text>
 
+        {/* Поле ввода SMS-кода */}
         <SmsCodeInput
           codeLength={CODE_LENGTH}
           code={code}
           onChange={handleCodeChange}
         />
 
+        {/* Кнопка отправки */}
         <View style={{marginBottom: normalize(16)}}>
           <Btn
             title={isLoading ? "Подождите..." : "Отправить"}
@@ -65,6 +92,7 @@ export const SmsVerificationWidget: React.FC<SmsVerificationWidgetProps> = ({
           />
         </View>
 
+        {/* Таймер повторной отправки */}
         <ResendTimer
           timer={timer}
           canResend={canResend}
@@ -73,6 +101,7 @@ export const SmsVerificationWidget: React.FC<SmsVerificationWidgetProps> = ({
         />
       </View>
 
+      {/* Модальное окно с уведомлениями */}
       <Alert
         visible={alertVisible}
         title={alertTitle}
@@ -83,6 +112,7 @@ export const SmsVerificationWidget: React.FC<SmsVerificationWidgetProps> = ({
   );
 };
 
+// Стили компонента
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -91,7 +121,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 0,
     alignItems: 'center',
     justifyContent: 'center'
   },

@@ -32,14 +32,14 @@ export const CheckboxWithLink: React.FC<CheckboxWithLinkProps> = ({
           )}
         </View>
       </TouchableOpacity>
-      <TouchableOpacity 
-        onPress={handleLinkPress}
-        style={styles.labelContainer}
-      >
+      <View style={styles.labelContainer}>
         <Text style={styles.label}>
-          Согласен(а) с <Text style={styles.link}>{label}</Text>
+          Согласен(а) с{' '}
+          <Text style={styles.link} onPress={handleLinkPress}>
+            {label}
+          </Text>
         </Text>
-      </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
     transform: [{ scale: 1.5 }],
   },
   checkbox: {
-    
     height: 20,
     width: 20,
     borderRadius: 8,

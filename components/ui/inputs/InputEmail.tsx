@@ -82,6 +82,7 @@ const EmailInput: React.FC<EmailInputProps> = ({
         autoCapitalize="none"
         autoComplete="email"
         autoCorrect={false}
+        maxLength={255}
       />
       {!isEmailValid && isTouched && (
         <Text style={[styles.errorText, { color: errorColor }]}>

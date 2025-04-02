@@ -15,7 +15,7 @@ const PaymentScreen = () => {
 
   return (
     <View style={styles.container}>
-      <PaymentWebView initialUrl={url as string} />
+      <PaymentWebView initialUrl={url} />
     </View>
   );
 };

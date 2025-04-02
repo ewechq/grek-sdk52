@@ -1,24 +1,51 @@
+/**
+ * Виджет горизонтального календаря
+ * 
+ * Функциональность:
+ * 1. Отображение дней в горизонтальном списке
+ * 2. Автоматическая прокрутка к выбранной дате
+ * 3. Отображение текущего месяца
+ * 4. Выделение выбранной даты
+ * 
+ * Особенности:
+ * - Оптимизация производительности через useCallback
+ * - Плавная анимация прокрутки
+ * - Центрирование выбранной даты
+ * - Переиспользуемые компоненты для дней и заголовка
+ */
+
 import React, { useCallback, useRef, useEffect } from 'react';
 import { View, FlatList, StyleSheet, Dimensions } from 'react-native';
 import { CalendarHeader } from '@/components/pages/mc/CalendarHeader';
 import { DayItem } from '@/components/pages/mc/DayItem';
 import { generateDays, formatMonthName } from '@/utils/mc/dateUtils';
 
+// Получаем ширину экрана для расчета прокрутки
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
+/**
+ * Пропсы компонента календаря
+ */
 interface CalendarProps {
-  selectedDate: Date;
-  onDateSelect: (date: Date) => void;
+  selectedDate: Date;         // Выбранная дата
+  onDateSelect: (date: Date) => void; // Обработчик выбора даты
 }
 
 export const Calendar: React.FC<CalendarProps> = ({
   selectedDate,
   onDateSelect,
 }) => {
+  // Реф для доступа к FlatList
   const flatListRef = useRef<FlatList>(null);
+  
+  // Получаем название месяца и массив дат
   const monthName = formatMonthName(selectedDate);
   const days = generateDays(selectedDate);
 
+  /**
+   * Прокручивает список к выбранной дате
+   * Центрирует выбранную дату на экране
+   */
   const scrollToSelectedDate = useCallback(() => {
     if (flatListRef.current) {
       const dayWidth = 60; // Примерная ширина элемента дня
@@ -37,10 +64,15 @@ export const Calendar: React.FC<CalendarProps> = ({
     }
   }, [selectedDate, days]);
 
+  // Прокручиваем к выбранной дате при изменении даты
   useEffect(() => {
     scrollToSelectedDate();
   }, [selectedDate, scrollToSelectedDate]);
 
+  /**
+   * Рендер элемента дня
+   * Мемоизирован для оптимизации производительности
+   */
   const renderItem = useCallback(({ item }: { item: Date }) => (
     <DayItem
       date={item}
@@ -51,10 +83,12 @@ export const Calendar: React.FC<CalendarProps> = ({
 
   return (
     <View style={styles.container}>
+      {/* Заголовок календаря с названием месяца */}
       <CalendarHeader
         monthName={monthName}
       />
 
+      {/* Контейнер со списком дней */}
       <View style={styles.daysContainer}>
         <FlatList
           ref={flatListRef}

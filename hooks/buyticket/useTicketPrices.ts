@@ -13,7 +13,7 @@ export const useTicketPrices = () => {
   useEffect(() => {
     const fetchPrices = async () => {
       try {
-        const response = await fetch('https://dev.api.grekland.ru/api/ticket/price');
+        const response = await fetch('https://api.grekland.ru/api/ticket/price');
         const data = await response.json();
         setPrices(data);
       } catch (error) {

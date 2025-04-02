@@ -70,6 +70,7 @@ export const useBuyTicketForm = () => {
     if (!agreements.privacy) missingAgreements.push('политикой конфиденциальности');
     if (!agreements.rules) missingAgreements.push('правилами посещения');
     if (!agreements.offer) missingAgreements.push('договором оферты');
+    if (!agreements.price) missingAgreements.push('прайс листом');
 
     if (missingAgreements.length > 0) {
       errors.push(`• Необходимо согласиться с: ${missingAgreements.join(', ')}`);
@@ -87,11 +88,12 @@ export const useBuyTicketForm = () => {
     try {
       const requestData = {
         "name": formData.name,
-        "phone": "+" + formData.phone.replace(/\D/g, ''),
+        "phone": formData.phone,
         "email": formData.email,
         "childage": [] as string[],
         "attendant": guestCounts.attendant.toString()
       };
+
 
       if (guestCounts.onetofour > 0) {
         for (let i = 0; i < guestCounts.onetofour; i++) {
@@ -107,7 +109,7 @@ export const useBuyTicketForm = () => {
 
       setTicketData(requestData);
 
-      const signatureResponse = await fetch('https://dev.api.grekland.ru/api/ticket/signature', {
+      const signatureResponse = await fetch('https://api.grekland.ru/api/ticket/signature', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
