@@ -84,11 +84,6 @@ export const useVerificationCode = ({
         code: Number(smsCode)
       };
 
-      console.log('Отправка запроса на проверку SMS:', {
-        url: 'https://api.grekland.ru/api/ticket/signatureCheck',
-        data: checkData
-      });
-
       const signatureCheckResponse = await fetch('https://api.grekland.ru/api/ticket/signatureCheck', {
         method: 'POST',
         headers: {
@@ -99,18 +94,12 @@ export const useVerificationCode = ({
       });
 
       const signatureCheckResult = await signatureCheckResponse.json();
-      console.log('Ответ от проверки SMS:', signatureCheckResult);
 
       if (signatureCheckResponse.ok && signatureCheckResult.signature === true) {
         const orderData = {
           ...ticketData,
           smsSignatureId: signatureId
         };
-
-        console.log('Отправка запроса на создание заказа:', {
-          url: 'https://api.grekland.ru/api/ticket/preorder',
-          data: orderData
-        });
 
         const orderResponse = await fetch('https://api.grekland.ru/api/ticket/preorder', {
           method: 'POST',
@@ -122,7 +111,6 @@ export const useVerificationCode = ({
         });
 
         const orderResult = await orderResponse.json();
-        console.log('Ответ от создания заказа:', orderResult);
 
         if (orderResponse.ok && orderResult.link) {
           router.push({
@@ -136,7 +124,6 @@ export const useVerificationCode = ({
         throw new Error(signatureCheckResult.message || 'Неверный код подтверждения');
       }
     } catch (error) {
-      console.error('Ошибка при обработке запроса:', error);
       showAlert('Ошибка!', error instanceof Error ? error.message : 'Произошла ошибка при обработке запроса');
     } finally {
       setIsLoading(false);
@@ -156,11 +143,6 @@ export const useVerificationCode = ({
         phone: ticketData.phone
       };
 
-      console.log('Отправка запроса на повторную отправку SMS:', {
-        url: 'https://api.grekland.ru/api/ticket/signature',
-        data: requestData
-      });
-
       const response = await fetch('https://api.grekland.ru/api/ticket/signature', {
         method: 'POST',
         headers: {
@@ -171,7 +153,6 @@ export const useVerificationCode = ({
       });
 
       const result = await response.json();
-      console.log('Ответ от повторной отправки SMS:', result);
 
       if (response.ok && result.signature?.id) {
         const newSignatureId = Number(result.signature.id);
@@ -187,7 +168,6 @@ export const useVerificationCode = ({
         throw new Error(result.message || 'Ошибка при отправке кода');
       }
     } catch (error) {
-      console.error('Ошибка при повторной отправке кода:', error);
       showAlert('Ошибка!', error instanceof Error ? error.message : 'Не удалось отправить код повторно');
     }
   };
@@ -209,7 +189,6 @@ export const useVerificationCode = ({
     handleCodeChange,
     handleSubmit,
     handleResendCode,
-    showAlert,
     formatTime,
     setAlertVisible
   };

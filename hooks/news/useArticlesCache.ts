@@ -7,6 +7,7 @@ interface ArticlesState {
   error: string | null;
   lastFetch: number;
   fetchArticles: () => Promise<void>;
+  refreshArticles: () => Promise<void>;
 }
 
 // Время жизни кэша - 5 минут
@@ -42,6 +43,27 @@ export const useArticlesStore = create<ArticlesState>()((set, get) => ({
       console.error('Ошибка при загрузке статей:', error);
       set({ 
         error: 'Ошибка при загрузке данных',
+        isLoading: false 
+      });
+    }
+  },
+
+  refreshArticles: async () => {
+    try {
+      set({ isLoading: true, error: null });
+      
+      const response = await fetch('https://api.grekland.ru/api/articles');
+      const data = await response.json();
+      
+      set({ 
+        articles: data, 
+        isLoading: false,
+        lastFetch: Date.now()
+      });
+    } catch (error) {
+      console.error('Ошибка при обновлении статей:', error);
+      set({ 
+        error: 'Ошибка при обновлении данных',
         isLoading: false 
       });
     }

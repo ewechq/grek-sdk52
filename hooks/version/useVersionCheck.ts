@@ -1,106 +1,103 @@
-import { useState, useEffect, useCallback } from 'react';
-import * as Updates from 'expo-updates';
-import { Platform, BackHandler } from 'react-native';
+import { useState, useEffect } from 'react';
+import { Platform, Linking, Alert, AppState, AppStateStatus } from 'react-native';
 import Constants from 'expo-constants';
-import { Alert, Linking } from 'react-native';
+import * as Updates from 'expo-updates';
 
 interface UseVersionCheckResult {
   version: string;
   serverVersion: string;
-  isUpdated: boolean;
   showUpdateModal: boolean;
   hasUpdate: boolean;
   setShowUpdateModal: (show: boolean) => void;
   handleUpdate: () => void;
-  checkForUpdate: () => Promise<void>;
+  forceUpdate: boolean;
 }
 
 export const useVersionCheck = (): UseVersionCheckResult => {
-  const [version, setVersion] = useState(Constants.expoConfig?.version || '0.1.0');
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [version] = useState(Constants.expoConfig?.version || '0.1.0');
   const [serverVersion, setServerVersion] = useState('');
-  const [isUpdated, setIsUpdated] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [hasUpdate, setHasUpdate] = useState(false);
+  const [forceUpdate, setForceUpdate] = useState(false);
 
-  // Проверяем обновления через API сервера
-  const checkVersionFromApi = useCallback(async () => {
+  // Проверка версии
+  const checkVersion = async () => {
     try {
       const response = await fetch('https://api.grekland.ru/api/version');
       const data = await response.json();
-      const serverVer = data.Version || '';
+      
+      const serverVer = data.Version || data.version || '';
+      
       setServerVersion(serverVer);
-
-      const needsUpdate = serverVer !== version && !isUpdated;
-      setHasUpdate(needsUpdate);
-
-      if (needsUpdate) {
+      
+      // Если версии не совпадают, показываем модальное окно
+      if (serverVer !== version) {
+        setHasUpdate(true);
         setShowUpdateModal(true);
-      }
-      
-      return !needsUpdate;
-    } catch (error) {
-      console.error('Ошибка получения версии с сервера:', error);
-      return true;
-    }
-  }, [version, isUpdated]);
-
-  // Проверка и загрузка обновлений через expo-updates
-  const checkForUpdate = useCallback(async () => {
-    if (!Updates.isEmbeddedLaunch) {
-      return; // Мы уже запущены из обновления, не нужно проверять еще раз
-    }
-
-    try {
-      // Проверка обновлений в Expo Updates
-      const update = await Updates.checkForUpdateAsync();
-      
-      // Если обновление доступно, загружаем его
-      if (update.isAvailable) {
-        await Updates.fetchUpdateAsync();
-        // Перезагрузка приложения для применения обновления
-        await Updates.reloadAsync();
+        setForceUpdate(true); // Устанавливаем флаг принудительного обновления
       } else {
-        // Если нет OTA обновлений, проверяем версию через API
-        await checkVersionFromApi();
+        setHasUpdate(false);
+        setShowUpdateModal(false);
+        setForceUpdate(false);
       }
     } catch (error) {
-      console.error('Ошибка при проверке обновлений Expo:', error);
-      // Если ошибка с Expo Updates, проверяем через API
-      await checkVersionFromApi();
-    }
-  }, [checkVersionFromApi]);
-
-  // Обработка нажатия кнопки обновления
-  const handleUpdate = useCallback(() => {
-    // Если обновление доступно через expo-updates и оно уже загружено
-    if (Updates.updateId) {
-      Updates.reloadAsync().catch(console.error);
-      setIsUpdated(true);
+      console.error('Ошибка проверки версии:', error);
+      setHasUpdate(false);
       setShowUpdateModal(false);
-      return;
+      setForceUpdate(false);
     }
+  };
 
-    // Не даем закрыть модальное окно - любое обновление обязательное
-    Alert.alert(
-      'Обновление обязательно',
-      'Это обновление необходимо для использования приложения. Пожалуйста, обновите приложение, когда оно станет доступно.',
-      [{ text: 'Понятно', style: 'cancel' }]
-    );
-  }, []);
+  // Обработка обновления
+  const handleUpdate = () => {
+    const storeUrl = Platform.select({
+      android: 'market://details?id=com.grekland.app',
+      ios: 'itms-apps://itunes.apple.com/app/id123456789'
+    });
+    
+    if (storeUrl) {
+      Linking.openURL(storeUrl).catch(() => {
+        const webUrl = Platform.select({
+          android: 'https://play.google.com/store/apps/details?id=com.grekland.app',
+          ios: 'https://apps.apple.com/app/id123456789'
+        });
+        if (webUrl) {
+          Linking.openURL(webUrl).catch(error => {
+            console.error('Ошибка открытия магазина:', error);
+            Alert.alert(
+              'Ошибка',
+              'Не удалось открыть магазин приложений. Пожалуйста, обновите приложение вручную.'
+            );
+          });
+        }
+      });
+    }
+  };
 
-  // Инициализация
+  // Проверяем версию при монтировании и при возврате в приложение
   useEffect(() => {
-    checkForUpdate();
-  }, [checkForUpdate]);
+    // Первая проверка при монтировании
+    checkVersion();
+
+    // Слушатель состояния приложения
+    const subscription = AppState.addEventListener('change', (nextAppState: AppStateStatus) => {
+      if (nextAppState === 'active') {
+        checkVersion();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   return {
     version,
     serverVersion,
-    isUpdated,
     showUpdateModal,
     hasUpdate,
     setShowUpdateModal,
     handleUpdate,
-    checkForUpdate
+    forceUpdate
   };
 }; 

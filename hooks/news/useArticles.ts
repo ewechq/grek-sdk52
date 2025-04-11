@@ -3,7 +3,7 @@ import { useArticlesStore } from './useArticlesCache';
 import { NewsItem } from '@/types/news';
 
 export const useArticles = (limit?: number) => {
-  const { articles, isLoading, error, fetchArticles } = useArticlesStore();
+  const { articles, isLoading, error, fetchArticles, refreshArticles } = useArticlesStore();
 
   useEffect(() => {
     fetchArticles();
@@ -44,6 +44,7 @@ export const useArticles = (limit?: number) => {
     blog,
     promo,
     isLoading,
-    error
+    error,
+    refresh: refreshArticles
   };
 }; 

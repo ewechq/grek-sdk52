@@ -1,13 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Event } from '@/types/mc';
 
 export const useEvents = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
       try {
+      setError(null);
         const response = await fetch("https://api.grekland.ru/api/events", {
           method: "GET",
           headers: {
@@ -24,13 +25,21 @@ export const useEvents = () => {
         setEvents(data);
       } catch (error) {
         console.error("Ошибка при получении данных:", error);
+      setError("Ошибка загрузки данных");
       } finally {
         setIsLoading(false);
       }
-    };
-
-    fetchEvents();
   }, []);
 
-  return { events, isLoading };
+  // Функция для обновления данных
+  const refreshEvents = useCallback(async () => {
+    setIsLoading(true);
+    await fetchEvents();
+  }, [fetchEvents]);
+
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
+
+  return { events, isLoading, error, refresh: refreshEvents };
 }; 

@@ -1,7 +1,7 @@
 {
   "cli": {
     "version": ">= 5.9.1",
-    "appVersionSource": "remote"
+    "appVersionSource": "local"
   },
   "build": {
     "development": {
@@ -26,14 +26,15 @@
     "production": {
       "channel": "production",
       "android": {
-        "buildType": "apk",
-        "gradleCommand": ":app:assembleRelease",
+        "buildType": "app-bundle",
+        "gradleCommand": ":app:bundleRelease",
         "env": {
           "ANDROID_NDK_HOME": "C:\\Users\\admin\\AppData\\Local\\Android\\Sdk\\ndk"
         },
         "cache": {
           "key": "gradle-{{ hashFiles('android/gradle/wrapper/gradle-wrapper.properties') }}"
-        }
+        },
+        "credentialsSource": "remote"
       }
     }
   },

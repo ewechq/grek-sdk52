@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useState } from "react";
 import { View, ScrollView, Image, StyleSheet, Dimensions } from "react-native";
 import { Colors } from "@/theme";
 import { Calendar } from "@/widgets/mc/Calendar";
@@ -9,19 +9,27 @@ import { useVisibleDates } from "@/hooks/mc/useVisibleDates";
 import { useCalendarState } from "@/hooks/mc/useCalendarState";
 import { LoadingState } from "@/components/ui/feedback/LoadingState";
 import { EmptyState } from "@/components/ui/feedback/EmptyState";
+import { CustomRefreshControl } from "@/components/ui/feedback/RefreshControl";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const CalendarPage = () => {
   const scrollViewRef = useRef<ScrollView>(null);
   const { selectedDate, handleDateSelect } = useCalendarState();
-  const { events, isLoading } = useEvents();
+  const { events, isLoading, refresh } = useEvents();
   const {
     visibleDates,
     isLoadingMore,
     loadMoreDates,
   } = useVisibleDates(selectedDate);
   const [showScrollTop, setShowScrollTop] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await refresh();
+    setRefreshing(false);
+  };
 
   const handleScroll = useCallback((event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
@@ -40,7 +48,7 @@ const CalendarPage = () => {
   }, []);
 
   const renderContent = () => {
-    if (isLoading) {
+    if (isLoading && !events?.length) {
       return (
         <View style={styles.contentContainer}>
           <View style={styles.whiteContainer}>
@@ -78,6 +86,12 @@ const CalendarPage = () => {
         onScroll={handleScroll}
         scrollEventThrottle={16}
         contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <CustomRefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+          />
+        }
       >
         <View style={styles.calendarContainer}>
           <Image 

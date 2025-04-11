@@ -4,8 +4,8 @@ import { useRouter } from 'expo-router';
 import { Platform, Alert, Linking } from 'react-native';
 
 import { 
-  isSuccessPaymentUrl,
-  isFailurePaymentUrl
+  isSuccessUrl,
+  isFailureUrl
 } from '@/utils/buyticket/paymentUtils';
 
 export const usePayment = () => {
@@ -104,13 +104,13 @@ export const usePayment = () => {
     logPaymentFlow('Navigation state changed', { url });
 
     try {
-      if (isSuccessPaymentUrl(url)) {
+      if (isSuccessUrl(url)) {
         logPaymentFlow('Success URL detected');
         router.replace('/(buyticket)/payment/success');
         return;
       }
 
-      if (isFailurePaymentUrl(url)) {
+      if (isFailureUrl(url)) {
         logPaymentFlow('Failure URL detected');
         router.replace('/(buyticket)/payment/failure');
         return;

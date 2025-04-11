@@ -18,6 +18,7 @@ import React, { useCallback } from 'react';
 import NewsCard from '@/components/pages/news/NewsCard';
 import { NewsItem } from '@/types/news';
 import { Colors } from '@/theme';
+import { CustomRefreshControl } from '@/components/ui/feedback/RefreshControl';
 
 // Получаем ширину экрана для расчета размеров карточек
 const { width } = Dimensions.get('window');
@@ -27,9 +28,11 @@ const { width } = Dimensions.get('window');
  */
 interface NewsGridProps {
   news: NewsItem[];  // Массив новостей
+  refreshing?: boolean; // Состояние обновления
+  onRefresh?: () => void; // Функция обновления
 }
 
-export const NewsGrid = ({ news }: NewsGridProps) => {
+export const NewsGrid = ({ news, refreshing = false, onRefresh }: NewsGridProps) => {
   /**
    * Рендер элемента сетки
    * Мемоизирован для оптимизации производительности
@@ -64,6 +67,14 @@ export const NewsGrid = ({ news }: NewsGridProps) => {
       windowSize={5}                   // Размер окна видимости
       removeClippedSubviews={true}     // Удаление невидимых элементов из памяти
       ListFooterComponent={<View style={styles.footer} />}  // Отступ в конце списка
+      refreshControl={
+        onRefresh ? (
+          <CustomRefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        ) : undefined
+      }
     />
   );
 };

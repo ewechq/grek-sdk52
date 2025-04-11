@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { useArticles } from '@/hooks/news/useArticles';
 import { Colors } from '@/theme';
 import Header from '@/components/ui/layout/Header';
@@ -12,13 +12,20 @@ import { NewsItem } from '@/types/news';
 
 export default function AllNewsScreen() {
   const { category = 'news' } = useLocalSearchParams<{ category: 'news' | 'blog' }>();
-  const { news, blog, isLoading, error } = useArticles();
+  const { news, blog, isLoading, error, refresh } = useArticles();
+  const [refreshing, setRefreshing] = useState(false);
 
   const filteredArticles = React.useMemo(() => {
     return category === 'blog' ? blog : news;
   }, [news, blog, category]);
 
-  if (isLoading) {
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await refresh();
+    setRefreshing(false);
+  };
+
+  if (isLoading && !filteredArticles?.length) {
     return <LoadingState loading={true} />;
   }
 
@@ -33,7 +40,11 @@ export default function AllNewsScreen() {
   return (
     <View style={styles.container}>
       <Header title={category === 'blog' ? 'Блог' : 'Новости'} />
-      <NewsGrid news={filteredArticles} />
+      <NewsGrid 
+        news={filteredArticles} 
+        refreshing={refreshing} 
+        onRefresh={handleRefresh} 
+      />
     </View>
   );
 }

@@ -20,7 +20,7 @@ export const usePaymentProcessing = (paymentId: string | undefined) => {
         }
         // Если статус pending, продолжаем ожидание
       } catch (error) {
-        console.error('Ошибка при проверке статуса платежа:', error);
+        // Ошибка при проверке статуса платежа
       }
     };
 

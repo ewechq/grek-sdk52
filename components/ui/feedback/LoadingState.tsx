@@ -1,5 +1,6 @@
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Colors } from '@/theme';
+import { CustomActivityIndicator } from './ActivityIndicator';
 
 interface LoadingStateProps {
   loading?: boolean;
@@ -10,7 +11,7 @@ export const LoadingState = ({ loading }: LoadingStateProps) => {
   
   return (
     <View style={styles.centered}>
-      <ActivityIndicator size="large" color={Colors.purple} />
+      <CustomActivityIndicator />
     </View>
   );
 };

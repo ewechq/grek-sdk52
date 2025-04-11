@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   StyleSheet,
   Text,
   View,
-  ActivityIndicator,
   ScrollView,
   TouchableOpacity,
   Dimensions,
@@ -13,6 +12,8 @@ import { Image } from "expo-image";
 import { TextStyles, Colors } from "@/theme";
 import Header from "@/components/ui/layout/Header";
 import Btn from "@/components/ui/btns/Btn";
+import { CustomRefreshControl } from "@/components/ui/feedback/RefreshControl";
+import { CustomActivityIndicator } from "@/components/ui/feedback/ActivityIndicator";
 
 interface Event {
   id: number;
@@ -35,49 +36,37 @@ const MKDetail = () => {
   const { id } = useLocalSearchParams();
   const [event, setEvent] = useState<Event | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    const fetchEventDetail = async () => {
-      try {
-        const response = await fetch("https://api.grekland.ru/api/events");
-        const data = await response.json();
-        const item = data.find((item: Event) => item.id === Number(id));
-        
-        // Добавляем лог для отладки
-        if (item) {
-          console.log(`Найдено событие: ${item.id} - ${item.title}, цена: ${item.price}`);
-        } else {
-          console.log(`Событие с ID ${id} не найдено`);
-          // Проверяем, не является ли это расширенным событием
-          const expandedId = Number(id) / 10000;
-          if (expandedId > 0) {
-            const originalItem = data.find((item: Event) => item.id === Math.floor(expandedId));
-            if (originalItem) {
-              console.log(`Найдено исходное событие: ${originalItem.id} - ${originalItem.title}`);
-              setEvent(originalItem);
-              setIsLoading(false);
-              return;
-            }
-          }
-        }
-        
-        setEvent(item);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching event detail:", error);
-        setIsLoading(false);
-      }
-    };
-
-    if (id) {
-      fetchEventDetail();
+  const fetchEventDetail = useCallback(async () => {
+    try {
+      const response = await fetch("https://api.grekland.ru/api/events");
+      const data = await response.json();
+      const item = data.find((item: Event) => item.id === Number(id));     
+      setEvent(item);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching event detail:", error);
+      setIsLoading(false);
     }
   }, [id]);
 
-  if (isLoading) {
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchEventDetail();
+    setRefreshing(false);
+  };
+
+  useEffect(() => {
+    if (id) {
+      fetchEventDetail();
+    }
+  }, [id, fetchEventDetail]);
+
+  if (isLoading && !event) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.purple} />
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -96,9 +85,17 @@ const MKDetail = () => {
     : "БЕСПЛАТНО";
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView 
+      style={styles.container}
+      refreshControl={
+        <CustomRefreshControl
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+        />
+      }
+    >
       <Header title="Подробнее" marginTop={32}/>
-      <ScrollView style={styles.scrollView} bounces={false}>
+      <View style={styles.contentWrapper}>
         <View style={styles.coverContainer}>
           <Image
             style={styles.image}
@@ -124,7 +121,7 @@ const MKDetail = () => {
             </Text>
           )}
         </View>
-      </ScrollView>
+      </View>
     </ScrollView>
   );
 };
@@ -133,7 +130,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-    
+  },
+  contentWrapper: {
+    flex: 1,
+    paddingHorizontal: 16,
   },
   scrollView: {
     flex: 1,
@@ -184,6 +184,7 @@ const styles = StyleSheet.create({
   title: {
     ...TextStyles.h2,
     alignSelf: 'center',
+    textAlign: 'center',
   },
   durationContainer: {
     marginTop: 8,

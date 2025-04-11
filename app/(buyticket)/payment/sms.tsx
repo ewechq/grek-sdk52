@@ -37,7 +37,7 @@ const ConfirmNumberPage = () => {
           style={styles.backButton}
           onPress={() => router.back()}
         >
-          <Ionicons name="chevron-back-outline" size={18} color={Colors.grayElements} />
+          <Ionicons name="chevron-back-outline" size={16} color={Colors.grayText} style={{marginTop: 20}}/>
         </TouchableOpacity>
         <SmsVerificationWidget signatureId={signatureId} ticketData={ticketData} />
       </View>

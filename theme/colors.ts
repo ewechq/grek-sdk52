@@ -6,7 +6,7 @@ export const Colors = {
     grayElements: "#E6E6E6",
     grayText: "#8B8B8B",
     purple: "#9995F3",
-    purpleDark: "#918DEE",
+    purpleDark: "#7d7ad9",
     pink: "#F4A0D6",
     yellow: "#FEEA6D",
     green: "#CFEC4D",

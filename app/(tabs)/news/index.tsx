@@ -1,16 +1,24 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { StyleSheet, View, ScrollView, ActivityIndicator, Text, Platform } from 'react-native';
 import { useArticles } from '@/hooks/news/useArticles';
 import { Colors, TextStyles } from '@/theme';
 import { NewsSection } from '@/widgets/news/NewsSection';
 import NewsSliderSection from '@/widgets/news/NewsSliderSection';
+import { CustomRefreshControl } from '@/components/ui/feedback/RefreshControl';
 
 const LATEST_NEWS_COUNT = 6;
 const IS_ANDROID = Platform.OS === 'android';
 
 export default function NewsScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
-  const { news, blog, promo, isLoading, error } = useArticles(LATEST_NEWS_COUNT);
+  const { news, blog, promo, isLoading, error, refresh } = useArticles(LATEST_NEWS_COUNT);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await refresh();
+    setRefreshing(false);
+  };
 
   if (isLoading && !news?.length) {
     return (
@@ -35,6 +43,12 @@ export default function NewsScreen() {
       showsVerticalScrollIndicator={false}
       removeClippedSubviews={IS_ANDROID}
       scrollEventThrottle={IS_ANDROID ? 32 : 16}
+      refreshControl={
+        <CustomRefreshControl
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+        />
+      }
     >
       {(news.length > 0 || promo.length > 0) && (
         <View style={styles.newsContainer}>

@@ -37,7 +37,11 @@ const CardComponent: React.FC<ChildComponentProps> = ({
           onLoad={() => setIsLoaded(true)}
         />
         {title && (
-          <Text style={styles.textHeader} numberOfLines={2}>
+          <Text 
+            style={styles.textHeader}
+            numberOfLines={2}
+            ellipsizeMode="tail"
+          >
             {String(title)}
           </Text>
         )}
@@ -81,7 +85,7 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 2,
     ...TextStyles.h3,
-    color: Colors.black
+    color: Colors.black,
   },
   infoContainer: {
     display: 'flex',

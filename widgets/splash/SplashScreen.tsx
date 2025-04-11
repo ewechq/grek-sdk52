@@ -2,81 +2,76 @@
  * Виджет загрузочного экрана приложения
  * 
  * Функциональность:
- * 1. Отображает анимированный логотип
+ * 1. Отображает логотип
  * 2. Проверяет наличие обновлений приложения
  * 3. Показывает модальное окно обновления при необходимости
- * 4. Автоматически перенаправляет на главный экран через 5 секунд
+ * 4. Автоматически перенаправляет на главный экран
  * 
  * Особенности:
  * - Блокирует кнопку "назад" при наличии обязательного обновления
- * - Использует анимацию вращения для логотипа
  * - Кэширует фоновое изображение
  * - Отображает текущую версию приложения
  */
 
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Animated, Text, Dimensions, BackHandler, Alert } from 'react-native';
+import { View, StyleSheet, Text, Dimensions, BackHandler, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Colors, TextStyles } from '@/theme';
 import { useVersionCheck } from '@/hooks/version/useVersionCheck';
-import { useRotationAnimation } from '@/hooks/animations/useRotationAnimation';
 import { UpdateModal } from '@/components/ui/modals/UpdateModal';
 
 const { width, height } = Dimensions.get('window');
 
 export const SplashScreenWidget = () => {
-  // Хук для навигации
   const router = useRouter();
-  // Хук для анимации вращения логотипа
-  const { rotate } = useRotationAnimation();
-  // Хук для проверки обновлений
   const {
     version,
+    serverVersion,
     showUpdateModal,
+    hasUpdate,
     setShowUpdateModal,
     handleUpdate,
-    checkForUpdate,
-    serverVersion,
-    hasUpdate
+    forceUpdate
   } = useVersionCheck();
 
   useEffect(() => {
-    // Проверяем обновления при запуске экрана
-    checkForUpdate();
-    
-    // Блокируем навигацию назад только если есть окно обновления и действительно требуется обновление
+    // Блокируем кнопку назад при необходимости обновления
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (showUpdateModal && hasUpdate) {
+      if (hasUpdate) {
         Alert.alert(
           'Требуется обновление',
-          'Вы не можете использовать приложение без обновления.',
+          'Вы не можете использовать приложение без обновления. Пожалуйста, обновите приложение.',
           [{ text: 'Понятно', style: 'cancel' }]
         );
-        return true; // Предотвращаем выход из приложения
+        return true;
       }
       return false;
     });
-    
-    // Таймер для перехода на главный экран, если нет модального окна обновления
-    const timer = setTimeout(() => {
-      if (!showUpdateModal) {
-        router.replace('/(tabs)');
-      }
-    }, 5000);
+
+    // Если обновление не требуется и версия сервера получена, переходим на главный экран
+    if (!hasUpdate && serverVersion) {
+      router.replace('/(tabs)');
+    }
 
     return () => {
-      clearTimeout(timer);
       backHandler.remove();
     };
-  }, [showUpdateModal, hasUpdate, router, checkForUpdate]);
+  }, [hasUpdate, serverVersion]);
+
+  // Если требуется принудительное обновление, показываем модальное окно
+  useEffect(() => {
+    if (forceUpdate) {
+      setShowUpdateModal(true);
+    }
+  }, [forceUpdate]);
 
   return (
     <View style={styles.container}>
       {/* Фоновое изображение */}
       <View style={styles.backgroundContainer}>
         <Image 
-          source={require('@/assets/images/bg-light.webp')}
+          source={require('@/assets/images/bg.webp')}
           style={styles.backgroundImage}
           contentFit="cover"
           transition={0}
@@ -84,17 +79,14 @@ export const SplashScreenWidget = () => {
         />
       </View>
       
-      {/* Анимированный логотип */}
-      <Animated.View style={[
-        styles.logoContainer,
-        { transform: [{ rotate }] }
-      ]}>
+      {/* Логотип */}
+      <View style={styles.logoContainer}>
         <Image
           source={require('@/assets/images/grek.webp')}
           style={styles.logo}
           contentFit="contain"
         />
-      </Animated.View>
+      </View>
       
       {/* Версия приложения */}
       <Text style={styles.versionText}>v{version}</Text>
@@ -102,7 +94,7 @@ export const SplashScreenWidget = () => {
       {/* Модальное окно обновления */}
       <UpdateModal 
         visible={showUpdateModal} 
-        onUpdate={handleUpdate} 
+        onUpdate={handleUpdate}
         serverVersion={serverVersion}
       />
     </View>
@@ -120,7 +112,7 @@ const styles = StyleSheet.create({
   backgroundContainer: {
     position: 'absolute',
     width: width * 1.2,
-    height: height,
+    height: height *1.1,
     top: 0,
     left: 0,
     transform: [{ translateX: -width * 0.2 }],
@@ -141,7 +133,7 @@ const styles = StyleSheet.create({
   versionText: {
     position: 'absolute',
     bottom: 40,
-    color: Colors.grayText,
+    color: Colors.white,
     ...TextStyles.text,
     textAlign: 'center',
   },

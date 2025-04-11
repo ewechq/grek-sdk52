@@ -15,11 +15,12 @@
  */
 
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { TextStyles, Colors } from '@/theme';
 import { Event } from '@/types/mc';
 import { formatDate, formatTime } from '@/utils/mc/dateFormatters';
 import CardComponent from '@/components/pages/mc/EventsCard';
+import { CustomActivityIndicator } from '@/components/ui/feedback/ActivityIndicator';
 
 /**
  * Пропсы компонента списка мероприятий
@@ -157,9 +158,7 @@ export const EventsList: React.FC<EventsListProps> = ({
 
         {/* Индикатор загрузки дополнительных данных */}
         {isLoadingMore && (
-          <View style={styles.loaderContainer}>
-            <ActivityIndicator size="large" color={Colors.purple} />
-          </View>
+          <CustomActivityIndicator containerStyle={styles.loaderContainer} />
         )}
       </View>
     </View>
@@ -180,7 +179,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingBottom: 160,
   },
   dateEventsContainer: {
     marginTop: 44,
@@ -204,7 +202,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   loaderContainer: {
-    paddingVertical: 20,
+    paddingTop: 20,
+    paddingBottom: 200,
     alignItems: 'center',
     justifyContent: 'center',
   },

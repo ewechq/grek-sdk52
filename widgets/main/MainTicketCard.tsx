@@ -19,6 +19,7 @@ import React, { useMemo } from 'react'
 import { Colors, TextStyles } from '@/theme/index'
 import Svg, { Path } from 'react-native-svg'
 import { normalize } from '@/utils/responsive'
+import { useTicketPrices } from '@/hooks/buyticket/useTicketPrices'
 
 /**
  * Пропсы для карточки с ценой
@@ -112,18 +113,46 @@ const BottomEdge = React.memo(() => (
  * Основной компонент карточки с информацией о билетах
  */
 export const MainTicketCard = () => {
+  const { prices, isLoading } = useTicketPrices();
+
   // Мемоизируем карточки с ценами для будних дней
-  const weekdayPriceCards = useMemo(() => (
-    <>
-      <PriceCard age="1 - 4 года" price="1 390 РУБ" />
-      <PriceCard age="5 - 16 лет" price="1 690 РУБ" />
-    </>
-  ), []);
+  const weekdayPriceCards = useMemo(() => {
+    if (!prices) return null;
+    
+    return (
+      <>
+        <PriceCard age="1 - 4 года" price={`${prices["1-4"]} РУБ`} />
+        <PriceCard age="5 - 16 лет" price={`${prices["5-16"]} РУБ`} />
+      </>
+    );
+  }, [prices]);
 
   // Мемоизируем карточку с ценой для выходных
-  const weekendPriceCard = useMemo(() => (
-    <PriceCard age="1 - 16 лет" price="2 290 РУБ" />
-  ), []);
+  const weekendPriceCard = useMemo(() => {
+    if (!prices) return null;
+    
+    return (
+      <PriceCard age="1 - 16 лет" price={`${prices["5-16"]} РУБ`} />
+    );
+  }, [prices]);
+
+  // Если цены загружаются, показываем плейсхолдер
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Загрузка цен...</Text>
+      </View>
+    );
+  }
+
+  // Если цены не загружены, показываем сообщение об ошибке
+  if (!prices) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Не удалось загрузить цены</Text>
+      </View>
+    );
+  }
 
   return (
     <View>
@@ -136,7 +165,7 @@ export const MainTicketCard = () => {
         <View style={styles.contentDescription}>
           <Text style={styles.sectionTitle}>Билет на весь день</Text>
           <Text style={styles.descriptionText}>
-            Один соповождающий взрослый - бесплатно, каждый последующий - 250₽. Дети до 1 года - бесплатно.
+            Один сопровождающий взрослый - бесплатно, каждый последующий - {prices["attendant"]}₽. Дети до 1 года - бесплатно.
           </Text>
           <Divider />
         </View>
@@ -286,5 +315,25 @@ const styles = StyleSheet.create({
   locationTimeText: {
     ...TextStyles.textDescription,
     color: Colors.grayText
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: normalize(20),
+  },
+  loadingText: {
+    ...TextStyles.text,
+    color: Colors.white,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: normalize(20),
+  },
+  errorText: {
+    ...TextStyles.text,
+    color: Colors.red,
   },
 }); 
