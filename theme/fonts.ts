@@ -8,6 +8,7 @@ export const Fonts = {
   },
   inter: {
     regular: 'Inter-Regular',
+    medium: 'Inter-Medium',
   }
 };
 

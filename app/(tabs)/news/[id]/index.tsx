@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { StyleSheet, ScrollView } from "react-native";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
+import { StyleSheet, ScrollView, Platform } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { useArticlesStore } from '@/hooks/news/useArticlesCache';
 import { NewsItem } from "@/types/news";
@@ -13,10 +13,13 @@ import { NewsContent } from "@/widgets/news/detail/NewsContent";
 import { Colors } from "@/theme";
 import { CustomRefreshControl } from "@/components/ui/feedback/RefreshControl";
 
-const NewsDetail = () => {
+const IS_ANDROID = Platform.OS === 'android';
+
+const NewsDetail = React.memo(() => {
   const { id } = useLocalSearchParams();
   const { articles, isLoading, error, refreshArticles } = useArticlesStore();
   const [refreshing, setRefreshing] = useState(false);
+
 
   const newsItem = useMemo(() => {
     if (!id) return null;
@@ -28,11 +31,13 @@ const NewsDetail = () => {
     getOptimizedImageUrl(newsItem?.cover || null),
   [newsItem?.cover]);
 
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     await refreshArticles();
     setRefreshing(false);
-  };
+  }, [refreshArticles]);
+
+  const hasCover = useMemo(() => !!imageUri, [imageUri]);
 
   if (isLoading && !newsItem) {
     return <LoadingState loading={true} />;
@@ -56,6 +61,8 @@ const NewsDetail = () => {
           onRefresh={handleRefresh}
         />
       }
+      removeClippedSubviews={IS_ANDROID}
+      contentContainerStyle={styles.contentContainer}
     >
       <Header title='Подробнее' marginTop={32}/>
       <NewsImage imageUri={imageUri} />
@@ -63,16 +70,19 @@ const NewsDetail = () => {
         title={newsItem.title}
         content={newsItem.content}
         createdAt={newsItem.created_at}
-        hasCover={!!imageUri}
+        hasCover={hasCover}
       />
     </ScrollView>
   );
-};
+});
 
 const styles = StyleSheet.create({
   scrollView: {
     height: "100%",
     backgroundColor: Colors.white,
+  },
+  contentContainer: {
+    flexGrow: 1,
   },
 });
 

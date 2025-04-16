@@ -36,7 +36,7 @@ export default ({ config }) => {
           foregroundImage: "./assets/images/icon2.webp",
           backgroundColor: "#ffffff"
         },
-        versionCode: 2, 
+        versionCode: 3, 
         package: "com.grekLand",
         permissions: ["INTERNET", "QUERY_ALL_PACKAGES"]
       },

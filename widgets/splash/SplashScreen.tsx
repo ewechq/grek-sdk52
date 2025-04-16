@@ -42,7 +42,7 @@ export const SplashScreenWidget = () => {
         Alert.alert(
           'Требуется обновление',
           'Вы не можете использовать приложение без обновления. Пожалуйста, обновите приложение.',
-          [{ text: 'Понятно', style: 'cancel' }]
+          [{ text: 'Хорошо', style: 'cancel' }]
         );
         return true;
       }

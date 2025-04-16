@@ -10,7 +10,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded] = useFonts({
-    'Gothic60': require('../assets/fonts/Gothic60.ttf'),
+    'Gothic60': require('../assets/fonts/Gothic60.otf'),
     'Inter-Regular': require('../assets/fonts/Inter-Regular.otf'),
     ...Ionicons.font,
   });

@@ -38,9 +38,9 @@ const CardComponent: React.FC<ChildComponentProps> = ({
         />
         {title && (
           <Text 
-            style={styles.textHeader}
+            style={[styles.textHeader, styles.optimizedText]}
             numberOfLines={2}
-            ellipsizeMode="tail"
+            ellipsizeMode="clip"
           >
             {String(title)}
           </Text>
@@ -87,6 +87,10 @@ const styles = StyleSheet.create({
     ...TextStyles.h3,
     color: Colors.black,
   },
+  optimizedText: {
+    // Слегка уменьшаем межстрочный интервал для более компактного отображения
+    lineHeight: (TextStyles.h3.lineHeight || 22) * 0.95,
+  },
   infoContainer: {
     display: 'flex',
     flexDirection: 'row',
@@ -118,8 +122,13 @@ const styles = StyleSheet.create({
     color: Colors.grayText,
     textAlign: 'center',
     textAlignVertical: 'center',
-    lineHeight: 40,
+    lineHeight: 20,
     paddingTop: 0,
+  },
+  androidText: {
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+    paddingRight: 2, // Дополнительный отступ справа для троеточия
   },
 });
 

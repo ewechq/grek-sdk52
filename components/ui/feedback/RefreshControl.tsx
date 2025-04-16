@@ -10,7 +10,7 @@ import { RefreshControl, RefreshControlProps } from 'react-native';
 import { Colors } from '@/theme';
 
 interface CustomRefreshControlProps extends Omit<RefreshControlProps, 'progressBackgroundColor' | 'colors' | 'tintColor'> {
-  color?: string; // Опциональный параметр для переопределения цвета
+  color?: string; 
 }
 
 export const CustomRefreshControl: React.FC<CustomRefreshControlProps> = ({

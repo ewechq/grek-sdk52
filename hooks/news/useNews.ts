@@ -3,7 +3,7 @@ import { NewsItem } from '@/types/news';
 
 const API_URL = 'https://api.grekland.ru/api/articles';
 
-export const useNews = (category: 'news' | 'blog' = 'news') => {
+export const useNews = (category: 'news' = 'news') => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

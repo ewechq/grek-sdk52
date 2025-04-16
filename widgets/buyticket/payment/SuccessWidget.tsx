@@ -33,15 +33,15 @@ export const SuccessWidget = () => {
   return (
     <View style={styles.container}>
       {/* Изображение успеха */}
-      <Image source={require('@/assets/images/grek_vesna.webp')} style={styles.image} />
+      <Image source={require('@/assets/images/success.webp')} style={styles.image} />
       
       {/* Контейнер с текстом и кнопкой */}
       <View style={styles.containerText}>
         {/* Заголовок с сообщением об успехе */}
-        <Text style={styles.title}>Билеты летят к вам на почту! 🦖🚀</Text>
+        <Text style={styles.title}>Билеты летят к вам на почту! </Text>
         
         {/* Дополнительное сообщение */}
-        <Text style={styles.message}>А Грек уже ждет на входе! Добро пожаловать в мир веселья и счастья!</Text>
+        <Text style={styles.message}>А Грек уже ждет на входе! 🦖🚀 Добро пожаловать в мир веселья!</Text>
         
         {/* Контейнер с кнопкой */}
         <View style={styles.buttonContainer}>
@@ -61,12 +61,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     backgroundColor: Colors.white,
   },
   containerText: {
     alignItems: 'center',
-    backgroundColor: Colors.white,
     paddingHorizontal: 24,
   },
   title: {
@@ -85,8 +84,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   image: {
-    width: 350,
-    height: 350,
+    width: "100%",
+    height: 300,
     marginBottom: 16,
   }
 }); 

@@ -40,19 +40,28 @@ interface EventsListProps {
 const isEventOnDate = (event: Event, targetDate: Date): boolean => {
   const eventDate = new Date(event.date_start);
   
-  // Если нет параметров повторения, проверяем только точное совпадение даты
+  // Проверяем на точное совпадение даты (без учета времени)
+  const isSameDate = (
+    eventDate.getDate() === targetDate.getDate() &&
+    eventDate.getMonth() === targetDate.getMonth() &&
+    eventDate.getFullYear() === targetDate.getFullYear()
+  );
+  
+  // Для обычных событий достаточно проверки на точное совпадение даты
   if (!event.repeat_days && !event.repeat_end_date) {
-    return (
-      eventDate.getDate() === targetDate.getDate() &&
-      eventDate.getMonth() === targetDate.getMonth() &&
-      eventDate.getFullYear() === targetDate.getFullYear()
-    );
+    return isSameDate;
   }
+  
+  // Если дата точно совпадает, событие нужно показать в любом случае
+  if (isSameDate) return true;
+  
+  // Проверяем, что целевая дата не раньше начальной даты события
+  if (targetDate < new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate())) return false;
 
   // Проверяем, не вышла ли дата за пределы периода повторения
   if (event.repeat_end_date) {
     const endDate = new Date(event.repeat_end_date);
-    if (targetDate > endDate) return false;
+    if (targetDate > new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())) return false;
   }
 
   // Проверяем, входит ли день недели в список повторяющихся дней
@@ -70,28 +79,39 @@ const isEventOnDate = (event: Event, targetDate: Date): boolean => {
  */
 const getEventTime = (event: Event): string => {
   const date = new Date(event.date_start);
-  return `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+};
+
+/**
+ * Получает дату в формате YYYY-MM-DD для сравнения
+ */
+const getDateString = (date: Date): string => {
+  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+};
+
+/**
+ * Дополнительные стили для дублирующихся событий
+ * Визуально не отмечаем, но используем для отладки
+ */
+const getDuplicateStyles = (eventsAtTime: Event[], index: number) => {
+  return eventsAtTime.length > 1 ? { } : { };
 };
 
 /**
  * Группирует и сортирует мероприятия по времени начала
+ * Сохраняет дублирующиеся события
  */
-const groupAndSortEvents = (events: Event[]): Event[] => {
+const groupAndSortEvents = (events: Event[]): Record<string, Event[]> => {
   // Группируем события по времени
-  const eventsByTime = events.reduce((acc, event) => {
+  return events.reduce((acc, event) => {
     const time = getEventTime(event);
     if (!acc[time]) {
       acc[time] = [];
     }
+    // Добавляем событие в нужную группу времени
     acc[time].push(event);
     return acc;
-  }, {} as { [key: string]: Event[] });
-
-  // Сортируем времена
-  const sortedTimes = Object.keys(eventsByTime).sort();
-
-  // Собираем отсортированный список событий
-  return sortedTimes.flatMap(time => eventsByTime[time]);
+  }, {} as Record<string, Event[]>);
 };
 
 export const EventsList: React.FC<EventsListProps> = ({
@@ -101,13 +121,21 @@ export const EventsList: React.FC<EventsListProps> = ({
   selectedDate,
   onEmpty,
 }) => {
+  // Фильтруем события для каждой видимой даты и группируем их по времени
+  const filteredEventsByDate = useMemo(() => {
+    return visibleDates.reduce((acc, date) => {
+      const dateEvents = events.filter(event => isEventOnDate(event, date));
+      if (dateEvents.length > 0) {
+        acc[date.toISOString()] = groupAndSortEvents(dateEvents);
+      }
+      return acc;
+    }, {} as Record<string, Record<string, Event[]>>);
+  }, [events, visibleDates]);
+
   // Проверяем наличие видимых мероприятий
   const hasVisibleEvents = useMemo(() => {
-    return visibleDates.some(date => {
-      const dateEvents = events.filter(event => isEventOnDate(event, date));
-      return dateEvents.length > 0;
-    });
-  }, [events, visibleDates]);
+    return Object.keys(filteredEventsByDate).length > 0;
+  }, [filteredEventsByDate]);
 
   return (
     <View style={styles.container}>
@@ -119,36 +147,49 @@ export const EventsList: React.FC<EventsListProps> = ({
           <View style={styles.content}>
             {/* Отображаем мероприятия по датам */}
             {visibleDates.map(date => {
-              const dateEvents = groupAndSortEvents(
-                events.filter(event => isEventOnDate(event, date))
-              );
+              const dateKey = date.toISOString();
+              const dateEventsByTime = filteredEventsByDate[dateKey];
 
-              if (dateEvents.length === 0) return null;
+              if (!dateEventsByTime) return null;
+
+              // Сортируем времена
+              const sortedTimes = Object.keys(dateEventsByTime).sort();
+              
+              if (sortedTimes.length === 0) return null;
 
               return (
-                <View key={date.toISOString()} style={styles.dateEventsContainer}>
+                <View key={dateKey} style={styles.dateEventsContainer}>
                   {/* Заголовок с датой */}
                   <Text style={styles.dateHeader}>
                     {formatDate(date)}
                   </Text>
                   {/* Сетка карточек мероприятий */}
                   <View style={styles.eventsContainer}>
-                    {dateEvents.map((event) => (
-                      <View key={`${event.id}-${event.date_start}`} style={styles.cardWrapper}>
-                        <CardComponent
-                          id={event.id}
-                          title={event.title || ''}
-                          cover={
-                            event.cover
-                              ? { uri: event.cover }
-                              : require("@/assets/images/placeholder.webp")
-                          }
-                          time={event.date_start ? formatTime(event.date_start) : undefined}
-                          price={event.price ? parseFloat(event.price) : undefined}
-                          ageLimit={event.age_limit || undefined}
-                        />
-                      </View>
-                    ))}
+                    {sortedTimes.flatMap(time => 
+                      dateEventsByTime[time].map((event, index) => {
+                        // Создаем уникальный ключ, учитывая и время, и индекс в массиве
+                        const uniqueKey = `${event.id}-${time}-${index}-${dateKey}`;
+                        // Определяем стили для дублирующихся событий (если нужно)
+                        const duplicateStyle = getDuplicateStyles(dateEventsByTime[time], index);
+                        
+                        return (
+                          <View key={uniqueKey} style={[styles.cardWrapper, duplicateStyle]}>
+                            <CardComponent
+                              id={event.id}
+                              title={event.title || ''}
+                              cover={
+                                event.cover
+                                  ? { uri: event.cover }
+                                  : require("@/assets/images/placeholder.webp")
+                              }
+                              time={time}
+                              price={event.price ? parseFloat(event.price) : undefined}
+                              ageLimit={event.age_limit || undefined}
+                            />
+                          </View>
+                        );
+                      })
+                    )}
                   </View>
                 </View>
               );

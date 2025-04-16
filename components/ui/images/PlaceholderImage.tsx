@@ -35,7 +35,7 @@ Animated.loop(
   ])
 ).start();
 
-const PlaceholderImage: React.FC<PlaceholderImageProps> = React.memo(({ style }) => {
+export const PlaceholderImage: React.FC<PlaceholderImageProps> = React.memo(({ style }) => {
   const rotate = rotateAnimation.interpolate({
     inputRange: [-1, 0, 1],
     outputRange: ['-5deg', '0deg', '5deg']
@@ -74,6 +74,4 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
   },
-});
-
-export default PlaceholderImage; 
+}); 

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import { StyleSheet, View, ScrollView, ActivityIndicator, Text, Platform } from 'react-native';
 import { useArticles } from '@/hooks/news/useArticles';
 import { Colors, TextStyles } from '@/theme';
@@ -11,14 +11,16 @@ const IS_ANDROID = Platform.OS === 'android';
 
 export default function NewsScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
-  const { news, blog, promo, isLoading, error, refresh } = useArticles(LATEST_NEWS_COUNT);
+  const { news, promo, isLoading, error, refresh } = useArticles(LATEST_NEWS_COUNT);
   const [refreshing, setRefreshing] = useState(false);
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await refresh();
-    setRefreshing(false);
-  };
+  const handleRefresh = useCallback(async () => {
+    if (refresh) {
+      setRefreshing(true);
+      await refresh();
+      setRefreshing(false);
+    }
+  }, [refresh]);
 
   if (isLoading && !news?.length) {
     return (
@@ -64,16 +66,6 @@ export default function NewsScreen() {
               category="news"
             />
           </View>
-
-          {blog.length > 0 && (
-            <View style={styles.lastSection}>
-              <NewsSection 
-                news={blog}
-                title="Блог"
-                category="blog"
-              />
-            </View>
-          )}
         </View>
       )}
     </ScrollView>

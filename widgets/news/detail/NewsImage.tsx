@@ -18,7 +18,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Platform } from 'react-native';
 import { Image } from 'expo-image';
 import { Colors } from '@/theme';
-import PlaceholderImage from '@/components/ui/images/PlaceholderImage';
+import { PlaceholderImage } from '@/components/ui/images/PlaceholderImage';
 
 // Определение платформы для специфичных настроек
 const IS_ANDROID = Platform.OS === 'android';

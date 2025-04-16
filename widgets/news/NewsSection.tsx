@@ -34,7 +34,7 @@ const IS_ANDROID = Platform.OS === 'android';
 interface NewsSectionProps {
   title: string;                // Заголовок секции
   news: NewsItem[];            // Массив новостей
-  category: 'news' | 'blog';   // Категория контента
+  category: 'news';   // Категория контента
 }
 
 export const NewsSection: React.FC<NewsSectionProps> = memo(({ 
@@ -47,7 +47,7 @@ export const NewsSection: React.FC<NewsSectionProps> = memo(({
    * Перенаправляет на страницу со всеми новостями выбранной категории
    */
   const handleShowAll = useCallback(() => {
-    router.push(`/(tabs)/news/all?category=${category}`);
+    router.push(`/(tabs)/news/all?category=${category}`);    
   }, [category]);
 
   /**
@@ -129,6 +129,7 @@ export const NewsSection: React.FC<NewsSectionProps> = memo(({
 const styles = StyleSheet.create({
   container: {
     marginTop: IS_ANDROID ? 8 : 16,
+    marginBottom: 140,
   },
   cardWrapper: {
     width: CARD_WIDTH,

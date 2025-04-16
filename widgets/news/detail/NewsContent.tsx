@@ -14,12 +14,13 @@
  * - Условное отображение стилей в зависимости от наличия обложки
  */
 
-import React from 'react';
-import { StyleSheet, Text, View, Platform, TextStyle } from 'react-native';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, View, Platform } from 'react-native';
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import { Colors, TextStyles } from '@/theme';
-import HtmlContent from "@/components/ui/text/HtmlContent";
+import RichContent from "@/components/ui/text/RichContent";
+import { MixedStyleDeclaration } from 'react-native-render-html';
 
 // Определение платформы для специфичных стилей
 const IS_ANDROID = Platform.OS === 'android';
@@ -34,39 +35,57 @@ interface NewsContentProps {
   hasCover?: boolean; // Флаг наличия обложки
 }
 
-export const NewsContent = ({ title, content, createdAt, hasCover }: NewsContentProps) => {
-  // Форматирование даты на русском языке
-  const formattedDate = format(new Date(createdAt), "dd MMM yyyy", { locale: ru });
+export const NewsContent = React.memo(({ 
+  title, 
+  content, 
+  createdAt, 
+  hasCover = false 
+}: NewsContentProps) => {
+  const formattedDate = useMemo(() => 
+    format(new Date(createdAt), "dd MMM yyyy", { locale: ru }),
+    [createdAt]
+  );
+
+  const containerStyle = useMemo(() => [
+    styles.container, 
+    !hasCover && styles.containerNoCover
+  ], [hasCover]);
+
+  const titleStyle = useMemo(() => [
+    styles.title, 
+    IS_ANDROID && styles.androidText
+  ], []);
+
+  const dateStyle = useMemo(() => [
+    styles.date, 
+    IS_ANDROID && styles.androidText
+  ], []);
+
+  const baseStyle = useMemo(() => ({
+    color: Colors.black,
+    lineHeight: 24,
+  }), []);
 
   return (
-    <View style={[
-      styles.container, 
-      !hasCover && styles.containerNoCover
-    ]}>
+    <View style={containerStyle}>
       {/* Заголовок новости */}
-      <Text style={[
-        styles.title, 
-        IS_ANDROID && styles.androidText
-      ]}>
+      <Text style={titleStyle}>
         {title}
       </Text>
       
       {/* Дата создания */}
-      <Text style={[
-        styles.date, 
-        IS_ANDROID && styles.androidText
-      ]}>
+      <Text style={dateStyle}>
         {formattedDate}
       </Text>
       
       {/* HTML-контент новости */}
-      <HtmlContent 
+      <RichContent 
         html={content} 
-        style={styles.content as TextStyle} 
+        baseStyle={baseStyle as MixedStyleDeclaration}
       />
     </View>
   );
-};
+});
 
 // Стили компонента
 const styles = StyleSheet.create({
@@ -76,7 +95,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-    paddingBottom: 200,  // Дополнительный отступ для прокрутки
+    paddingBottom: 200,  
   },
   containerNoCover: {
     marginTop: 0,
@@ -89,17 +108,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   date: {
-    ...TextStyles.text,
+    ...TextStyles.textDescription,
     color: Colors.grayText,
     marginBottom: 20,
     textAlign: 'center',
   },
-  content: {
-    color: Colors.black,
-    lineHeight: 24,
-  },
   androidText: {
-    includeFontPadding: false,    // Убираем лишние отступы в Android
-    textAlignVertical: 'center',  // Центрирование текста по вертикали
+    includeFontPadding: false,    
+    textAlignVertical: 'center',  
   },
 });

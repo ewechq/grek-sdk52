@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity, Platform } from 'react-native
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Colors, TextStyles } from '@/theme';
-import PlaceholderImage from '@/components/ui/images/PlaceholderImage';
+import { PlaceholderImage } from '@/components/ui/images/PlaceholderImage';
 
 const IS_ANDROID = Platform.OS === 'android';
 
@@ -70,16 +70,16 @@ const NewsCard = memo(({ id, title, introtext, cover }: NewsCardProps) => {
       </View>
       <View style={styles.content}>
         <Text 
-          style={[styles.title, IS_ANDROID && styles.androidText]}
+          style={[styles.title, styles.optimizedText]}
           numberOfLines={2}
-          ellipsizeMode="tail"
+          ellipsizeMode="clip"
         >
           {title}
         </Text>
         <Text 
-          style={[styles.description, IS_ANDROID && styles.androidText]}
+          style={[styles.description, styles.optimizedText]}
           numberOfLines={2}
-          ellipsizeMode="tail"
+          ellipsizeMode="clip"
         >
           {introtext}
         </Text>
@@ -114,6 +114,9 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 2,
   },
+  titleContainer: {
+    marginBottom: 4,
+  },
   title: {
     ...TextStyles.h3,
     color: Colors.black,
@@ -122,6 +125,12 @@ const styles = StyleSheet.create({
   description: {
     ...TextStyles.textDescription,
     color: Colors.grayText,
+  },
+  optimizedText: {
+    // Слегка уменьшаем межстрочный интервал для более компактного отображения
+    lineHeight: IS_ANDROID ? 
+      (TextStyles.h3.lineHeight || 22) * 0.95 : 
+      (TextStyles.h3.lineHeight || 22) * 0.95,
   },
   androidText: {
     includeFontPadding: false,
