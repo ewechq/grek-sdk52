@@ -16,9 +16,8 @@
 
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography } from '@/theme';
 import Btn from '@/components/ui/btns/Btn';
-import { normalize } from '@/utils/responsive';
 import { Alert } from '@/components/ui/modals/Alert';
 import { SmsCodeInput } from '@/components/pages/buyticket/payment/SmsCodeInput';
 import { ResendTimer } from '@/components/pages/buyticket/payment/ResendTimer';
@@ -81,7 +80,7 @@ export const SmsVerificationWidget: React.FC<SmsVerificationWidgetProps> = ({
         />
 
         {/* Кнопка отправки */}
-        <View style={{marginBottom: normalize(16)}}>
+        <View style={{marginBottom: 16}}>
           <Btn
             title={isLoading ? "Подождите..." : "Отправить"}
             onPress={handleSubmit}
@@ -126,12 +125,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   title: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     marginBottom: 12,
     textAlign: 'center',
   },
   description: {
-    ...TextStyles.text,
+    ...Typography.caption(),
     color: Colors.grayText,
     textAlign: 'center',
     marginBottom: 40,

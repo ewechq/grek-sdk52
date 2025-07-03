@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography } from '@/theme';
 
 
 interface BtnDownlineTextProps {
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   text: {
-    ...TextStyles.text,
+    ...Typography.small(),
     marginBottom: 4,
     textDecorationLine: 'underline',
   },

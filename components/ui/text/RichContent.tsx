@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useWindowDimensions } from 'react-native';
 import RenderHtml, { MixedStyleDeclaration, RenderHTMLProps } from 'react-native-render-html';
-import { Colors, TextStyles, Fonts } from '@/theme';
+import { Colors, Typography } from '@/theme';
 
 interface RichContentProps {
   html: string;
@@ -21,34 +21,35 @@ const RichContent: React.FC<RichContentProps> = ({
   const { width } = useWindowDimensions();
 
   const tagsStyles = useMemo<Record<string, MixedStyleDeclaration>>(() => ({
-    h2: {
+    heading24: {
       marginBottom: 0,
       paddingBottom: 0,
+      textTransform: 'uppercase',
     },
     p: {
-      ...TextStyles.text,
+      ...Typography.caption(),
     },
     strong: {
       fontWeight: '500' as const,
-      fontFamily: Fonts.inter.regular,
+      fontFamily: 'VelaSans-Regular',
     },
     em: {
       fontStyle: 'italic',
-      fontFamily: Fonts.inter.regular,
+      fontFamily: 'VelaSans-Light',
     },
     ul: {
       marginBottom: 8,
       paddingLeft: 12,
-      fontFamily: Fonts.inter.regular,
+      fontFamily: 'VelaSans-Light',
     },
     li: {
       marginBottom: 4,
-      fontFamily: Fonts.inter.regular,
+      fontFamily: 'VelaSans-Light',
     },
     a: {
       color: Colors.purple,
       textDecorationLine: 'underline',
-      fontFamily: Fonts.inter.regular,
+      fontFamily: 'VelaSans-Light',
     },
     figure: {
       alignItems: 'center',
@@ -83,7 +84,7 @@ const RichContent: React.FC<RichContentProps> = ({
     },
     'info-item': {
       paddingLeft: 8,
-      ...TextStyles.text,
+      ...Typography.caption(),
     },
     'info-label': {
     },

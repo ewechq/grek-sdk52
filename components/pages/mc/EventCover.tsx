@@ -8,7 +8,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
-import { TextStyles, Colors } from '@/theme';
+import { Typography, Colors } from '@/theme';
 
 interface EventCoverProps {
   cover: string | null;
@@ -32,7 +32,7 @@ export const EventCover: React.FC<EventCoverProps> = ({ cover, ageLimit }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 24,
+    marginTop: 16,
     marginBottom: 15,
     position: 'relative',
   },
@@ -44,10 +44,10 @@ const styles = StyleSheet.create({
   },
   ageLimitContainer: {
     position: 'absolute',
-    right: 0,
-    top: 0,
-    width: 50,
-    height: 50,
+    right: 6,
+    top: 4,
+    width: 30,
+    height: 30,
     backgroundColor: Colors.white,
     borderTopRightRadius: 24,
     borderBottomLeftRadius: 25,
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ageLimit: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     color: Colors.purple,
   },
 }); 

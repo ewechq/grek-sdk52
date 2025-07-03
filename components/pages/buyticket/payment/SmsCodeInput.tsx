@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography } from '@/theme';
 
 interface SmsCodeInputProps {
   codeLength: number;
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.grayElements,
     backgroundColor: Colors.white,
     textAlign: 'center',
-    ...TextStyles.h1,
+    ...Typography.h1(),
     textAlignVertical: 'center',
     lineHeight: 26,
     color: Colors.black,

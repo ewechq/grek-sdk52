@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput, View, Text, StyleSheet } from 'react-native';
-import { TextStyles, Colors } from '@/theme';
+import { Typography, Colors } from '@/theme';
 
 interface PhoneInputProps {
   initialValue: string;
@@ -67,8 +67,6 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   const handleChangeText = (text: string) => {
     const formatted = formatPhoneNumber(text);
     setValue(formatted);
-    
-    // Отправляем форматированный номер вместо только цифр
     onPhoneChange(formatted);
     
     if (isTouched) {
@@ -121,14 +119,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     paddingHorizontal: 16,
     color: Colors.grayBg,
-    ...TextStyles.text,
+    ...Typography.caption(),
   },
   errorText: {
     position: 'absolute',
     bottom: 4,
     left: 16,
     right: 16,
-    ...TextStyles.textDescription,
+    ...Typography.small(),
   },
 });
 

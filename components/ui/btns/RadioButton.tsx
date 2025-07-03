@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
-import { TextStyles, Colors } from '@/theme';
+import { Typography, Colors } from '@/theme';
 
 interface RadioButtonProps {
   selected: boolean;
@@ -16,7 +16,7 @@ export const RadioButton = ({ selected, onSelect, label }: RadioButtonProps) => 
           {selected && <View style={styles.innerCircle} />}
         </View>
       </View>
-      <Text style={[TextStyles.text, styles.label]}>{label}</Text>
+      <Text style={[Typography.caption(), styles.label]}>{label}</Text>
     </TouchableOpacity>
   );
 };
@@ -25,9 +25,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 8,
-    alignItems: 'center',
-    
+    marginVertical: 8,    
   },
   radioWrapper: {
     marginRight: 8,

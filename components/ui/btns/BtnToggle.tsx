@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { TextStyles, Colors } from '@/theme';
+import { Typography, Colors } from '@/theme';
 
 interface ToggleButtonProps {
   title: string;
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    ...TextStyles.h3,
+    ...Typography.h3(),
   },
 });
 

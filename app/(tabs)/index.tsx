@@ -1,135 +1,219 @@
-import { StyleSheet, View, ScrollView, Image, Text } from 'react-native'
-import React, { useState, useCallback } from 'react'
-import { useRouter } from 'expo-router'
-import Btn from '@/components/ui/btns/Btn'
-import { Colors, TextStyles } from '@/theme/index'
-import { normalize } from '@/utils/responsive'
-import {DiscountsModal} from '@/components/ui/modals/DiscountsModal'
-import { MainTicketCard } from '@/widgets/main/MainTicketCard'
+import { StyleSheet, View, Pressable, Text, Image } from "react-native";
+import React, { useState, useCallback } from "react";
+import { useRouter } from "expo-router";
+import { Colors, Typography } from "@/theme/index";
+import MainHeader from "@/components/ui/layout/MainHeader";
+import Feather from "@expo/vector-icons/Feather";
+import { InstIcon } from "@/components/ui/icons/InstIcon";
+import { VkIcon } from "@/components/ui/icons/VkIcon";
+import { TgIcon } from "@/components/ui/icons/TgIcon";
+import { useTheme } from "@/theme";
 
 export default function MainScreen() {
-  const [isDiscountsModalVisible, setIsDiscountsModalVisible] = useState(false);
-  const [logoError, setLogoError] = useState(false);
+  const { theme, toggleTheme, colors } = useTheme();
   const router = useRouter();
-
-  // Мемоизируем функции-обработчики
-  const handleLogoError = useCallback(() => {
-    setLogoError(true);
-    console.warn('Failed to load logo image');
-  }, []);
 
   const handleBuyTicket = useCallback(() => {
     try {
-      router.push('/(buyticket)');
+      router.push("/(buyticket)");
     } catch (error) {
-      router.push('/');
+      router.push("/");
     }
   }, [router]);
 
-  const handleDiscountsPress = useCallback(() => {
-    setIsDiscountsModalVisible(true);
-  }, []);
+  const handlePaidCard = useCallback(() => {
+    try {
+      router.push("/(paybycard)");
+    } catch (error) {
+      router.push("/");
+    }
+  }, [router]);
+
+  const handleTicketPrice = useCallback(() => {
+    try {
+      router.push("/(price)");
+    } catch (error) {
+      router.push("/");
+    }
+  }, [router]);
 
   return (
-    <View style={styles.container}>
-      <Image 
-        source={require('@/assets/images/pattern.webp')} 
-        style={styles.backgroundPattern}
-      />
-      <ScrollView>
-        {!logoError ? (
-          <Image 
-            source={require('@/assets/images/logo-white.webp')} 
-            style={styles.logoImage}
-            onError={handleLogoError}
-          />
-        ) : (
-          <View style={styles.logoFallback}>
-            <Text style={styles.logoFallbackText}>GREK LAND</Text>
+    <View style={{ height: "100%", backgroundColor: colors.background }}>
+      <MainHeader />
+      <View style={{ paddingHorizontal: 8, gap: 8 }}>
+        <Pressable style={styles.cardBlock} onPress={handlePaidCard}>
+          <View style={[styles.TextBlock, { width: "50%" }]}>
+            <Text
+              style={[
+                styles.BlockTitle,
+                { color: Colors.white },
+              ]}
+            >
+              Пополнить карту
+            </Text>
+            <Text style={[styles.BlockText, { color: Colors.white }]}>
+              Проходите на аттракционы без очередей
+            </Text>
           </View>
-        )}
-        <View style={styles.bottomButtons}>
-          <Btn title="Купить билет" onPress={handleBuyTicket} width="full" bgColor={Colors.pink}/>
-          <Btn title="Скидки" onPress={handleDiscountsPress} width="full" bgColor={Colors.purpleDark}/>
-        </View>
-        <View style={styles.topSection}>
-          {/* Пустой контейнер для отступа */}
-        </View>
-        
-        <View style={styles.mainContent}>
-          <MainTicketCard />
-        </View>
-        
-        <View style={styles.bottomSection}>
-          {/* Пустой контейнер для отступа */}
-        </View>
-      </ScrollView>
 
-      <DiscountsModal 
-        isVisible={isDiscountsModalVisible}
-        onClose={() => setIsDiscountsModalVisible(false)}
-      />
+          <Image
+            source={require("@/assets/images/cards.png")}
+            resizeMode="contain"
+            style={styles.cardBlockImage}
+          />
+          <View style={styles.iconCard}>
+            <Feather name="arrow-up-right" size={18} color={Colors.white} />
+          </View>
+        </Pressable>
+
+        <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              height: 325,
+              gap: 8,
+              width: "49%",
+            }}
+          >
+            <Pressable style={styles.buyTicketBlock} onPress={handleBuyTicket}>
+              <View style={styles.TextBlock}>
+                <Text style={styles.BlockTitle}>Купить билет</Text>
+                <Text style={styles.BlockText}>
+                  Забронируйте билеты заранее
+                </Text>
+              </View>
+              <Image
+                source={require("@/assets/images/success.webp")}
+                resizeMode="contain"
+                style={[
+                  styles.cardBlockImage,
+                  {
+                    top: "auto",
+                    bottom: 20,
+                    right: 0,
+                    height: 180,
+                    width: 180,
+                  },
+                ]}
+              />
+              <View
+                style={[
+                  styles.iconCard,
+                  { bottom: 8, top: "auto", backgroundColor: "#96E3F4" },
+                ]}
+              >
+                <Feather name="arrow-up-right" size={18} color={Colors.black} />
+              </View>
+            </Pressable>
+            <View style={styles.socialMediaBlock}>
+              <Pressable style={styles.socialMedia}>
+                <InstIcon></InstIcon>
+              </Pressable>
+              <Pressable style={styles.socialMedia}>
+                <VkIcon></VkIcon>
+              </Pressable>
+              <Pressable style={styles.socialMedia}>
+                <TgIcon></TgIcon>
+              </Pressable>
+            </View>
+          </View>
+          <Pressable
+            style={styles.ticketPriceBlock}
+            onPress={handleTicketPrice}
+          >
+            <View style={styles.TextBlock}>
+              <Text style={styles.BlockTitle}>Стоимость билетов</Text>
+              <Text style={styles.BlockText}>
+                Прайс-лист, акции и специальные предложения
+              </Text>
+            </View>
+            <Image
+              source={require("@/assets/images/grek_vesna.webp")}
+              resizeMode="contain"
+              style={[styles.cardBlockImage, { top: -10, width: 200 }]}
+            />
+            <View style={[styles.iconCard, { backgroundColor: "#FBDF82" }]}>
+              <Feather name="arrow-up-right" size={18} color={Colors.black} />
+            </View>
+          </Pressable>
+        </View>
+      </View>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
-  // Container styles
-  container: {
-    flex: 1,
+  cardBlock: {
     backgroundColor: Colors.purple,
+    padding: 16,
+    borderRadius: 15,
+    position: "relative",
+    marginTop: 40,
+    height: 180,
+    justifyContent: "flex-end",
   },
-  backgroundPattern: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '110%',
-    height: '110%',
-    opacity: 0.3
+  TextBlock: {
+    color: Colors.white,
+    zIndex: 10,
   },
-
-  // Logo styles
-  logoImage: {
-    width: '50%',
-    height: 80,
-    alignSelf: 'center',
-    marginVertical: normalize(16),
+  BlockTitle: {
+    ...Typography.h2(),
+    textTransform: "uppercase",
+    paddingBottom: 4,
   },
-
-  mainContent: {
-    marginHorizontal: normalize(24),
+  BlockText: {
+    ...Typography.caption(),
   },
-
+  cardBlockImage: {
+    position: "absolute",
+    right: -10,
+    top: -25,
+    height: 220,
+    width: 220,
+  },
+  iconCard: {
+    padding: 8,
+    backgroundColor: "rgb(200, 174, 255)",
+    position: "absolute",
+    top: 8,
+    right: 8,
+    borderRadius: 12,
+    height: 40,
+    width: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 11,
+  },
   bottomButtons: {
-    gap: normalize(8),
-    padding: normalize(24),
+    gap: 8,
+    padding: 24,
   },
-
-  // Bottom section styles
-  bottomSection: {
-    margin: normalize(24),
-    marginBottom: normalize(140),
-    marginTop: 0,
-    overflow: 'hidden'
+  socialMediaBlock: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 8,
   },
-  topSection: {
-    marginHorizontal: normalize(24),
-    paddingTop: 5,
-    marginBottom: 0,
-    overflow: 'hidden'    
+  socialMedia: {
+    padding: 8,
+    backgroundColor: "#F49FD6",
+    borderRadius: 8,
+    flex: 1,
+    aspectRatio: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
-
-  // Fallback styles
-  logoFallback: {
-    width: '50%',
-    height: 80,
-    alignSelf: 'center',
-    marginVertical: normalize(16),
-    justifyContent: 'center',
-    alignItems: 'center'
+  buyTicketBlock: {
+    flex: 1,
+    backgroundColor: "#C2F4FF",
+    borderRadius: 15,
+    padding: 16,
   },
-  logoFallbackText: {
-    ...TextStyles.h1,
-    color: Colors.white
+  ticketPriceBlock: {
+    width: "49%",
+    backgroundColor: "rgb(255,248,167)",
+    borderRadius: 15,
+    padding: 16,
+    justifyContent: "flex-end",
   },
-}); 
+});

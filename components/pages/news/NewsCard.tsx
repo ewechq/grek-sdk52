@@ -1,8 +1,8 @@
 import React, { memo, useCallback, useMemo, useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Platform } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Platform, Pressable } from 'react-native';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography } from '@/theme';
 import { PlaceholderImage } from '@/components/ui/images/PlaceholderImage';
 
 const IS_ANDROID = Platform.OS === 'android';
@@ -44,21 +44,18 @@ const NewsCard = memo(({ id, title, introtext, cover }: NewsCardProps) => {
   }, []);
 
   return (
-    <TouchableOpacity 
+    <Pressable 
       style={styles.container} 
       onPress={handlePress}
-      activeOpacity={0.7}
     >
       <View style={styles.imageContainer}>
         {imageUri && !hasError ? (
           <>
             <Image
               source={{ uri: imageUri }}
-              style={[styles.image, !isLoading && styles.loadedImage]}
+              style={styles.image}
               contentFit="cover"
-              transition={IS_ANDROID ? 0 : 200}
               cachePolicy="memory-disk"
-              priority={IS_ANDROID ? "high" : "normal"}
               onError={handleError}
               onLoadEnd={handleLoadEnd}
             />
@@ -70,21 +67,21 @@ const NewsCard = memo(({ id, title, introtext, cover }: NewsCardProps) => {
       </View>
       <View style={styles.content}>
         <Text 
-          style={[styles.title, styles.optimizedText]}
+          style={styles.title}
           numberOfLines={2}
-          ellipsizeMode="clip"
+          ellipsizeMode='tail'
         >
           {title}
         </Text>
         <Text 
-          style={[styles.description, styles.optimizedText]}
+          style={styles.description}
           numberOfLines={2}
-          ellipsizeMode="clip"
+          ellipsizeMode="tail"
         >
           {introtext}
         </Text>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }, (prevProps, nextProps) => {
   return prevProps.id === nextProps.id && 
@@ -101,14 +98,14 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: '100%',
     aspectRatio: 1,
-    borderRadius: 25,
+    borderRadius: 20,
     overflow: 'hidden',
     backgroundColor: Colors.grayElements,
   },
   image: {
     width: '100%',
     height: '100%',
-    borderRadius: 25,
+    borderRadius: 20,
   },
   content: {
     paddingTop: 8,
@@ -118,26 +115,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    ...TextStyles.h3,
+    ...Typography.h3(),
     color: Colors.black,
     marginBottom: 4,
   },
   description: {
-    ...TextStyles.textDescription,
+    ...Typography.small(),
     color: Colors.grayText,
-  },
-  optimizedText: {
-    // Слегка уменьшаем межстрочный интервал для более компактного отображения
-    lineHeight: IS_ANDROID ? 
-      (TextStyles.h3.lineHeight || 22) * 0.95 : 
-      (TextStyles.h3.lineHeight || 22) * 0.95,
-  },
-  androidText: {
-    includeFontPadding: false,
-    textAlignVertical: 'center',
-  },
-  loadedImage: {
-    // Add any styles for the loaded image if needed
   },
 });
 

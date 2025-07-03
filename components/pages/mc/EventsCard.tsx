@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { StyleSheet, View, Text, ImageSourcePropType, TouchableOpacity } from "react-native";
+import React, { useState, useRef } from "react";
+import { Animated, StyleSheet, View, Text, ImageSourcePropType, Pressable } from "react-native";
 import { Image } from "expo-image";
-import { Colors, TextStyles } from "@/theme";
+import { Colors, Typography } from "@/theme";
 import { useRouter } from "expo-router";
+import { usePressScaleAnimation } from "@/hooks/animations/usePressScaleAnimation";
 
 export interface ChildComponentProps {
   id: number;
@@ -24,13 +25,15 @@ const CardComponent: React.FC<ChildComponentProps> = ({
   const [isLoaded, setIsLoaded] = useState(false);
   const router = useRouter();
 
+  const { scale, handlePressIn, handlePressOut } = usePressScaleAnimation();
+
   const handlePress = () => {
     router.push(`/mc/${id}`);
   };
 
   return (
-    <TouchableOpacity onPress={handlePress}>
-      <View style={styles.mainView}>
+    <Pressable onPress={handlePress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
+      <Animated.View style={[styles.mainView, { transform: [{ scale }] }]}>
         <Image
           style={[styles.imgCard, !isLoaded && styles.imgPlaceholder]}
           source={cover}
@@ -38,7 +41,7 @@ const CardComponent: React.FC<ChildComponentProps> = ({
         />
         {title && (
           <Text 
-            style={[styles.textHeader, styles.optimizedText]}
+            style={styles.textHeader}
             numberOfLines={2}
             ellipsizeMode="clip"
           >
@@ -53,7 +56,7 @@ const CardComponent: React.FC<ChildComponentProps> = ({
           )}
           {price !== undefined && price !== null && (
             <Text style={styles.priceText}>
-              {String(price)} РУБ
+              {String(price)} ₽
             </Text>
           )}
         </View>
@@ -62,8 +65,8 @@ const CardComponent: React.FC<ChildComponentProps> = ({
             {String(ageLimit)}+
           </Text>
         )}
-      </View>
-    </TouchableOpacity>
+      </Animated.View>
+    </Pressable>
   );
 };
 
@@ -71,65 +74,53 @@ const styles = StyleSheet.create({
   mainView: {
     width: "100%",
     height: 240,
-    paddingHorizontal: 2,
   },
   imgCard: {
     width: "100%",
     aspectRatio: 1,
-    borderRadius: 25,
+    borderRadius: 20,
   },
   imgPlaceholder: {
     backgroundColor: Colors.grayBg,
   },
   textHeader: {
     paddingTop: 8,
-    paddingBottom: 2,
-    ...TextStyles.h3,
+    ...Typography.h3(),
     color: Colors.black,
-  },
-  optimizedText: {
-    // Слегка уменьшаем межстрочный интервал для более компактного отображения
-    lineHeight: (TextStyles.h3.lineHeight || 22) * 0.95,
   },
   infoContainer: {
     display: 'flex',
     flexDirection: 'row',
     gap: 2,
-    marginTop: 4,
     justifyContent: 'space-between',
   },
   timeText: {
-    ...TextStyles.h3,
+    ...Typography.small(),
     paddingVertical: 4,
     color: Colors.grayText,
   },
   priceText: {
-    ...TextStyles.h3,
+    ...Typography.small(),
     paddingVertical: 4,
     paddingLeft: 16,
     color: Colors.grayText,
   },
   ageLimitText: {
     position: 'absolute',
-    top: 0,
-    right: 0,
+    top: 4,
+    right: 6,
     backgroundColor: Colors.white,
-    borderTopRightRadius: 25,
-    borderBottomLeftRadius: 25,
-    ...TextStyles.h3,
-    width: 40,
-    height: 40,
+    borderRadius: 25,
+    ...Typography.small(),
+    width: 30,
+    height: 30,
     color: Colors.grayText,
     textAlign: 'center',
     textAlignVertical: 'center',
     lineHeight: 20,
     paddingTop: 0,
   },
-  androidText: {
-    includeFontPadding: false,
-    textAlignVertical: 'center',
-    paddingRight: 2, // Дополнительный отступ справа для троеточия
-  },
+
 });
 
 export default CardComponent;

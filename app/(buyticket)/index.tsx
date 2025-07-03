@@ -6,7 +6,7 @@ import { Alert } from '@/components/ui/modals/Alert';
 import { DiscountsModal } from '@/components/ui/modals/DiscountsModal';
 import { useTicketPrices } from '@/hooks/buyticket/useTicketPrices';
 import { PriceCalculation } from '@/widgets/buyticket/PriceCalculation';
-import { normalize } from '@/utils/responsive';
+
 import { DateWarning } from '@/components/pages/buyticket/DateWarning';
 import { PersonalDataForm } from '@/widgets/buyticket/PersonalDataForm';
 import { AgreementsBlock } from '@/widgets/buyticket/AgreementsBlock';
@@ -14,7 +14,6 @@ import { useBuyTicketForm } from '@/hooks/buyticket/useBuyTicketForm';
 import { useBuyTicketValidation } from '@/hooks/buyticket/useBuyTicketValidation';
 import { useRouter } from 'expo-router';
 import Btn from '@/components/ui/btns/Btn';
-
 
 const BuyTicket = () => {
   const [alertVisible, setAlertVisible] = useState(false);
@@ -62,7 +61,7 @@ const BuyTicket = () => {
       <ScrollView style={styles.container}>
         <Header 
           title="Покупка билета" 
-          marginTop={normalize(48)}
+          marginTop={48}
           onPress={() => router.push('/(tabs)')}
         />
 
@@ -129,12 +128,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   priceCalculationContainer: {
-    marginBottom: normalize(40),
-    borderRadius: normalize(25),
+    marginBottom: 40,
+    borderRadius: 25,
     backgroundColor: Colors.grayBg,
-    paddingHorizontal: normalize(16),
-    paddingVertical: normalize(28),
-    marginHorizontal: normalize(16),
+    paddingHorizontal: 16,
+    paddingVertical: 28,
+    marginHorizontal: 16,
     overflow: 'hidden'
   },
   patternImage: {
@@ -146,12 +145,12 @@ const styles = StyleSheet.create({
     tintColor: 'rgba(0, 0, 0, 0.1)'
   },
   buttonContainer: {
-    marginHorizontal: normalize(16),
+    marginHorizontal: 16,
     marginBottom: 100
   },
   discountButtonContainer: {
-    paddingBottom: normalize(40),
-    marginTop: normalize(10)
+    paddingBottom: 40,
+    marginTop: 10
   }
 });
 

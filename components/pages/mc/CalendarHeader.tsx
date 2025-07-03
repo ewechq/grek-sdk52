@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { TextStyles, Colors } from '@/theme';
+import { Typography, Colors } from '@/theme';
 
 interface CalendarHeaderProps {
   monthName: string;
@@ -36,15 +36,14 @@ const styles = StyleSheet.create({
   titleContainer: {
     gap: 4,
     alignItems: 'center',
-    marginBottom: 16
   },
   title: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     color: Colors.white,
-
+    textTransform:'uppercase',
   },
   monthName: {
-    ...TextStyles.textDescription,
+    ...Typography.caption(),
     color: Colors.white,
   },
 }); 

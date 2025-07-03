@@ -1,9 +1,10 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from '@/theme';
 import TabBar from '@/components/ui/layout/TabBar';
+import { useRouter } from 'expo-router';
 
 export default function TabLayout() {
   return (
@@ -21,17 +22,18 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Главная'
-          }}
-        />
-        <Tabs.Screen
           name="mc"
           options={{
             title: 'MC'
           }}
         />
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Главная'
+          }}
+        />
+
       </Tabs>
     </SafeAreaView>
   );

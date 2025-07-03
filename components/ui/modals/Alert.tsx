@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography } from '@/theme';
 import { BaseModal } from './BaseModal';
 
 interface AlertProps {
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   message: {
-    ...TextStyles.text,
+    ...Typography.caption(),
     color: Colors.black,
     lineHeight: 24,
   },

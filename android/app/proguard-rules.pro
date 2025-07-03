@@ -12,29 +12,3 @@
 -keep class com.facebook.react.turbomodule.** { *; }
 
 # Add any project specific keep options here:
-
-# Сохраняем mapping файл
--keepattributes SourceFile,LineNumberTable
--printmapping mapping.txt
-
-# Сохраняем имена классов и методов
--keepnames class * { *; }
--keepnames interface * { *; }
--keepnames enum * { *; }
-
-# Сохраняем аннотации
--keepattributes *Annotation*
-
-# Сохраняем нативные методы
--keepclasseswithmembernames class * {
-    native <methods>;
-}
-
-# Сохраняем классы React Native
--keep class com.facebook.react.** { *; }
--keep class com.facebook.hermes.** { *; }
--keep class com.facebook.jni.** { *; }
-
-# Сохраняем классы Expo
--keep class expo.modules.** { *; }
--keep class host.exp.** { *; }

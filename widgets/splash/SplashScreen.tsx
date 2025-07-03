@@ -17,7 +17,7 @@ import React, { useEffect } from 'react';
 import { View, StyleSheet, Text, Dimensions, BackHandler, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography } from '@/theme';
 import { useVersionCheck } from '@/hooks/version/useVersionCheck';
 import { UpdateModal } from '@/components/ui/modals/UpdateModal';
 
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 40,
     color: Colors.white,
-    ...TextStyles.text,
+    ...Typography.caption(),
     textAlign: 'center',
   },
 }); 

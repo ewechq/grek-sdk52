@@ -1,14 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { TextStyles, Colors } from '@/theme';
-import { normalize } from '@/utils/responsive';
+import { Typography, Colors } from '@/theme';
 
 export const DateWarning = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.icon}>⚠️</Text>
       <Text style={styles.text}>
-        Сейчас билеты можно приобрести только на текущую дату
+        Время для покупки билетов: с 6:00 до 20:00.
       </Text>
     </View>
   );
@@ -16,22 +15,28 @@ export const DateWarning = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: normalize(40),
-    marginHorizontal: normalize(16),
+    marginVertical: 40,
+    marginHorizontal: 16,
     backgroundColor: Colors.grayBg,
-    borderRadius: normalize(25),
-    padding: normalize(16),
+    borderRadius: 25,
+    padding: 16,
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: normalize(16),
-    paddingHorizontal: normalize(16)
+    alignItems: 'flex-start',
+    gap: 16,
+    paddingHorizontal: 16,
+    maxWidth: '100%',
+    flexWrap: 'wrap',
   },
   icon: {
-    fontSize: 16
+    fontSize: 16,
+    marginTop: 4
   },
   text: {
-    ...TextStyles.text,
+    ...Typography.caption(),
     color: Colors.black,
-    paddingRight: normalize(16)
+    flex: 1,
+    flexShrink: 1,
+    flexWrap: 'wrap',
+    minWidth: 0,
   }
 }); 

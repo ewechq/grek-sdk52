@@ -1,6 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
   <uses-permission android:name="android.permission.INTERNET"/>
-  <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
@@ -25,8 +24,13 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="grek-one"/>
-        <data android:scheme="com.grek.one"/>
+        <data android:scheme="grekLand"/>
+      </intent-filter>
+      <intent-filter android:autoVerify="true" data-generated="true">
+        <action android:name="android.intent.action.android.intent.action.VIEW"/>
+        <data android:scheme="https"/>
+        <category android:name="android.intent.category.android.intent.category.BROWSABLE"/>
+        <category android:name="android.intent.category.android.intent.category.DEFAULT"/>
       </intent-filter>
     </activity>
   </application>

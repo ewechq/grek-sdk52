@@ -1,74 +1,66 @@
-import React, { useRef, useState, useCallback } from 'react';
-import { StyleSheet, View, ScrollView, ActivityIndicator, Text, Platform } from 'react-native';
+import { StyleSheet, View, Text, ScrollView } from 'react-native';
+import React, { useState } from 'react';
 import { useArticles } from '@/hooks/news/useArticles';
-import { Colors, TextStyles } from '@/theme';
-import { NewsSection } from '@/widgets/news/NewsSection';
-import NewsSliderSection from '@/widgets/news/NewsSliderSection';
-import { CustomRefreshControl } from '@/components/ui/feedback/RefreshControl';
+import { Colors } from '@/theme';
+import { TextStyles } from '@/theme';
+import { LoadingState } from '@/components/ui/feedback/LoadingState';
+import { ErrorState } from '@/components/ui/feedback/ErrorState';
+import { EmptyState } from '@/components/ui/feedback/EmptyState';
+import NewsGrid from '@/widgets/news/NewsGrid';
+import SegmentedTabs from '@/components/ui/btns/SegmentedTabs'
+import MainHeader from '@/components/ui/layout/MainHeader'
+import { useLocalSearchParams } from 'expo-router';
+import CustomRefreshControl from '@/components/ui/feedback/RefreshControl';
 
-const LATEST_NEWS_COUNT = 6;
-const IS_ANDROID = Platform.OS === 'android';
-
-export default function NewsScreen() {
-  const scrollViewRef = useRef<ScrollView>(null);
-  const { news, promo, isLoading, error, refresh } = useArticles(LATEST_NEWS_COUNT);
+export default function AllNewsScreen() {
+  const { category = 'news' } = useLocalSearchParams<{ category: 'news' | 'blog' }>();
+  const { news, promo, isLoading, error, refresh } = useArticles();
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedTab, setSelectedTab] = useState(0);
 
-  const handleRefresh = useCallback(async () => {
-    if (refresh) {
-      setRefreshing(true);
-      await refresh();
-      setRefreshing(false);
+  const filteredArticles = React.useMemo(() => {
+    if (selectedTab === 0) {
+      return [...news, ...promo];
+    } else if (selectedTab === 1) {
+      return news;
+    } else if (selectedTab === 2) {
+      return promo;
     }
-  }, [refresh]);
+    return news;
+  }, [news, promo, selectedTab]);
 
-  if (isLoading && !news?.length) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={Colors.purple} />
-      </View>
-    );
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    if (refresh) {
+      await refresh();
+    }
+    setRefreshing(false);
+  };
+
+  if (isLoading && !filteredArticles?.length) {
+    return <LoadingState loading={true} />;
   }
 
   if (error) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.error}>{error}</Text>
-      </View>
-    );
+    return <ErrorState message={error} />;
+  }
+
+  if (!filteredArticles?.length) {
+    return <EmptyState message={`Нет доступых событий`} />;
   }
 
   return (
-    <ScrollView 
-      ref={scrollViewRef}
-      style={styles.container}
-      showsVerticalScrollIndicator={false}
-      removeClippedSubviews={IS_ANDROID}
-      scrollEventThrottle={IS_ANDROID ? 32 : 16}
-      refreshControl={
-        <CustomRefreshControl
-          refreshing={refreshing}
-          onRefresh={handleRefresh}
-        />
-      }
-    >
-      {(news.length > 0 || promo.length > 0) && (
-        <View style={styles.newsContainer}>
-          <NewsSliderSection 
-            news={promo.length > 0 ? promo : news} 
-            parentScrollRef={scrollViewRef} 
-          />
-          
-          <View>
-            <NewsSection 
-              news={news}
-              title="Новости"
-              category="news"
-            />
-          </View>
-        </View>
-      )}
-    </ScrollView>
+    <View style={styles.container}>
+      <NewsGrid 
+        news={filteredArticles} 
+        refreshing={refreshing} 
+        onRefresh={handleRefresh} 
+        heading="События в Grek Land"
+        tabs={['Все', 'Новости', 'Акции']}
+        selectedTab={selectedTab}
+        onSelectTab={setSelectedTab}
+      />
+    </View>
   );
 }
 
@@ -76,24 +68,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-  },
-  newsContainer: {
-    flex: 1,
-    paddingBottom: IS_ANDROID ? 16 : 0,
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Colors.white,
-  },
-  lastSection: {
-    paddingBottom: 140,
-  },
-  error: {
-    color: Colors.red,
-    ...TextStyles.text,
-    textAlign: 'center',
-    paddingHorizontal: 20,
+    gap: 20,
   },
 });

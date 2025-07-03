@@ -14,7 +14,6 @@
 
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { normalize } from '@/utils/responsive';
 import { CheckboxWithLink } from '@/components/ui/btns/CheckboxWithLink';
 
 /* Пропсы для компонента соглашений */
@@ -72,7 +71,7 @@ export const AgreementsBlock = ({
 // Стили компонента
 const styles = StyleSheet.create({
   container: {
-    marginBottom: normalize(40),
-    marginHorizontal: normalize(16)
+    marginBottom: 40,
+    marginHorizontal: 16
   }
 }); 

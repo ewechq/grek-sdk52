@@ -2,7 +2,7 @@ import React from 'react';
 import { Stack, router } from 'expo-router';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import Btn from '@/components/ui/btns/Btn';
-import { TextStyles, Colors } from '@/theme/index';
+import { Typography, Colors } from '@/theme/index';
 
 export default function NotFoundScreen() {
   return (
@@ -32,13 +32,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   text: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     marginVertical: 10,
     textAlign: 'center',
     marginHorizontal: 16,
   },
   textDescription: {
-    ...TextStyles.text,
+    ...Typography.caption(),
     marginBottom: 20,
     textAlign: 'center',
     marginHorizontal: 16,

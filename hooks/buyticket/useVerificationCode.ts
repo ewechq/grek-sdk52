@@ -95,6 +95,12 @@ export const useVerificationCode = ({
 
       const signatureCheckResult = await signatureCheckResponse.json();
 
+      // Проверка на ошибку 422 при проверке подписи
+      if (signatureCheckResponse.status === 422) {
+        showAlert('Ошибка!', 'Билеты доступны для покупки только с 6:00 до 20:00. Пожалуйста, попробуйте позже.');
+        return;
+      }
+
       if (signatureCheckResponse.ok && signatureCheckResult.signature === true) {
         const orderData = {
           ...ticketData,
@@ -111,6 +117,12 @@ export const useVerificationCode = ({
         });
 
         const orderResult = await orderResponse.json();
+
+        // Проверка на ошибку 422 при создании предзаказа
+        if (orderResponse.status === 422) {
+          showAlert('Ошибка!', 'Билеты доступны для покупки только с 6:00 до 20:00. Пожалуйста, попробуйте позже.');
+          return;
+        }
 
         if (orderResponse.ok && orderResult.link) {
           router.push({
@@ -153,6 +165,12 @@ export const useVerificationCode = ({
       });
 
       const result = await response.json();
+
+      // Проверка на ошибку 422 при повторной отправке кода
+      if (response.status === 422) {
+        showAlert('Ошибка!', 'Билеты доступны для покупки только с 6:00 до 20:00. Пожалуйста, попробуйте позже.');
+        return;
+      }
 
       if (response.ok && result.signature?.id) {
         const newSignatureId = Number(result.signature.id);

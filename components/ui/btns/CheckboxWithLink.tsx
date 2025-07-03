@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography} from '@/theme';
 
 interface CheckboxWithLinkProps {
   checked: boolean;
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   label: {
-    ...TextStyles.text,
+    ...Typography.caption(),
     color: Colors.black,
     paddingTop: 2,
     paddingLeft: 16,

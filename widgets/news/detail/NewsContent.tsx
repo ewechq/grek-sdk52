@@ -18,7 +18,7 @@ import React, { useMemo } from 'react';
 import { StyleSheet, Text, View, Platform } from 'react-native';
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography } from '@/theme';
 import RichContent from "@/components/ui/text/RichContent";
 import { MixedStyleDeclaration } from 'react-native-render-html';
 
@@ -103,12 +103,12 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 0,
   },
   title: {
-    ...TextStyles.h2,
-    marginBottom: 10,
+    ...Typography.h2(),
+    marginBottom: 4,
     textAlign: 'center',
   },
   date: {
-    ...TextStyles.textDescription,
+    ...Typography.small(),
     color: Colors.grayText,
     marginBottom: 20,
     textAlign: 'center',

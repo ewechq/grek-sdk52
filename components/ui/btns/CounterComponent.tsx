@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { TextStyles, Colors } from '@/theme';
+import { Typography, Colors } from '@/theme';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 interface CounterProps {
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   label: {
-    ...TextStyles.text,
+    ...Typography.caption(),
     color: Colors.black,
   },
   controls: {
@@ -82,14 +82,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   value: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     color: Colors.black,
     minWidth: 24,
     textAlign: 'center',
     flexDirection: 'row',
   },
   unit: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     color: Colors.black,
   },
 });

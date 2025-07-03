@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography } from '@/theme';
 
 interface EmptyStateProps {
   message: string;
@@ -22,6 +22,6 @@ const styles = StyleSheet.create({
   },
   message: {
     color: Colors.black,
-    ...TextStyles.text,
+    ...Typography.caption(),
   },
 });

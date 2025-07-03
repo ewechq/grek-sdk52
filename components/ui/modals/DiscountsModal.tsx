@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography } from '@/theme';
 import { BaseModal } from './BaseModal';
 
 interface DiscountsModalProps {
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   discountItem: {
-    ...TextStyles.text,
+    ...Typography.caption(),
     marginBottom: 12,
     color: Colors.black,
   },
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   noteText: {
-    ...TextStyles.textDescription,
+    ...Typography.small(),
     marginBottom: 8,
     color: Colors.grayText,
 

@@ -16,8 +16,7 @@
 
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
-import { TextStyles, Colors } from '@/theme';
-import { normalize } from '@/utils/responsive';
+import { Typography, Colors } from '@/theme';
 import PhoneInput from '@/components/ui/inputs/InputPhone';
 import EmailInput from '@/components/ui/inputs/InputEmail';
 import Counter from '@/components/ui/btns/CounterComponent';
@@ -61,7 +60,7 @@ const NameInput: React.FC<NameInputProps> = ({
         style={[
           styles.input,
           {
-            borderBottomColor: !isValid && isTouched ? Colors.red : Colors.grayElements,
+            borderBottomColor: !isValid && isTouched ? Colors.red : Colors.grayBg,
             marginBottom: !isValid && isTouched ? 24 : 12
           }
         ]}
@@ -117,7 +116,7 @@ export const PersonalDataForm = ({
   return (
     <View style={styles.container}>
       {/* Секция персональных данных */}
-      <Text style={[styles.sectionTitle, {marginBottom: normalize(8)}]}>
+      <Text style={[styles.sectionTitle, {marginBottom: 8}]}>
         Ваши данные:
       </Text>
       
@@ -143,7 +142,7 @@ export const PersonalDataForm = ({
       />
 
       {/* Секция выбора количества билетов */}
-      <Text style={[styles.sectionTitle, {marginTop: normalize(40),}]}>
+      <Text style={[styles.sectionTitle, {marginTop: 40,}]}>
         Количество билетов:
       </Text>           
       <View style={styles.countersContainer}>
@@ -189,44 +188,46 @@ export const PersonalDataForm = ({
 // Стили компонента
 const styles = StyleSheet.create({
   container: {
-    marginBottom: normalize(40),
-    marginHorizontal: normalize(16)
+    marginBottom: 40,
+    marginHorizontal: 16
   },
   sectionTitle: {
-    ...TextStyles.h2,
+    ...Typography.h2,
     color: Colors.black,
-    marginBottom: normalize(8),
+    marginBottom: 8,
+    textTransform:'uppercase',
+    fontWeight:'600'
   },
   input: {
     height: 50,
     borderWidth: 0,
     borderBottomWidth: 1,
-    paddingHorizontal: normalize(16),
-    paddingVertical: normalize(16),
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     color: Colors.black,
-    ...TextStyles.text,
+    ...Typography.caption,
   },
   errorText: {
     position: 'absolute',
     bottom: 4,
-    left: normalize(16),
-    right: normalize(16),
-    ...TextStyles.textDescription,
+    left: 16,
+    right: 16,
+    ...Typography.small,
     color: Colors.red,
   },
   counterSection: {
-    marginTop: normalize(40),
+    marginTop: 40,
   },
   countersContainer: {
-    gap: normalize(4),
+    gap: 4,
   },
   counterRow: {
     width: '100%',
-    paddingHorizontal: normalize(16)
+    paddingHorizontal: 16
   },
   attendantText: {
-    ...TextStyles.textDescription,
+    ...Typography.caption,
     color: Colors.grayText,
-    marginBottom: normalize(16),
+    marginBottom: 16,
   }
 }); 

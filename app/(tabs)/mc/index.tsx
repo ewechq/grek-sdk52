@@ -9,7 +9,8 @@ import { useVisibleDates } from "@/hooks/mc/useVisibleDates";
 import { useCalendarState } from "@/hooks/mc/useCalendarState";
 import { LoadingState } from "@/components/ui/feedback/LoadingState";
 import { EmptyState } from "@/components/ui/feedback/EmptyState";
-import { CustomRefreshControl } from "@/components/ui/feedback/RefreshControl";
+import CustomRefreshControl from "@/components/ui/feedback/RefreshControl";
+import MainHeader from "@/components/ui/layout/MainHeader";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -93,12 +94,14 @@ const CalendarPage = () => {
           />
         }
       >
+        
         <View style={styles.calendarContainer}>
           <Image 
             source={require('@/assets/images/pattern.webp')} 
             style={styles.pattern}
             resizeMode="cover"
           />
+          <MainHeader colorEditPark={Colors.white} colorIconContact={Colors.white} colorIconTheme={Colors.white} colorPark={Colors.white} />
           <Calendar 
             selectedDate={selectedDate}
             onDateSelect={handleDateSelect} 

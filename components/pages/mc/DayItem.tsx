@@ -1,6 +1,7 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { TextStyles, Colors } from '@/theme';
+import { TouchableOpacity, Text, StyleSheet, Pressable } from 'react-native';
+import { Typography, Colors } from '@/theme';
+import { formatCalendarDay } from '@/utils/mc/dateFormatters';
 
 interface DayItemProps {
   date: Date;
@@ -13,11 +14,11 @@ export const DayItem: React.FC<DayItemProps> = ({
   isSelected,
   onPress,
 }) => {
-  const dayOfWeek = date.toLocaleDateString("ru-RU", { weekday: "short" });
+  const dayOfWeek = formatCalendarDay(date);
   const dayNumber = date.getDate();
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={() => onPress(date)}
       style={[
         styles.container,
@@ -40,29 +41,29 @@ export const DayItem: React.FC<DayItemProps> = ({
       >
         {dayNumber}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: 60,
-    height: 70,
+    width: 50,
+    height: 80,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 4,
-    borderRadius: 15,
-    marginBottom: 8,
+    marginHorizontal: 8,
+    borderRadius: 20,
+    marginBottom: 16,
   },
   selectedContainer: {
     backgroundColor: Colors.pink,
   },
   weekdayText: {
-    ...TextStyles.textDescription,
+    ...Typography.small(),
     color: Colors.white,
   },
   dayText: {
-    ...TextStyles.h1,
+    ...Typography.h1(),
     color: Colors.white,
   },
   selectedText: {

@@ -11,7 +11,7 @@ import { EmptyState } from "@/components/ui/feedback/EmptyState";
 import { NewsImage } from "@/widgets/news/detail/NewsImage";
 import { NewsContent } from "@/widgets/news/detail/NewsContent";
 import { Colors } from "@/theme";
-import { CustomRefreshControl } from "@/components/ui/feedback/RefreshControl";
+import CustomRefreshControl from "@/components/ui/feedback/RefreshControl";
 
 const IS_ANDROID = Platform.OS === 'android';
 

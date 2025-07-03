@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { VisibleDatesState } from '@/types/mc';
 
-const DAYS_TO_LOAD = 7; // Загружаем неделю за раз
+const DAYS_TO_LOAD = 2; // Загружаем по 2 дня
 
 export const useVisibleDates = (initialDate: Date) => {
   const [{ dates, isLoading }, setState] = useState<VisibleDatesState>({

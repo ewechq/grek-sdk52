@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography } from '@/theme';
 
 interface ResendTimerProps {
   timer: number;
@@ -33,7 +33,7 @@ export const ResendTimer: React.FC<ResendTimerProps> = ({
 
 const styles = StyleSheet.create({
   resendCode: {
-    ...TextStyles.textDescription,
+    ...Typography.small(),
     color: Colors.grayText,
     textAlign: 'center'
   },

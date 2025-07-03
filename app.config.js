@@ -5,19 +5,19 @@ export default ({ config }) => {
       slug: "grekApp",
       version: "1.0.1", 
       orientation: "portrait",
-      icon: "./assets/images/icon2.webp",
+      icon: "./assets/images/icon2.png",
       scheme: "grekLand",
       userInterfaceStyle: "automatic",
       newArchEnabled: true,
       splash: {
-        image: "./assets/images/icon2.webp",
+        image: "./assets/images/icon2.png",
         resizeMode: "contain",
         backgroundColor: "#ffffff"
       },
       assetBundlePatterns: ["**/*"],
       ios: {
         supportsTablet: true,
-        bundleIdentifier: "com.grekLand",
+        bundleIdentifier: "com.grek.one",
         infoPlist: {
           LSApplicationQueriesSchemes: [
             "bank100000000008",
@@ -33,19 +33,59 @@ export default ({ config }) => {
       },
       android: {
         adaptiveIcon: {
-          foregroundImage: "./assets/images/icon2.webp",
+          foregroundImage: "./assets/images/icon2.png",
           backgroundColor: "#ffffff"
         },
-        versionCode: 3, 
-        package: "com.grekLand",
-        permissions: ["INTERNET", "QUERY_ALL_PACKAGES"]
+        versionCode: 7, 
+        package: "com.grek.one",
+        permissions: ["INTERNET"],
+        intentFilters: [
+          {
+            autoVerify: true,
+            action: "android.intent.action.VIEW",
+            data: [
+              {
+                scheme: "https"
+              }
+            ],
+            category: ["android.intent.category.BROWSABLE", "android.intent.category.DEFAULT"]
+          }
+        ],
+        queries: [
+          {
+            package: "com.bank100000000008"
+          },
+          {
+            package: "com.bank100000000004"
+          },
+          {
+            package: "com.bank100000000111"
+          },
+          {
+            package: "com.bank100000000015"
+          },
+          {
+            package: "com.bank100000000007"
+          },
+          {
+            package: "com.bank100000000001"
+          },
+          {
+            package: "com.bank100000000005"
+          }
+        ],
+        edgeToEdgeEnabled: true
       },
       web: {
         bundler: "metro",
         output: "static",
         favicon: "./assets/images/icon1.webp"
       },
-      plugins: ["expo-router"],
+      plugins: [
+        "expo-router",
+        "expo-font",
+        "expo-system-ui"
+      ],
       experiments: {
         typedRoutes: true
       },

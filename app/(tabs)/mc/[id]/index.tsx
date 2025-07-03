@@ -9,10 +9,10 @@ import {
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { Image } from "expo-image";
-import { TextStyles, Colors } from "@/theme";
+import { Typography, Colors } from "@/theme";
 import Header from "@/components/ui/layout/Header";
 import Btn from "@/components/ui/btns/Btn";
-import { CustomRefreshControl } from "@/components/ui/feedback/RefreshControl";
+import CustomRefreshControl from "@/components/ui/feedback/RefreshControl";
 import { CustomActivityIndicator } from "@/components/ui/feedback/ActivityIndicator";
 
 interface Event {
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   },
   ageLimit: {
     color: Colors.purple,
-    ...TextStyles.h2,
+    ...Typography.h2(),
     paddingTop: 5,
   },
   image: {
@@ -182,22 +182,22 @@ const styles = StyleSheet.create({
 
   },
   title: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     alignSelf: 'center',
     textAlign: 'center',
   },
   durationContainer: {
     marginTop: 8,
     marginBottom: 24,
-    ...TextStyles.textDescription,
+    ...Typography.small(),
   },
   duration: {
-    ...TextStyles.textDescription,
+    ...Typography.small(),
     alignSelf: 'center',
   },
 
   description: {
-    ...TextStyles.text,
+    ...Typography.caption(),
     color: Colors.black,
     marginBottom: 32,
     paddingBottom: 180,

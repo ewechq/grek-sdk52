@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography } from '@/theme';
 import { AntDesign } from '@expo/vector-icons';
 
 interface BaseModalProps {
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   title: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     textAlign: 'center',
     marginBottom: 16,
   },

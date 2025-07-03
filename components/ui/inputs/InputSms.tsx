@@ -5,7 +5,7 @@ import {
   StyleSheet, 
   Text,
 } from "react-native";
-import { TextStyles, Colors } from "@/theme";
+import { Typography, Colors } from "@/theme";
 
 interface SmsInputProps {
   value: string;
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.red,
   },
   errorText: {
-    ...TextStyles.textDescription,
+    ...Typography.small(),
     color: Colors.red,
     marginTop: -5,
     marginBottom: 10,

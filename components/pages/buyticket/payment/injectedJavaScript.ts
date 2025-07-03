@@ -1,4 +1,4 @@
-import { BANK_SCHEMES } from '@/utils/buyticket/bankSchemes';
+import { BANK_SCHEMES } from '@/utils/buyticket/paymentUtils';
 
 export const getInjectedJavaScript = () => {
   const bankSchemesConditions = Object.values(BANK_SCHEMES)

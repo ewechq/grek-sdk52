@@ -16,9 +16,9 @@
 
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { TextStyles, Colors } from '@/theme';
+import { Typography, Colors } from '@/theme';
 import { Event } from '@/types/mc';
-import { formatDate, formatTime } from '@/utils/mc/dateFormatters';
+import { formatDateWithWeekday } from '@/utils/mc/dateFormatters';
 import CardComponent from '@/components/pages/mc/EventsCard';
 import { CustomActivityIndicator } from '@/components/ui/feedback/ActivityIndicator';
 
@@ -161,7 +161,7 @@ export const EventsList: React.FC<EventsListProps> = ({
                 <View key={dateKey} style={styles.dateEventsContainer}>
                   {/* Заголовок с датой */}
                   <Text style={styles.dateHeader}>
-                    {formatDate(date)}
+                    {formatDateWithWeekday(date)}
                   </Text>
                   {/* Сетка карточек мероприятий */}
                   <View style={styles.eventsContainer}>
@@ -222,12 +222,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   dateEventsContainer: {
-    marginTop: 44,
+    marginTop: 40,
   },
   dateHeader: {
-    ...TextStyles.h2,
+    ...Typography.caption(),
     color: Colors.black,
-    marginBottom: 8,
     paddingHorizontal: 16,
     alignSelf: 'center',
   },
@@ -239,7 +238,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   cardWrapper: {
-    width: '48%',
+    width: '49%',
     marginBottom: 20,
   },
   loaderContainer: {

@@ -15,7 +15,7 @@
 
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography } from '@/theme';
 
 /* Пропсы для компонента расчета стоимости*/
 interface PriceCalculationProps {
@@ -127,11 +127,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    ...TextStyles.text,
+    ...Typography.caption(),
     color: Colors.black,
   },
   price: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     color: Colors.black,
   },
   totalRow: {
@@ -141,19 +141,19 @@ const styles = StyleSheet.create({
     borderTopColor: Colors.grayElements,
   },
   totalText: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     color: Colors.black,
   },
   totalPrice: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     color: Colors.black,
   },
   emptyText: {
-    ...TextStyles.text,
+    ...Typography.caption(),
     color: Colors.black,
     lineHeight: 18,
   },
   emoji: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
   }
 }); 

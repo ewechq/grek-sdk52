@@ -13,7 +13,7 @@ interface CustomRefreshControlProps extends Omit<RefreshControlProps, 'progressB
   color?: string; 
 }
 
-export const CustomRefreshControl: React.FC<CustomRefreshControlProps> = ({
+const CustomRefreshControl: React.FC<CustomRefreshControlProps> = ({
   refreshing,
   onRefresh,
   color = Colors.white,
@@ -30,3 +30,5 @@ export const CustomRefreshControl: React.FC<CustomRefreshControlProps> = ({
     />
   );
 }; 
+
+export default CustomRefreshControl;

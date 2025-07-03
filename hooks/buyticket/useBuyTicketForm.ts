@@ -122,6 +122,12 @@ export const useBuyTicketForm = () => {
 
       const signatureResult = await signatureResponse.json();
 
+      if (signatureResponse.status === 422) {
+        return { 
+          error: 'Билеты доступны для покупки только с 6:00 до 20:00. Пожалуйста, попробуйте позже.'
+        };
+      }
+
       if (signatureResponse.ok && signatureResult.signature?.id) {
         const newSignatureId = signatureResult.signature.id;
         

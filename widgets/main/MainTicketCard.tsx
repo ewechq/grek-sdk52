@@ -16,9 +16,8 @@
 
 import { StyleSheet, Text, View, Image } from 'react-native'
 import React, { useMemo } from 'react'
-import { Colors, TextStyles } from '@/theme/index'
+import { Colors, Typography } from '@/theme/index'
 import Svg, { Path } from 'react-native-svg'
-import { normalize } from '@/utils/responsive'
 import { useTicketPrices } from '@/hooks/buyticket/useTicketPrices'
 
 /**
@@ -36,12 +35,12 @@ interface PriceCardProps {
 const PriceCard = ({ age, price }: PriceCardProps) => (
   <View style={styles.priceCard}>
     <View style={styles.ageCardColumn}>
-      <Text style={TextStyles.textDescription}>Возраст</Text>
-      <Text style={TextStyles.h2}>{age}</Text>
+      <Text style={Typography.small()}>Возраст</Text>
+      <Text style={Typography.h2()}>{age}</Text>
     </View>
     <View style={styles.priceCardColumn}>
-      <Text style={TextStyles.textDescription}>Цена</Text>
-      <Text style={TextStyles.h2}>{price}</Text>
+      <Text style={Typography.small()}>Цена</Text>
+      <Text style={Typography.h2()}>{price}</Text>
     </View>
   </View>
 );
@@ -210,46 +209,46 @@ export const MainTicketCard = () => {
 const styles = StyleSheet.create({
   // Стили основного контента
   mainContent: {
-    gap: normalize(24),
+    gap: 24,
     backgroundColor: Colors.white,
-    paddingTop: normalize(36),
+    paddingTop: 36,
   },
   contentDescription: {
-    marginHorizontal: normalize(16),
+    marginHorizontal: 16,
   },
 
   // Стили типографики
   sectionTitle: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     alignSelf: 'center',
-    marginBottom: normalize(8),
+    marginBottom: 8,
   },
   descriptionText: {
-    ...TextStyles.textDescription,
+    ...Typography.caption(),
     textAlign: 'center',
-    marginBottom: normalize(4),
+    marginBottom: 4,
     color: Colors.grayText,
   },
 
   // Стили карточек с ценами
   priceSection: {
-    gap: normalize(4)
+    gap: 4
   },
   priceCard: {
-    marginHorizontal: normalize(24),
+    marginHorizontal: 24,
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: Colors.purpleLight,
-    padding: normalize(16),
-    borderRadius: normalize(16)
+    padding: 16,
+    borderRadius: 16
   },
   priceCardColumn: {
     alignItems: 'flex-end',
-    gap: normalize(4)
+    gap: 4
   },  
   ageCardColumn: {
     alignItems: 'flex-start',
-    gap: normalize(4)
+    gap: 4
   },
 
   // Стили заголовков секций
@@ -260,22 +259,22 @@ const styles = StyleSheet.create({
   },
   sectionHeaderDecorLeft: {
     backgroundColor: Colors.purple,
-    borderTopRightRadius: normalize(16),
-    borderBottomRightRadius: normalize(16),
-    width: normalize(16),
-    height: normalize(24),
+    borderTopRightRadius: 16,
+    borderBottomRightRadius: 16,
+    width: 16,
+    height: 24,
     top: -4
   },
   sectionHeaderDecorRight: {
     backgroundColor: Colors.purple,
-    borderTopLeftRadius: normalize(16),
-    borderBottomLeftRadius: normalize(16),
-    width: normalize(16),
-    height: normalize(24),
+    borderTopLeftRadius: 16,
+    borderBottomLeftRadius: 16,
+    width: 16,
+    height: 24,
     top: -4
   },
   sectionHeaderTitle: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     alignSelf: 'center'
   },
 
@@ -286,7 +285,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.purple,
     width: '60%',
     alignSelf: 'center',
-    marginTop: normalize(16)
+    marginTop: 16
   },
 
   // Стили SVG-контейнеров
@@ -305,35 +304,35 @@ const styles = StyleSheet.create({
 
   // Стили контейнера с информацией о месте и времени
   locationTimeContainer: {
-    gap: normalize(4),
+    gap: 4,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: normalize(16),
-    marginBottom: normalize(24),
-    marginHorizontal: normalize(24)
+    marginTop: 16,
+    marginBottom: 24,
+    marginHorizontal: 24
   },
   locationTimeText: {
-    ...TextStyles.textDescription,
+    ...Typography.caption(),
     color: Colors.grayText
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: normalize(20),
+    padding: 20,
   },
   loadingText: {
-    ...TextStyles.text,
+    ...Typography.caption(),
     color: Colors.white,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: normalize(20),
+    padding: 20,
   },
   errorText: {
-    ...TextStyles.text,
+    ...Typography.small(),
     color: Colors.red,
   },
 }); 

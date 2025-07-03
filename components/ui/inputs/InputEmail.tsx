@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TextInput, View, Text, StyleSheet } from "react-native";
 
-import { TextStyles, Colors } from "@/theme";
+import { Typography, Colors } from "@/theme";
 
 const isValidEmail = (email: string) => {
   // Проверяем наличие кириллицы
@@ -69,7 +69,7 @@ const EmailInput: React.FC<EmailInputProps> = ({
           {
             backgroundColor,
             color: textColor,
-            borderColor: !isEmailValid && isTouched ? errorColor : Colors.grayElements,
+            borderColor: !isEmailValid && isTouched ? errorColor : Colors.grayBg,
             marginBottom: !isEmailValid && isTouched ? 24 : 12
           }
         ]}
@@ -100,14 +100,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     paddingHorizontal: 16,
     color: Colors.black,
-    ...TextStyles.text,
+    ...Typography.caption(),
   },
   errorText: {
     position: 'absolute',
     bottom: -16,
     left: 16,
     right: 16,
-    ...TextStyles.textDescription,
+    ...Typography.small(),
   },
 });
 

@@ -15,7 +15,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography } from '@/theme';
 import Btn from '@/components/ui/btns/Btn';
 
 export const FailureWidget = () => {
@@ -61,14 +61,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   title: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     color: Colors.black,
     marginBottom: 4,
     marginHorizontal: 16,
     textAlign: 'center',
   },
   message: {
-    ...TextStyles.text,
+    ...Typography.caption(),
     color: Colors.black,
     marginBottom: 32,
     textAlign: 'center',

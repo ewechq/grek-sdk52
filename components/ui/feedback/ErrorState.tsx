@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography } from '@/theme';
 
 interface ErrorStateProps {
   message: string;
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   },
   error: {
     color: Colors.red,
-    ...TextStyles.text,
+    ...Typography.caption(),
     textAlign: 'center',
     paddingHorizontal: 20,
   },

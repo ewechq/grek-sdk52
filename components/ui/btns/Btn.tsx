@@ -1,15 +1,14 @@
-import { StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native'
+import {  Text, Pressable, ViewStyle } from 'react-native'
 import React from 'react'
-import { Colors, TextStyles } from "@/theme"
-import { normalize } from '@/utils/responsive';
+import { Colors, Typography } from "@/theme"
 import { makeUseStyles } from '@/hooks/useStyles';
 
 interface BtnComponentProps {
-  title: string
+  title: string | React.ReactNode
   onPress: () => void
   bgColor?: string
   textColor?: string
-  width?: 'default' | 'full'
+  width?: 'default' | 'full' | "icon"
   useSystemFont?: boolean
   disabled?: boolean
   style?: ViewStyle
@@ -28,26 +27,31 @@ const Btn: React.FC<BtnComponentProps> = ({
   const [styles, isSmallLayout] = useStyles();
 
   return (
-    <TouchableOpacity 
+    <Pressable
       style={[
         styles.button, 
         { backgroundColor: bgColor },
         width === 'full' && styles.fullWidth,
+        width === 'icon' && styles.iconWidth,
         disabled && styles.disabled,
         style
       ]} 
       onPress={onPress}
       disabled={disabled}
     >
-      <Text style={[
-        styles.text,
-        { color: textColor },
-        useSystemFont && styles.systemFont,
-        disabled && styles.disabledText
-      ]}>
-        {title}
-      </Text>
-    </TouchableOpacity>
+      {typeof title === 'string' ? (
+        <Text style={[
+          styles.text,
+          { color: textColor },
+          useSystemFont && styles.systemFont,
+          disabled && styles.disabledText
+        ]}>
+          {title}
+        </Text>
+      ) : (
+        title
+      )}
+    </Pressable>
   )
 }
 
@@ -55,9 +59,9 @@ export default Btn
 
 const useStyles = makeUseStyles((isSmallLayout) => ({
   button: {
-    height: normalize(45),
-    paddingHorizontal: normalize(40),
-    borderRadius: normalize(20),
+    height: 45,
+    paddingHorizontal: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
@@ -66,12 +70,16 @@ const useStyles = makeUseStyles((isSmallLayout) => ({
     width: '100%',
     alignSelf: 'stretch',
   },
+  iconWidth:{
+    width: 45,
+    paddingHorizontal: 0,
+  },
   text: {
-    ...TextStyles.h2,
+    ...Typography.h3(),
     textAlign: 'center',
   },
   systemFont: {
-    ...TextStyles.text,
+    ...Typography.small(),
     fontWeight: '400',
     textTransform: 'capitalize' as const,
   },

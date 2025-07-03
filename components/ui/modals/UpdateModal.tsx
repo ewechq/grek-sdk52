@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Modal } from 'react-native';
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography } from '@/theme';
 import Btn from '@/components/ui/btns/Btn';
 
 interface UpdateModalProps {
@@ -71,19 +71,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalTitle: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     color: Colors.black,
     marginBottom: 8,
     textAlign: 'center',
   },
   versionText: {
-    ...TextStyles.textDescription,
+    ...Typography.small(),
     color: Colors.black,
     marginBottom: 8,
     fontWeight: '600',
   },
   modalText: {
-    ...TextStyles.text,
+    ...Typography.caption(),
     color: Colors.black,
     textAlign: 'center',
     marginBottom: 24,

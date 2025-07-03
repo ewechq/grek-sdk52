@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { TextStyles, Colors } from '@/theme';
+import { Typography, Colors } from '@/theme';
 import { Event } from '@/types/mc';
 import { EventCover } from '@/components/pages/mc/EventCover';
 import Btn from '@/components/ui/btns/Btn';
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {},
   title: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     alignSelf: 'center',
   },
   durationContainer: {
@@ -77,13 +77,17 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   duration: {
-    ...TextStyles.textDescription,
+    ...Typography.caption(),
     alignSelf: 'center',
   },
+  subtitle: {
+    ...Typography.small(),
+    color: Colors.grayText,
+  },
   description: {
-    ...TextStyles.text,
+    ...Typography.caption(),
     color: Colors.black,
     marginBottom: 32,
-    paddingBottom: 180,  // Дополнительный отступ для прокрутки
+    paddingBottom: 180, 
   },
 }); 

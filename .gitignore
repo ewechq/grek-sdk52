@@ -51,9 +51,3 @@ yarn-error.*
 
 app-example
 
-# Android/IntelliJ
-android/app/build/
-android/.gradle/
-android/.idea/
-android/local.properties
-android/*.iml

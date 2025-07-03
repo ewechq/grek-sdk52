@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { Colors, TextStyles } from '@/theme';
+import { Colors, Typography } from '@/theme';
 import Btn from '@/components/ui/btns/Btn';
 import { usePaymentProcessing } from '@/hooks/buyticket/usePaymentProcessing';
 
@@ -85,19 +85,19 @@ const styles = StyleSheet.create({
     marginBottom: 24
   },
   title: {
-    ...TextStyles.h2,
+    ...Typography.h2(),
     color: Colors.black,
     textAlign: 'center',
     marginBottom: 16
   },
   description: {
-    ...TextStyles.text,
+    ...Typography.caption(),
     color: Colors.grayText,
     textAlign: 'center',
     marginBottom: 24
   },
   subtitle: {
-    ...TextStyles.text,
+    ...Typography.caption(),
     color: Colors.grayText,
     textAlign: 'center',
     marginBottom: 32
